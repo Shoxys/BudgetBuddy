@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  font-size: 16px; /* Baseline, scaled by OS to 20px at 125% */
+}

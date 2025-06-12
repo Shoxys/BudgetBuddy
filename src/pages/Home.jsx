@@ -1,0 +1,41 @@
+import Button from '../components/Button';
+
+export default function Home() {
+  return (
+   <div
+  className="min-h-screen pl-40 3xl:pl-72 pr-9 bg-[url('src/assets/home-bg.png')] bg-cover bg-no-repeat"
+  style={{ 
+    backgroundSize: 'cover', 
+    backgroundPosition: 'center',
+    width: '100vw', 
+    height: '100vh' 
+  }}
+>
+  <div className="pt-6 3xl:pt-10 flex items-center justify-between">
+    <div className="flex items-center">
+      <img src="/src/assets/bb_logo.png" alt="Budget Buddy Logo" width="65" height="55" />
+      <h2 className="text-4xl 3xl:text-6xl font-header font-bold ml-4">
+        <span className="text-primary_blue">Budget</span>
+        <span className="text-secondary_red">Buddy</span>
+      </h2>
+    </div>
+    <div className="flex items-center">
+      <button
+        className="text-bb_darkgrey bg-bb_salmon font-body text-2xl 3xl:text-4xl rounded-xl font-bold px-8 py-5 3xl:px-10 3xl:py-7 mr-5 3xl:mr-8"
+        onClick={() => {}}
+      >
+        Sign Up
+      </button>
+      <Button label="Login" padding="px-10 py-5 3xl:px-14 3xl:py-7" size="text-2xl 3xl:text-4xl" onClick={() => alert('Button clicked!')} />
+    </div>
+  </div>
+  <div className="w-2/5 pt-11 3xl:pt-36">
+    <h1 className="font-header text-6xl 3xl:text-8xl font-bold leading-tight 3xl:leading-tight">Gain <br /> Personalised <br /> Financial <br /> Insights</h1>
+    <h2 className="mt-6 3xl:mt-12 mb-6 3xl:mb-12 font-header text-2xl 3xl:text-4xl">
+      Built for users seeking to manage their finances effectively, it offers transaction logging, spending categorisation, goal tracking, and visualisations.
+    </h2>
+    <Button label="Get Started" size="text-3xl 3xl:text-4xl" weight="font-none" padding="px-10 py-3 3xl:px-14 3xl:py-5" onClick={() => alert('Button clicked!')} />
+  </div>
+</div>
+  );
+}
