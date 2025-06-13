@@ -1,14 +1,13 @@
-/** @type {import('tailwindcss').Config} */
 export default {
-   content: [
+  content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        primary_blue: '#008CFF', 
-        secondary_red: '#E92C81', 
+        primary_blue: '#008CFF',
+        secondary_red: '#E92C81',
         bb_purple: '#853FFF',
         bb_green: '#64E69C',
         bb_yellow: '#FFBD51',
@@ -22,13 +21,18 @@ export default {
         'body': ['Inter', 'sans-serif'],
       },
       screens: {
-        '3xl': '1921px' // Custom breakpoint for my 1440p display
+        '3xl': '1921px', // Custom breakpoint for my 1440p display
       },
       boxShadow: {
         'custom-blue': '0px 8px 17px #008cff26, 0px 0px 2px #008cff1F',
       },
-    }
+      width: {
+        '6/13': '47%',
+      },
+      border: {
+        'border_gray': '#008CFFFF',
+      },
+    },
   },
   plugins: [],
-}
-
+};

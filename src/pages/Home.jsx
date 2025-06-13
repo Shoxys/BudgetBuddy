@@ -1,4 +1,5 @@
 import Button from '../components/Button';
+import Logo from '../components/Logo';
 
 export default function Home() {
   return (
@@ -12,13 +13,7 @@ export default function Home() {
   }}
 >
   <div className="pt-6 3xl:pt-10 flex items-center justify-between">
-    <div className="flex items-center">
-      <img src="/src/assets/bb_logo.png" alt="Budget Buddy Logo" width="65" height="55" />
-      <h2 className="text-4xl 3xl:text-6xl font-header font-bold ml-4">
-        <span className="text-primary_blue">Budget</span>
-        <span className="text-secondary_red">Buddy</span>
-      </h2>
-    </div>
+    <Logo/>
     <div className="flex items-center">
       <button
         className="text-bb_darkgrey bg-bb_salmon font-body text-2xl 3xl:text-4xl rounded-xl font-bold px-8 py-5 3xl:px-10 3xl:py-7 mr-5 3xl:mr-8"
