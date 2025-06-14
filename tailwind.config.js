@@ -15,6 +15,7 @@ export default {
         bb_salmon: '#FFF8F2FF',
         bb_darkgrey: '#17191FFF',
         bb_neutral: '#F3F4F6FF',
+        bb_aqua: '#F0F8FF80',
       },
       fontFamily: {
         'header': ['Archivo', 'sans-serif'],
