@@ -13,19 +13,20 @@ export default function Sidebar({selectedNav}) {
         console.log(expanded);
     }
     return (
-     <nav className={`fixed top-0 left-0 bottom-0 z-50 flex flex-col px-3 py-1 gap-2 bg-white shadow-sm transition-[width] duration-200 ${expanded ? 'w-80 px-5' : 'w-16 px-2 items-center'}`}>
+     <nav className={`fixed top-0 left-0 bottom-0 z-50 flex flex-col px-3 py-1 gap-2 bg-white shadow-sm transition-[width] duration-200 ${expanded ? 'w-80 px-5 opacity-95' : 'w-16 px-2 items-center'}`}>
         <div className="flex flex-row">
             {expanded ? <img className="h-14" src="src/assets/bb-logo-text.png" alt="Budget buddy logo with text"/> :
                         <img className="w-10" src="src/assets/bb_logo.png" alt="Budget buddy logo"/>
             }
             <button
                 onClick={setNavState}
-                className={`absolute top-2 right-[-14px] w-6 h-10 opacity-100 bg-white rounded-md border border-gray-400 shadow-sm hover:bg-slate-200 outline-none flex items-center justify-center`}
+                className={`absolute top-2 right-[-14px] w-5 h-10 opacity-100 bg-white rounded-md border border-gray-400 shadow-sm hover:bg-slate-200 outline-none flex items-center justify-center`}
                 >
                 <img
                     className={`${expanded ? '' : 'scale-x-[-1]'}`}
                     src="src/assets/arrow.png"
                     alt="Toggle sidebar"
+                    width="12"
                 />
             </button>
         </div>
@@ -44,7 +45,7 @@ export default function Sidebar({selectedNav}) {
             </a>         
         ))}
         <hr className="h-0.5 rounded-sm w-full bg-gray-400 mt-3 mb-2"/>
-        <a href="#" className="hover:bg-slate-200 rounded-md flex flex-row items-center w-14">
+        <a href="#" className="hover:bg-slate-200 rounded-md flex flex-row items-center w-full">
             <img src="src/assets/logout.png" alt="logout icon" />
             {expanded && 
                 <h1 className={`font-body text-xl text-gray-700 font-bold`}>

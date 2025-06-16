@@ -29,7 +29,7 @@ const AuthForm = ({ fields, onSubmit, buttonLabel, className = '' }) => {
               id={field.id}
               type={field.type === 'password' && !showPassword[field.id] ? 'password' : 'text'}
               placeholder={field.placeholder}
-              className="rounded-sm w-full text-left bg-bb_neutral text-md 3xl:text-lg focus:outline-none focus:ring-primary_blue pr-10" // pr-10 for icon space
+              className="rounded-sm w-full text-left bg-bb_neutral text-md 3xl:text-lg focus:outline-none focus:ring-primary_blue pr-10"
             />
             {field.type === 'password' && (
               <button

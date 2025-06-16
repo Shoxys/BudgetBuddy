@@ -27,6 +27,7 @@ export default {
       },
       boxShadow: {
         'custom-blue': '0px 8px 17px #008cff26, 0px 0px 2px #008cff1F',
+        'bb-general': '0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F',
       },
       width: {
         '6/13': '47%',
