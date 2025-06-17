@@ -9,7 +9,7 @@ export default function ValueCard() {
     return(
             <>
             {valueObjects.map(({ title, amount, icon, editable }) => (
-                <div className="px-4 pt-3 pb-4 flex flex-row justify-between gap-2 rounded-lg w-60 shadow-bb-general" key={title}>
+                <div className="px-4 pt-3 pb-4 flex flex-row justify-between gap-2 rounded-lg w-72 shadow-bb-general" key={title}>
                     <div>
                         <div className="flex flex-row">
                             <h2 className="font-body text-md text-gray-600 font-normal">{title}</h2>
@@ -21,7 +21,7 @@ export default function ValueCard() {
                         </div>
                         <h1 className="text-2xl text-gray-700 font-header font-bold">{amount}</h1>
                     </div>
-                        <div className="flex items-center">
+                    <div className="flex items-center">
                         <img className="w-13 h-12" src={icon} alt={`${title} icon`} />
                     </div>
                 </div>
