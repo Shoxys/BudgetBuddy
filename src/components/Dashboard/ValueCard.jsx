@@ -9,7 +9,7 @@ export default function ValueCard() {
     return(
             <>
             {valueObjects.map(({ title, amount, icon, editable }) => (
-                <div className="px-4 pt-3 pb-4 flex flex-row justify-between gap-2 rounded-lg w-72 shadow-bb-general" key={title}>
+                <div className="px-4 pt-3 pb-2 flex flex-row justify-between gap-2 rounded-lg w-72 shadow-bb-general" key={title}>
                     <div>
                         <div className="flex flex-row">
                             <h2 className="font-body text-md text-gray-600 font-normal">{title}</h2>

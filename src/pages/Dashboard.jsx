@@ -5,6 +5,11 @@ import NetworthCard from "../components/Dashboard/NetworthCard";
 import PeriodDropdown from "../components/Dashboard/PeriodDropdown";
 import TotalBalanceCard from "../components/Dashboard/TotalBalanceCard";
 import SavingGoalsCard from "../components/Dashboard/SavingGoalsCard";
+import IncomeExpenseCard from "../components/Dashboard/IncomeExpensesCard";
+import RevenueCard from "../components/Dashboard/RevenueCard";
+import ExpenseAnalysisCard from "../components/Dashboard/ExpenseAnalysisCard";
+import TransactionsCard from "../components/Dashboard/TransactionsCard";
+
 export default function Dashboard () {
    const totalBalance = "$4,950";
    return (
@@ -19,8 +24,8 @@ export default function Dashboard () {
             </h2>
             <PeriodDropdown/>
          </div>
-            <div className="w-full h-full border border-black">
-               <div className="flex flex-col bg-white pl-4 pb-4 pt-3 w-full text-black rounded-sm shadow-bb-general">
+            <div className="w-full h-full">
+               <div className="flex flex-col bg-white pl-4 pb-3 pt-3 w-full text-black rounded-sm shadow-bb-general">
                   <h1 className="font-header text-md font-semibold text-gray-700 mb-2"> Account Overview</h1>
                   <div className="flex flex-row gap-6">
                      <TotalBalanceCard totalBalance={totalBalance}/>
@@ -29,17 +34,17 @@ export default function Dashboard () {
                      </div>
                   </div>
                </div>
-               <div className="border border-red-600 flex gap-2 mt-3 h-full">
-                  <div className="border-blue-600 w-1/2 grid grid-col grid-auto-rows gap-3">
+               <div className="flex gap-2 mt-3 h-full">
+                  <div className="w-1/2 grid grid-col grid-auto-rows gap-3">
                      <InsightsCard/>
                      <NetworthCard/>
                      <SavingGoalsCard/>
-                     <div className="bg-white rounded-lg shadow-bb-general px-3 py-2">
-                        <h1 className="text-md font-semibold font-header">Income vs Expenses</h1>
-                     </div>
-                  </div>
-                  <div className="border-bg-pink-500 w-1/2 bg-white">
-                     
+                     <IncomeExpenseCard/>
+                  </div>   
+                  <div className="w-1/2 grid grid-cols-2 grid-auto-rows gap-3">
+                     <RevenueCard/>
+                     <ExpenseAnalysisCard/>
+                     <TransactionsCard/>
                   </div>
                </div>
             </div>    
