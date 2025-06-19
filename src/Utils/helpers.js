@@ -6,12 +6,13 @@ export function formatMoney(amount, currency = 'AUD') {
   });
 }
 
-export function formatDate({date}) {
-    const formatted = new Intl.DateTimeFormat("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    }).format(date);
+export function formatDate(date) {
+  if (!date) return "Invalid Date";
+  const parsedDate = new Date(date);
 
-    return formatted
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(parsedDate);
 }
