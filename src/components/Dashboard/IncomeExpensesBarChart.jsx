@@ -8,6 +8,8 @@ import {
   CartesianGrid
 } from "recharts";
 
+import { formatMoney } from '../../Utils/helpers';
+
 const data = [
   {
     name: "Last month",
@@ -21,15 +23,9 @@ const data = [
   }
 ];
 
-const formatMoney = (amount) =>
-  amount.toLocaleString("en-AU", {
-    style: "currency",
-    currency: "AUD"
-  });
-
 export default function IncomeExpensesBarChart() {
   return (
-    <div className="w-full max-w-md h-[220px] flex flex-col items-center justify-between mt-4">
+    <div className="w-full max-w-md h-[235px] flex flex-col items-center justify-between mt-4">
       {/* Bar Chart */}
       <div className="h-[100%] w-full">
         <ResponsiveContainer width="100%" height="100%">

@@ -1,8 +1,8 @@
 
-import OnboardingLayout from '../../components/OnBoardingLayout';
-import Investments from './Investments'
-import ValueInput from './ValueInput'
-import UploadSection from './UploadSection'
+import OnboardingLayout from '../components/OnBoardingLayout';
+import Investments from '../components/Onboarding/Investments'
+import ValueInput from '../components/Onboarding/ValueInput'
+import UploadSection from '../components/Onboarding/UploadSection'
 import { useState } from 'react';
 
 const stepMap = {
