@@ -1,6 +1,10 @@
+import { useState } from "react"
 import Sidebar from "../components/Siderbar"
 import Table from "../components/Transactions/Table"
+import AddModal from "../components/Transactions/AddModal"
+
 export default function Transactions() {
+   const [openAddModal, setOpenAddModal] = useState(false)
    return (
       <div className="relative min-h-screen min-w-screen bg-bb_slate pl-20">
         <Sidebar selectedNav="Dashboard"/>
@@ -42,16 +46,19 @@ export default function Transactions() {
                             <option className="text-gray-600" value="latest" selected>Sort Latest</option>
                             <option className="text-gray-600" value="oldest">Sort Oldest</option>
                         </select>
-                        <button className="bg-primary_blue flex flex-row items-center text-white text-md font-header font-semibold gap-2 py-2 px-4 rounded-md hover:bg-btn_hover">
+                        <button onClick={() => setOpenAddModal(true)} className="bg-primary_blue flex flex-row items-center text-white text-md font-header font-semibold gap-2 py-2 px-4 rounded-md hover:bg-btn_hover">
                             <img className="w-5" src="src/assets/plus-icon.png" alt="plus icon" />
                              Add New
                         </button>
                     </div>
                 </div>
-                <span className="absolute text-sm font-semibold font-header text-gray-500 text-left top-[10.5rem]">Select All</span>
-               <Table/>
+                <span className="z-0 absolute text-sm font-semibold font-header text-gray-500 text-left top-[10.5rem]">Select All</span>
+               <Table/>    
             </div>
         </div>
+        {openAddModal && (
+            <AddModal isOpen={openAddModal} onClose={() => setOpenAddModal(false)} />
+        )}
     </div>
    )
 }

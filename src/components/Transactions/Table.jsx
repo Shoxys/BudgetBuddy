@@ -1,4 +1,7 @@
 import Tag from "../tag";
+import ActionsDropdown from "./ActionsDropdown";
+import DeletionPopup from "./DeletionPopup";
+import EditModal from "./EditModal";
 import { formatMoney, formatDate } from '../../Utils/helpers';
 import { useState } from "react";
 
@@ -11,26 +14,27 @@ const transactions = [
   { id: 6, date: "2025-04-15", amount: -12.5, accountNumber: "899800000", type: "MISC", desc: "V3344 10/04", balance: 143.17, category: "Restaurants", merchant: "McDonald's (Waterford West)" },
   { id: 7, date: "2025-04-15", amount: -50.44, accountNumber: "899800000", type: "MISC", desc: "V3344 05/04", balance: -168.27, category: "Fuel", merchant: "Shell Coles Express (Marsden)" },
   { id: 8, date: "2025-04-14", amount: -25.38, accountNumber: "899800000", type: "MISC", desc: "V3344 05/04", balance: 218.71, category: "Attractions & Events", merchant: "On Air Singing Booth" },
-  { id: 9, date: "2025-04-13", amount: 12, accountNumber: "899800000", type: "TRANSFER", desc: "Shane N", balance: 244.09, category: "Transfers in", merchant: "" },
-  { id: 10, date: "2025-04-07", amount: 7.5, accountNumber: "899800000", type: "TRANSFER", desc: "MONFORT", balance: 232.09, category: "Transfers in", merchant: "" },
-  { id: 11, date: "2025-04-07", amount: 8, accountNumber: "899800000", type: "TRANSFER", desc: "JIMMYMONEY", balance: 224.59, category: "Transfers in", merchant: "" },
-  { id: 12, date: "2025-04-06", amount: 120, accountNumber: "899800000", type: "TRANSFER", desc: "ONLINE FEE RETURN", balance: 216.59, category: "Internal transfers", merchant: "" },
-  { id: 13, date: "2025-04-05", amount: 150, accountNumber: "899800000", type: "TRANSFER", desc: "ONLINE GIFT", balance: 265.28, category: "Internal transfers", merchant: "" },
-  { id: 14, date: "2025-04-01", amount: -10.69, accountNumber: "899800000", type: "MISC", desc: "V3344 30/03", balance: 96.59, category: "Medical", merchant: "Chemist Warehouse (Crestmead)" }
 ];
 
 export default function Table() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [lastCheckedIndex, setLastCheckedIndex] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
+
+    // Handles check box selection of transactions
     const handleSelect = (event, id, index) => {
+        // Handle Shift Key + Click group select
         if (event.shiftKey && lastCheckedIndex !== null) {
-            const start = Math.min(index, lastCheckedIndex);
-            const end = Math.max(index, lastCheckedIndex);
+            const start = Math.min(index, lastCheckedIndex); // Start checkbox
+            const end = Math.max(index, lastCheckedIndex); // Last checkbox
 
+            // Slice the selected transactions from the data object
             const rangeIds = transactions.slice(start, end + 1).map((transaction) => transaction.id);
             const isDeselecting = selectedIds.includes(id)
             
+            // Remove deselected ids if selected is in selected array else add selected ids
             if (isDeselecting){
                 setSelectedIds((prev) => prev.filter((id) => !rangeIds.includes(id)));
             } else {
@@ -47,6 +51,7 @@ export default function Table() {
             );
         }
         console.log({ id, index, shift: event.shiftKey, lastCheckedIndex });
+
         setLastCheckedIndex(index)
     };
 
@@ -59,10 +64,11 @@ export default function Table() {
     }
 
     return(
+        <>
             <table className="table-fixed w-full">
                 <thead>
                     <tr className="font-header font-semibold text-md text-gray-800 ">
-                        <th className="w-2 text-center py-2">
+                        <th className="w-1 text-center py-2">
                             <input
                             className="h-5 w-5 outline-none"
                             name="selectAll"
@@ -72,14 +78,15 @@ export default function Table() {
                             />
                         </th>
                         <th className="w-5 text-center">Date</th>
-                        <th className="w-16">Details</th>
-                        <th className="w-7">Category</th>
-                        <th className="w-3">Debit</th>
-                        <th className="w-3">Credit</th>
-                        <th className="w-5">Balance</th>
+                        <th className="w-11">Details</th>
+                        <th className="w-4">Category</th>
+                        <th className="w-3.5">Debit</th>
+                        <th className="w-3.5">Credit</th>
+                        <th className="w-3.5">Balance</th>
+                        <th className="w-0.5"></th>
                     </tr>
                 </thead>
-                <tbody className="">
+                <tbody>
                     {transactions.map(({id, date, amount, type, desc, balance, category, merchant}, index) =>(
                         <tr key={id} className={`border-t border-b ${selectedIds.includes(id) ? 'bg-[#008CFF66] opacity-85 border-blue-400' : 'border-gray-200'} text-md text-gray-700 font-body font-semibold`}>
                             <td className="text-center">
@@ -107,14 +114,31 @@ export default function Table() {
                                     {formatMoney(amount)}
                                 </>)}
                             </td>
-                            <td className="text-gray-800 text-center">
+                            <td className="text-gray-800 text-center items-center">
                                 {balance < 0 ? (<span className="text-[#E11A0CFF]">-</span> ) :
                                                (<span className="text-[#2CBD00FF]">+</span> )}
                                 {formatMoney(balance).replace("-", "")}
+                            </td>
+                            <td className="text-left"> 
+                                <ActionsDropdown
+                                    onEdit={() => setShowEditModal(true)}
+                                    onDelete={() => setShowDeleteModal(true)}
+                                />     
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <div className="flex flex-row justify-center gap-4">
+                    <button className="bg-bb_neutral py-2 px-3 text-md text-gray-500 font-body font-semibold rounded-lg hover:bg-gray-200">‹⠀Previous</button>
+                    <button className="bg-bb_neutral py-2 px-5 text-md text-gray-500 font-body font-semibold rounded-lg hover:bg-gray-200">Next⠀⠀›</button>
+            </div>
+            {showDeleteModal && (
+                <DeletionPopup isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} handleDelete={() => (console.log({showDeleteModal}))}/>
+            )} 
+            {showEditModal && (
+                <EditModal isOpen={showEditModal} onClose={() => setShowEditModal(false)}/>
+            )}  
+        </>
     )
 }

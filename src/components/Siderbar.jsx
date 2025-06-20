@@ -13,7 +13,7 @@ export default function Sidebar({selectedNav}) {
         console.log(expanded);
     }
     return (
-     <nav className={`fixed top-0 left-0 bottom-0 z-50 flex flex-col px-3 py-1 gap-2 bg-white shadow-bb-general transition-[width] duration-200 ${expanded ? 'w-80 px-5 opacity-90' : 'w-16 px-2 items-center'}`}>
+     <nav className={`fixed top-0 left-0 bottom-0 z-10 flex flex-col px-3 py-1 gap-2 bg-white shadow-bb-general transition-[width] duration-200 ${expanded ? 'w-80 px-5 opacity-90' : 'w-16 px-2 items-center'}`}>
         <div className="flex flex-row">
             {expanded ? <img className="h-14" src="src/assets/bb-logo-text.png" alt="Budget buddy logo with text"/> :
                         <img className="w-10" src="src/assets/bb_logo.png" alt="Budget buddy logo"/>
