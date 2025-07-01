@@ -1,4 +1,5 @@
-import AuthForm from '../components/AuthForm';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthForm from '../components/Authentication/AuthForm';
 
 export default function Signup() {
   const signupFields = [
@@ -7,8 +8,10 @@ export default function Signup() {
     { id: 'confirmPassword', label: 'Confirm Password', type: 'password', placeholder: 'Enter password again ', required: true },
   ];
 
+  const navigate = useNavigate()
   const handleSubmit = () => {
       // Handle login logic
+      navigate("/onboarding")
       alert('Sign up!');
   }
 
@@ -21,13 +24,17 @@ export default function Signup() {
         <div className="flex-1 flex items-center justify-center px-12 ">
           <div className="text-center w-1/2">
             <div className=""> 
-              <h1 className="font-header text-gray-800 text-5xl 3xl:text-6xl font-medium">Sign Up</h1>
+              <h1 className="font-header text-gray-800 text-5xl 3xl:text-6xl font-semibold">Sign Up</h1>
               <AuthForm
                 fields={signupFields}
                 onSubmit={handleSubmit}
                 buttonLabel="Sign Up"
                 className="w-full mt-9 3xl:mt-14"
               />
+              <p className="mt-5 font-body text-md">
+                <span> Already have an account? </span> 
+                <Link to="/login" className="text-primary_blue underline text-lg font-medium">Login</Link>
+              </p>
             </div>
           </div>
         </div>

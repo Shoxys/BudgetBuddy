@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-export default function ActionsDropdown({ onEdit, onDelete }) {
+export default function ActionsDropdown({ onEdit, onDelete, children }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -22,7 +22,7 @@ export default function ActionsDropdown({ onEdit, onDelete }) {
             onClick={() => setOpen(!open)}
             className="text-2xl text-gray-600 hover:text-black"
         >
-            ⋮
+            {children}
         </button>
         {open && (
             <div className="absolute right-0 z-10 mt-2 w-36 bg-white rounded-md shadow-md border">

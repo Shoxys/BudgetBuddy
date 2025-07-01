@@ -1,4 +1,4 @@
-import MoneyInput from '../../components/MoneyInput';
+import MoneyInput from './MoneyInput'
 export default function ValueInput() {
     return (
         <>

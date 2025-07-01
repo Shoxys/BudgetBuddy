@@ -7,21 +7,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-
-const data = [
-  { month: 'Jan', thisYear: 3200, lastYear: 3000 },
-  { month: 'Feb', thisYear: 3400, lastYear: 3100 },
-  { month: 'Mar', thisYear: 3600, lastYear: 3300 },
-  { month: 'Apr', thisYear: 3500, lastYear: 3400 },
-  { month: 'May', thisYear: 3700, lastYear: 3600 },
-  { month: 'Jun', thisYear: 3900, lastYear: 3800 },
-  { month: 'Jul', thisYear: 4000, lastYear: 4000 },
-  { month: 'Aug', thisYear: 4200, lastYear: 4100 },
-  { month: 'Sep', thisYear: 4300, lastYear: 4200 },
-  { month: 'Oct', thisYear: 4500, lastYear: 4300 },
-  { month: 'Nov', thisYear: 4700, lastYear: 4400 },
-  { month: 'Dec', thisYear: 4800, lastYear: 4600 },
-];
+import { formatMoney } from '../../Utils/helpers';
 
 // Custom Tooltip
 const CustomTooltip = ({ active, payload, label }) => {
@@ -29,20 +15,28 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 text-sm">
         <p className="font-semibold text-gray-800">{label}</p>
-        <p className="text-blue-600">This Year: ${payload[0].value.toLocaleString()}</p>
-        <p className="text-gray-500">Last Year: ${payload[1].value.toLocaleString()}</p>
+        <p className="text-blue-600">This Year: {formatMoney(payload[0].value)}</p>
+        <p className="text-gray-500">Last Year: {formatMoney(payload[1].value)}</p>
       </div>
     );
   }
-
   return null;
 };
 
-const RevenueChart = () => {
+const DEFAULT_RANGE = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+export default function IncomeLineChart ({data}) {
+  const isValid = Array.isArray(data) && data.length > 0;
+  const fallback = DEFAULT_RANGE.map((month) => ({month, thisYear: 0, lastYear: 0}));
+
+  data = isValid ? data : fallback;
+
   return (
     <>
+     { /* Title */}
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold text-gray-700">Revenue</h2>
+        <h2 className="text-lg font-semibold text-gray-700">Income Over Time</h2>
+        { /* Legend */}
         <div className="flex space-x-4 text-sm">
           <div className="flex items-center space-x-1 text-primary_blue font-body">
             <span className="w-3 h-3 rounded-full bg-primary_blue inline-block"></span>
@@ -55,7 +49,8 @@ const RevenueChart = () => {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={220}>
+      { /* Income Over Time Line Chart */}
+      <ResponsiveContainer width="100%" height="88%">
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis 
@@ -65,8 +60,12 @@ const RevenueChart = () => {
             tickFormatter={(value) => `$${value / 1000}k`} 
             stroke="#6F7787FF" 
             domain={[
-               (dataMin) => (Math.floor(dataMin / 200) * 200) - 500,
-               (dataMax) => Math.ceil(dataMax * 1.1 / 500) * 500 
+               isValid
+                ? [0, 1000] // default fallback
+                : [
+                    (dataMin) => Math.floor(dataMin / 200) * 200 - 500,
+                    (dataMax) => Math.ceil(dataMax * 1.1 / 500) * 500
+                  ]
             ]}   
             />
           <Tooltip content={<CustomTooltip />} />
@@ -92,4 +91,4 @@ const RevenueChart = () => {
   );
 };
 
-export default RevenueChart;
+

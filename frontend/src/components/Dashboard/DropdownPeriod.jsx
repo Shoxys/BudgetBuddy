@@ -1,4 +1,4 @@
-export default function PeriodDropdown() {
+export default function DropdownPeriod() {
     return(
         <>
             <select name="timeFrame" id="timeFrame" className="text-gray-700 font-body border border-gray-500 rounded-lg bg-transparent py-2 pl-1 pr-7 mt-2">

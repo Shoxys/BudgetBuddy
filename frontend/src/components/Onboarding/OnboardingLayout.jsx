@@ -1,5 +1,4 @@
-import Button from './Button';
-import Logo from './Logo';
+import Logo from '../Logo';
 import StepsProgress from './StepsProgress'
 
 export default function OnboardingLayout ({ children, step, setStep, title, subtitle} ) {

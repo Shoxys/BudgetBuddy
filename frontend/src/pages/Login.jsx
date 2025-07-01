@@ -1,4 +1,5 @@
-import AuthForm from '../components/AuthForm';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthForm from '../components/Authentication/AuthForm';
 
 export default function Login() {
   const loginFields = [
@@ -6,8 +7,11 @@ export default function Login() {
     { id: 'password', label: 'Password', type: 'password', placeholder: 'Enter at least 8+ characters ', required: true },
   ];
 
+  const navigate = useNavigate()
+
   const handleSubmit = () => {
       // Handle login logic
+      navigate("/dashboard")
       alert('Logging in!');
   }
 
@@ -26,8 +30,9 @@ export default function Login() {
                 buttonLabel="Login"
                 className="w-full mt-9"
               />
-              <p className="mt-5 font-body text-md"> Don't have an account? 
-                <a className="text-primary_blue underline text-lg font-medium" href="#">Sign Up</a>
+              <p className="mt-5 font-body text-md">
+                <span> Don't have an account? </span> 
+                <Link to="/signup" className="text-primary_blue underline text-lg font-medium">Sign Up</Link>
               </p>
           </div>
         </div>

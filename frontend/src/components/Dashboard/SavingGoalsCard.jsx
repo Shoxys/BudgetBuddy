@@ -1,31 +1,30 @@
-const savingGoals = [
-  { name: "PS5", saved: 261, goal: 500 },
-  { name: "Nike Airforces", saved: 35, goal: 140 },
-  { name: "Wallet", saved: 12, goal: 50 }
-];
+import { Link } from "react-router-dom";
+export default function SavingGoalsCard({ data }) {
+  const isValid = Array.isArray(data) && data.length > 0;
 
-export default function SavingGoalsCard() {
   return (
-    <div className="bg-white row-span-1 row-start-2 col-span-1 rounded-lg shadow-bb-general px-3 py-2">
-      <h2 className="font-header text-md text-gray-800 font-semibold">Saving Goals</h2>
-       {savingGoals.map(({ name, saved, goal }, index) => {
-        const percentage = Math.min((saved / goal) * 100, 100);
+    <div className="w-full min-w-[23vw] bg-white row-span-1 row-start-2 col-span-1 rounded-lg shadow-bb-general px-3 py-2">
+      <h2 className="font-header text-md 3xl:text-xl text-gray-800 font-semibold">Saving Goals</h2>
+      {isValid
+        /* Saving goals data display */
+        ? (data.map(({ title, contributed, target }, index) => {
+        const percentage = Math.min((contributed / target) * 100, 100);
         return (
           <div key={index} className="flex flex-col relative">
-            <div className="text-sm text-gray-700 font-medium">{name}</div>
+            <div className="text-sm 3xl:text-lg text-gray-700 font-medium">{title}</div>
 
             {/* Dynamic dollar label following progress */}
             <div className="relative h-5 mb-2">
               <div
-                className="absolute text-sm font-semibold text-blue-700 transition-all duration-300"
+                className="absolute text-sm 3xl:text-lg font-semibold text-blue-700 transition-all duration-300"
                 style={{ left: `calc(${percentage}% - 1.1rem)` }} // shift back to center the text
               >
-                ${saved}
+                ${contributed}
               </div>
             </div>
 
             {/* Progress bar */}
-            <div className="w-full h-3 bg-blue-100 rounded-full overflow-hidden relative">
+            <div className="w-full h-[1.8vh] bg-blue-100 rounded-full overflow-hidden relative">
               <div
                 className="h-full bg-primary_blue transition-all duration-300"
                 style={{ width: `${percentage}%` }}
@@ -33,13 +32,22 @@ export default function SavingGoalsCard() {
             </div>
 
             {/* Min and Max values */}
-            <div className="flex justify-between text-xs text-gray-500 font-medium mb-2">
+            <div className="flex justify-between text-xs 3xl:text-lg text-gray-500 font-medium mb-[1.2vh]">
               <span>$0</span>
-              <span>${goal}</span>
+              <span>${target}</span>
             </div>
           </div>
         );
-      })}
+      }))
+      /* Default message if invalid data */
+      : <div className="flex flex-row gap-2 items-center justify-center mt-3 text-xl font-body px-3 text-gray-700 bg-neutral-100 rounded-md text-center">
+          <span>Set Saving Goals!</span>
+          <Link to="/saving-goals">
+            <img src="src/assets/goal-plus.png" alt="Set goals button icon" />
+          </Link>
+        </div>
+    }
+       
     </div>
   );
 }

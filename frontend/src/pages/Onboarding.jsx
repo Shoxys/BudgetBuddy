@@ -1,5 +1,4 @@
-
-import OnboardingLayout from '../components/OnBoardingLayout';
+import OnboardingLayout from '../components/Onboarding/OnboardingLayout'
 import Investments from '../components/Onboarding/Investments'
 import ValueInput from '../components/Onboarding/ValueInput'
 import UploadSection from '../components/Onboarding/UploadSection'
@@ -30,8 +29,8 @@ export default function Onboarding() {
                 subtitle={subtitle}
                 step={step}
                 setStep={setStep}
-                >
-                <StepComponent/>
+            >
+            <StepComponent/>
             </OnboardingLayout>
         </>
     )

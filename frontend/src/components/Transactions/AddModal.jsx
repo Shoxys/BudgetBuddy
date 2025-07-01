@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { formatMoney } from "../../Utils/helpers";
+import { categoryColors } from "../../Utils/categoryColors";
 
-const categories = [
-  "Transfers out",
-  "Personal Care",
-  "Restaurants & takeaway",
-  "Attractions & events",
-];
+const categories = Object.keys(categoryColors);
+const initialForm = {
+  details: "",
+  category: "",
+  type: "",
+  date: "",
+  amount: "",
+  balance: "",
+};
 
-export default function AddModal({ isOpen, onClose }) {
-  const [details, setDetails] = useState("");
-  const [category, setCategory] = useState("");
-  const [type, setType] = useState("");
-  const [date, setDate] = useState("");
-  const [amount, setAmount] = useState();
-  const [balance, setBalance] = useState();
+export default function UpdateSavings({ isOpen, onClose }) {
+const [formData, setFormData] = useState(initialForm);
+
+const handleChange = (field) => (e) => {
+  setFormData({ ...formData, [field]: e.target.value });
+};
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
@@ -31,8 +33,8 @@ export default function AddModal({ isOpen, onClose }) {
               <input
                 type="text"
                 placeholder="Enter transaction details"
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
+                value={formData.details}
+                onChange={(e) => handleChange(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
               />
             </div>
@@ -43,8 +45,8 @@ export default function AddModal({ isOpen, onClose }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 font-header">Category</label>
                 <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  value={formData.category}
+                  onChange={(e) => handleChange(e.target.value)}
                   className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
                 >
                   {categories.map((cat) => (
@@ -59,8 +61,8 @@ export default function AddModal({ isOpen, onClose }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 font-header">Type</label>
                 <select
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  value={formData.type}
+                  onChange={(e) => handleChange(e.target.value)}
                   className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
                 >
                   <option value="Credit">Credit</option>
@@ -77,8 +79,8 @@ export default function AddModal({ isOpen, onClose }) {
             <input
                 type="number"
                 placeholder="Enter transaction amount"
-                value={amount}
-                onChange={(e) => setAmount(formatMoney(e.target.value))}
+                value={formData.amount}
+                onChange={(e) => handleChange(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue pl-7"
               />
             </div>
@@ -90,8 +92,8 @@ export default function AddModal({ isOpen, onClose }) {
             <input
                 type="number"
                 placeholder="Enter transaction balance"
-                value={balance}
-                onChange={(e) => setBalance(formatMoney(e.target.value))}
+                value={formData.balance}
+                onChange={(e) => handleChange(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue pl-7"
               />
             </div>
@@ -102,8 +104,8 @@ export default function AddModal({ isOpen, onClose }) {
               <div className="relative mt-1">
                 <input
                   type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  value={formData.date}
+                  onChange={(e) => handleChange(e.target.value)}
                   className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
                 />
               </div>
@@ -125,7 +127,7 @@ export default function AddModal({ isOpen, onClose }) {
               }}
               className="rounded-md bg-primary_blue px-5 py-2 text-white hover:bg-btn_hover"
             >
-              Save
+              Create
             </button>
           </div>
         </Dialog.Panel>

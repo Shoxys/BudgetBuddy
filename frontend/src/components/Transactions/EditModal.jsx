@@ -1,21 +1,16 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { formatMoney } from "../../Utils/helpers";
+import { categoryColors } from "../../Utils/categoryColors";
 
-const categories = [
-  "Transfers out",
-  "Personal Care",
-  "Restaurants & takeaway",
-  "Attractions & events",
-];
+const categories = Object.keys(categoryColors);
 
-export default function EditModal({ isOpen, onClose }) {
-  const [details, setDetails] = useState("Emergency Fund");
-  const [category, setCategory] = useState("Personal Care");
-  const [type, setType] = useState("Debit");
-  const [date, setDate] = useState("2022-04-27");
-  const [amount, setAmount] = useState(68.96);
-  const [balance, setBalance] = useState(200.21);
+export default function EditModal({ actionedTransaction, isOpen, onClose }) {
+  const [formData, setFormData] = useState(actionedTransaction);
+  if (!actionedTransaction) return
+
+  const handleChange = (field) => (e) => {
+    setFormData({ ...formData, [field]: e.target.value });
+  };
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
@@ -30,8 +25,8 @@ export default function EditModal({ isOpen, onClose }) {
               <label className="block text-sm font-medium text-gray-700 font-header">Details</label>
               <input
                 type="text"
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
+                value={formData.merchant === "" ? formData.desc + " " + formData.type : formData.merchant}
+                onChange={(e) => handleChange(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
               />
             </div>
@@ -42,8 +37,8 @@ export default function EditModal({ isOpen, onClose }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 font-header">Category</label>
                 <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  value={formData.category}
+                  onChange={(e) => handleChange(e.target.value)}
                   className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
                 >
                   {categories.map((cat) => (
@@ -58,8 +53,8 @@ export default function EditModal({ isOpen, onClose }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 font-header">Type</label>
                 <select
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  value={formData.type}
+                  onChange={(e) => handleChange(e.target.value)}
                   className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
                 >
                   <option value="Credit">Credit</option>
@@ -75,8 +70,8 @@ export default function EditModal({ isOpen, onClose }) {
             <span className="absolute ml-3 mt-2.5 font-header text-lg">$</span>
             <input
                 type="number"
-                value={amount}
-                onChange={(e) => setAmount(formatMoney(e.target.value))}
+                value={formData.amount}
+                onChange={(e) => handleChange(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue pl-7"
               />
             </div>
@@ -87,8 +82,8 @@ export default function EditModal({ isOpen, onClose }) {
             <span className="absolute ml-3 mt-2.5 font-header text-lg">$</span>
             <input
                 type="number"
-                value={balance}
-                onChange={(e) => setBalance(formatMoney(e.target.value))}
+                value={formData.balance}
+                onChange={(e) => handleChange(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue pl-7"
               />
             </div>
@@ -99,8 +94,8 @@ export default function EditModal({ isOpen, onClose }) {
               <div className="relative mt-1">
                 <input
                   type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  value={formData.date}
+                  onChange={(e) => handleChange(e.target.value)}
                   className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
                 />
               </div>
