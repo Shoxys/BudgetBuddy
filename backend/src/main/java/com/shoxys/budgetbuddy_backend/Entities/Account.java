@@ -1,9 +1,12 @@
 package com.shoxys.budgetbuddy_backend.Entities;
 
-import com.shoxys.budgetbuddy_backend.Enum.AccountType;
+import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
+@Table(name = "accounts")
 public class Account {
 
     @Id
@@ -17,10 +20,10 @@ public class Account {
     @Column(nullable = false)
     private AccountType type;
 
-    private String accountNo;
+    private int accountNo;
 
-    @Column(nullable = false)
-    private float balance;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal balance;
 
     @Column(nullable = false)
     private boolean isManual;
@@ -53,19 +56,19 @@ public class Account {
         this.type = type;
     }
 
-    public String getAccountNo() {
+    public int getAccountNo() {
         return accountNo;
     }
 
-    public void setAccountNo(String accountNo) {
+    public void setAccountNo(int accountNo) {
         this.accountNo = accountNo;
     }
 
-    public float getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(float balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
