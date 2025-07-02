@@ -1,4 +1,4 @@
-package com.shoxys.budgetbuddy_backend.exception;
+package com.shoxys.budgetbuddy_backend.Exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.*;
