@@ -1,10 +1,9 @@
-package com.shoxys.budgetbuddy_backend.Controller;
+package com.shoxys.budgetbuddy_backend.Controllers;
 
-import com.shoxys.budgetbuddy_backend.DTO.LoginRequest;
-import com.shoxys.budgetbuddy_backend.DTO.RegisterRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.LoginRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.RegisterRequest;
 import com.shoxys.budgetbuddy_backend.Services.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

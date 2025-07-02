@@ -1,8 +1,8 @@
 package com.shoxys.budgetbuddy_backend.Services;
 
-import com.shoxys.budgetbuddy_backend.DTO.AuthResponse;
-import com.shoxys.budgetbuddy_backend.DTO.LoginRequest;
-import com.shoxys.budgetbuddy_backend.DTO.RegisterRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.LoginRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.RegisterRequest;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
@@ -30,7 +30,7 @@ public class AuthService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         AppUserDetails userDetails = new AppUserDetails(user);
         String jwt = jwtUtil.generateToken(userDetails);
-        return new AuthResponse(jwt);
+        return new AuthResponse(jwt, "User authenticated successfully");
     }
 
     public void register(RegisterRequest request) {
