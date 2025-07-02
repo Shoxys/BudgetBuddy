@@ -1,10 +1,10 @@
-package com.shoxys.budgetbuddy_backend.Controller;
+package com.shoxys.budgetbuddy_backend.Controllers;
 
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.TransactionService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
-import com.shoxys.budgetbuddy_backend.DTO.TransactionSummaryResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.TransactionSummaryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -21,46 +21,51 @@ import java.util.List;
 public class TransactionController {
     @Autowired
     TransactionService transactionService;
+    @Autowired
     UserService userService;
 
-    @GetMapping("/user/{userId}")
-    public List<Transaction> getAllTransactionsForUser(@PathVariable Long userId) {
+    @GetMapping("/")
+    public List<Transaction> getAllTransactionsForUser(@AuthenticationPrincipal UserDetails userDetails) {
+        long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return transactionService.getAllTransactionsByUserId(userId);
     }
 
-    @GetMapping("/user/{userId}/timeframe")
+    @GetMapping("/timeframe")
     public List<Transaction> getTransactionsForUserInTimeFrame(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
+        long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return transactionService.getTransactionsByUserIdInTimeFrame(userId, startDate, endDate);
     }
 
-    @GetMapping("/user/{userId}/oldest")
-    public List<Transaction> getAllOldestTransactionsForUser(@PathVariable Long userId) {
+    @GetMapping("/oldest")
+    public List<Transaction> getAllOldestTransactionsForUser(@AuthenticationPrincipal UserDetails userDetails) {
+        long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return transactionService.getAllTransactionsByUserIdSortedOldest(userId);
     }
 
-    @GetMapping("/user/{userId}/newest")
-    public List<Transaction> getAllNewestTransactionsForUser(@PathVariable Long userId) {
+    @GetMapping("/newest")
+    public List<Transaction> getAllNewestTransactionsForUser(@AuthenticationPrincipal UserDetails userDetails) {
+        long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return transactionService.getTransactionsByUserIdSortedNewest(userId);
     }
 
-    @GetMapping("/user/{userId}/paginated")
+    @GetMapping("/paginated")
     public Page<Transaction> getPaginatedTransactionsForUser(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-
+        long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return transactionService.getTransactionsByUserIdPaginated(userId, page, size);
     }
 
-    @GetMapping("/user/{userId}/summary")
+    @GetMapping("/summary")
     public TransactionSummaryResponse getUserTransactionSummary(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam LocalDate start,
             @RequestParam LocalDate end) {
-
+        long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return transactionService.getUserTransactionSummary(userId, start, end);
     }
 
@@ -70,18 +75,18 @@ public class TransactionController {
     }
 
     @PutMapping("/{id}")
-    public Transaction updateTransaction(@PathVariable  long id,  @RequestBody Transaction transaction) {
+    public Transaction updateTransaction(@PathVariable long id,  @RequestBody Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteTransaction(@PathVariable long id) {
+    public ResponseEntity<String> deleteTransaction(@PathVariable long id) {
         transactionService.deleteTransaction(id);
         return ResponseEntity.ok("Successfully deleted transaction");
     }
 
-    @DeleteMapping("/{delete-selected}")
-    public ResponseEntity deleteTransactions(@PathVariable List<Long> ids) {
+    @DeleteMapping("/delete-selected")
+    public ResponseEntity<String>  deleteMultipleTransactions(@RequestBody  List<Long> ids) {
         transactionService.deleteTransactionsById(ids);
         return ResponseEntity.ok("Deleted " + ids.size() + " transactions");
     }
