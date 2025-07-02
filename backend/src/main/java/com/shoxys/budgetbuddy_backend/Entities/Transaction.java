@@ -1,10 +1,13 @@
 package com.shoxys.budgetbuddy_backend.Entities;
 
-import com.shoxys.budgetbuddy_backend.Enum.SourceType;
+import com.shoxys.budgetbuddy_backend.Enums.SourceType;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "transactions")
 public class Transaction {
 
     @Id
@@ -14,8 +17,8 @@ public class Transaction {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
-    private double amount;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private String description;
@@ -25,8 +28,8 @@ public class Transaction {
 
     private String merchant;
 
-    @Column(nullable = false)
-    private float balanceAtTransaction;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal balanceAtTransaction;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -64,11 +67,11 @@ public class Transaction {
         this.date = date;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -96,13 +99,13 @@ public class Transaction {
         this.merchant = merchant;
     }
 
-    public float getBalanceAtTransaction() {
+    public BigDecimal getBalanceAtTransaction() {
         return balanceAtTransaction;
     }
 
     //TODO: Add logic for this
 
-    public void setBalanceAtTransaction(float balanceAtTransaction) {
+    public void setBalanceAtTransaction(BigDecimal balanceAtTransaction) {
         this.balanceAtTransaction = balanceAtTransaction;
     }
 
