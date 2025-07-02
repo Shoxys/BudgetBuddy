@@ -1,8 +1,16 @@
-package com.shoxys.budgetbuddy_backend.DTO;
+package com.shoxys.budgetbuddy_backend.DTOs;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 public class UpdateEmailRequest {
+    @NotBlank
+    @Email
     private String currentEmail;
+    @NotBlank
+    @Email
     private String newEmail;
+    @NotBlank
     private String confirmPassword;
 
     public String getCurrentEmail() {

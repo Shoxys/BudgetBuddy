@@ -1,8 +1,13 @@
-package com.shoxys.budgetbuddy_backend.DTO;
+package com.shoxys.budgetbuddy_backend.DTOs;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class ChangePasswordRequest {
+    @NotBlank
     private String currentPassword;
+    @NotBlank
     private String newPassword;
+    @NotBlank
     private String confirmPassword;
 
     public String getCurrentPassword() {

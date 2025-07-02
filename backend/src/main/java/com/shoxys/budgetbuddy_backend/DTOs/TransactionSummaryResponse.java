@@ -1,8 +1,6 @@
-package com.shoxys.budgetbuddy_backend.dto;
+package com.shoxys.budgetbuddy_backend.DTOs;
 
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
-import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.shoxys.budgetbuddy_backend.DTO;
+package com.shoxys.budgetbuddy_backend.DTOs;
 
 public class AuthResponse {
     private String token;

@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/settings")
@@ -35,6 +32,12 @@ public class UserSettingsController {
                                               @RequestBody UpdateEmailRequest request) {
         AuthResponse response = userService.updateEmail(userDetails.getUsername(), request);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.deleteAccount(userDetails.getUsername());
+        return ResponseEntity.ok("Account deleted successfully");
     }
 
 

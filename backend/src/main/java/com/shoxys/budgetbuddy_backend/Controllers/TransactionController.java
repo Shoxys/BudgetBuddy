@@ -1,12 +1,15 @@
 package com.shoxys.budgetbuddy_backend.Controller;
 
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
+import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.TransactionService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
-import com.shoxys.budgetbuddy_backend.dto.TransactionSummaryResponse;
+import com.shoxys.budgetbuddy_backend.DTO.TransactionSummaryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,7 +88,7 @@ public class TransactionController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> importTransactions(@RequestParam("files") MultipartFile[] files,
-                                                     @AuthenticationPrincipal UserDetails userDetails) {
+                                                     @AuthenticationPrincipal AppUserDetails userDetails) {
         long userId = userService.getUserIdByEmail(userDetails.getUsername());
         for (MultipartFile file : files) {
             transactionService.importMultipleCSVs(userId, file);
