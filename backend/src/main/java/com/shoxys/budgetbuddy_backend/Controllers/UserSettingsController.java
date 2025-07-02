@@ -1,8 +1,8 @@
-package com.shoxys.budgetbuddy_backend.Controller;
+package com.shoxys.budgetbuddy_backend.Controllers;
 
-import com.shoxys.budgetbuddy_backend.DTO.AuthResponse;
-import com.shoxys.budgetbuddy_backend.DTO.ChangePasswordRequest;
-import com.shoxys.budgetbuddy_backend.DTO.UpdateEmailRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.ChangePasswordRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.UpdateEmailRequest;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

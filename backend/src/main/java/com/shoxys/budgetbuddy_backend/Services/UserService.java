@@ -1,17 +1,14 @@
 package com.shoxys.budgetbuddy_backend.Services;
 
-import com.shoxys.budgetbuddy_backend.DTO.AuthResponse;
-import com.shoxys.budgetbuddy_backend.DTO.ChangePasswordRequest;
-import com.shoxys.budgetbuddy_backend.DTO.UpdateEmailRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.ChangePasswordRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.UpdateEmailRequest;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.naming.NameAlreadyBoundException;
-import java.rmi.AlreadyBoundException;
 
 @Service
 public class UserService  {
@@ -63,5 +60,11 @@ public class UserService  {
         AppUserDetails userDetails = new AppUserDetails(user);
         String newToken = jwtUtil.generateToken(userDetails);
         return new AuthResponse(newToken, "Email updated successfully");
+    }
+
+    public void deleteAccount(String email) {
+        User user = userRepo.getUserByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("User doesn't exist"));
+        userRepo.delete(user);
     }
 }
