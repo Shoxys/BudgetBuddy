@@ -4,20 +4,27 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String hashedPassword;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Account> accounts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavingGoal> savingGoals;
 
     public long getId() {
         return id;
@@ -35,9 +42,9 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
+    public String getHashedPassword() {
         return hashedPassword;
     }
 
-    public void hashPassword(String hashedPassword) {this.hashedPassword = hashedPassword;}
+    public void setHashedPassword(String hashedPassword) {this.hashedPassword = hashedPassword;}
 }
