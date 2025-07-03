@@ -20,7 +20,8 @@ public class Account {
     @Column(nullable = false)
     private AccountType type;
 
-    private int accountNo;
+    @Column(nullable = true)
+    private Integer accountNo;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal balance;
@@ -31,6 +32,18 @@ public class Account {
     @ManyToOne
     @JoinColumn(name= "user_id", referencedColumnName = "id")
     private User user;
+
+    public Account() {
+    }
+
+    public Account(String name, AccountType type, Integer accountNo, BigDecimal balance, boolean isManual, User user) {
+        this.name = name;
+        this.type = type;
+        this.accountNo = accountNo;
+        this.balance = balance;
+        this.isManual = isManual;
+        this.user = user;
+    }
 
     public long getId() {
         return id;
@@ -56,11 +69,11 @@ public class Account {
         this.type = type;
     }
 
-    public int getAccountNo() {
+    public Integer getAccountNo() {
         return accountNo;
     }
 
-    public void setAccountNo(int accountNo) {
+    public void setAccountNo(Integer accountNo) {
         this.accountNo = accountNo;
     }
 
