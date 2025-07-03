@@ -3,11 +3,11 @@ package com.shoxys.budgetbuddy_backend.DTOs;
 import jakarta.validation.constraints.NotBlank;
 
 public class ChangePasswordRequest {
-    @NotBlank
+    @NotBlank(message = "Current password is required")
     private String currentPassword;
-    @NotBlank
+    @NotBlank(message = "New password is required")
     private String newPassword;
-    @NotBlank
+    @NotBlank(message = "Confirmation password is required")
     private String confirmPassword;
 
     public String getCurrentPassword() {

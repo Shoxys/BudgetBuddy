@@ -1,36 +1,29 @@
 package com.shoxys.budgetbuddy_backend.DTOs;
 
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class TransactionSummaryResponse {
-    private List<Transaction> transactions;
-    private long count;
+    private Integer count;
     private LocalDate earliest;
     private LocalDate latest;
 
-    public TransactionSummaryResponse(List<Transaction> transactions, long count, LocalDate earliest, LocalDate latest) {
-        this.transactions = transactions;
+    public TransactionSummaryResponse(Integer count, LocalDate earliest, LocalDate latest) {
         this.count = count;
         this.earliest = earliest;
         this.latest = latest;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public long getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(long count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 

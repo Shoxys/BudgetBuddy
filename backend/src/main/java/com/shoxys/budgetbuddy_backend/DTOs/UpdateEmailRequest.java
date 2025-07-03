@@ -4,13 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class UpdateEmailRequest {
-    @NotBlank
     @Email
+    @NotBlank (message = "Email is required")
     private String currentEmail;
-    @NotBlank
     @Email
+    @NotBlank (message = "New Email is required")
     private String newEmail;
-    @NotBlank
+    @NotBlank (message = "Password is required")
     private String confirmPassword;
 
     public String getCurrentEmail() {
