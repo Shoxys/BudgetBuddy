@@ -5,7 +5,6 @@ import com.shoxys.budgetbuddy_backend.DTOs.ChangePasswordRequest;
 import com.shoxys.budgetbuddy_backend.DTOs.UpdateEmailRequest;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/settings")
 public class UserSettingsController {
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
     public UserSettingsController(UserService userService) {
         this.userService = userService;

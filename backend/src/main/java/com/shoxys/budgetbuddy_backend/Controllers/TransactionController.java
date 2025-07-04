@@ -7,7 +7,6 @@ import com.shoxys.budgetbuddy_backend.Services.TransactionService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
 import com.shoxys.budgetbuddy_backend.DTOs.TransactionSummaryResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,10 +21,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
-    @Autowired
-    TransactionService transactionService;
-    @Autowired
-    UserService userService;
+    private final TransactionService transactionService;
+    private final UserService userService;
+
+    public TransactionController(TransactionService transactionService, UserService userService) {
+        this.transactionService = transactionService;
+        this.userService = userService;
+    }
 
     @GetMapping("/")
     public List<Transaction> getAllTransactionsForUser(@AuthenticationPrincipal UserDetails userDetails) {

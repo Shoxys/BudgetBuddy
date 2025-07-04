@@ -6,9 +6,7 @@ import com.shoxys.budgetbuddy_backend.DTOs.SavingGoalRequest;
 import com.shoxys.budgetbuddy_backend.Entities.SavingGoal;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.SavingGoalService;
-import com.shoxys.budgetbuddy_backend.Services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +16,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/saving-goals")
 public class SavingGoalsController {
-    @Autowired
-    SavingGoalService  savingGoalService;
-    @Autowired
-    UserService userService;
+    private final SavingGoalService savingGoalService;
+
+    public SavingGoalsController(SavingGoalService savingGoalService) {
+        this.savingGoalService = savingGoalService;
+    }
 
     @GetMapping("/")
     public List<SavingGoal> getPendingGoals(@AuthenticationPrincipal AppUserDetails userDetails) {
