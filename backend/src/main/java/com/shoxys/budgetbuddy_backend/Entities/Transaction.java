@@ -43,6 +43,22 @@ public class Transaction {
     @JoinColumn(name= "user_id", referencedColumnName = "id")
     private User user;
 
+    public Transaction() {
+
+    }
+
+    public Transaction(LocalDate date, BigDecimal amount, String description, String category, String merchant, BigDecimal balanceAtTransaction, SourceType source, Account account, User user) {
+        this.date = date;
+        this.amount = amount;
+        this.description = description;
+        this.category = category;
+        this.merchant = merchant;
+        this.balanceAtTransaction = balanceAtTransaction;
+        this.source = source;
+        this.account = account;
+        this.user = user;
+    }
+
     public User getUser() {
         return user;
     }

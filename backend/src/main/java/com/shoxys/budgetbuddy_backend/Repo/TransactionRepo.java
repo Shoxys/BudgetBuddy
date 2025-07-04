@@ -83,7 +83,7 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
     """, nativeQuery = true)
     BigDecimal getTotalDebitLastMonth(Long userId);
 
-    @Query("SELECT COALESCE(SUM(t.amount), 0) " +
+    @Query("SELECT SUM(t.amount), 0 " +
             "FROM Transaction t " +
             "WHERE t.amount > 0 AND t.user.id = ?1 AND YEAR(t.date) = ?2 " +
             "GROUP BY MONTH(t.date) " +
@@ -108,6 +108,8 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
         LIMIT 3
     """, nativeQuery = true)
     List<RecentTransactions> findLatest3TransactionSummaries(Long userId);
+
+    LocalDate findEarliestTransactionDate(Long userId);
 
 
 

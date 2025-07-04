@@ -1,10 +1,12 @@
 package com.shoxys.budgetbuddy_backend.Controllers;
 
+import com.shoxys.budgetbuddy_backend.DTOs.TransactionRequest;
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.TransactionService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
 import com.shoxys.budgetbuddy_backend.DTOs.TransactionSummaryResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -63,20 +65,19 @@ public class TransactionController {
     @GetMapping("/summary")
     public TransactionSummaryResponse getUserTransactionSummary(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam LocalDate start,
-            @RequestParam LocalDate end) {
+            @RequestParam String timeFrame) {
         long userId = userService.getUserIdByEmail(userDetails.getUsername());
-        return transactionService.getUserTransactionSummary(userId, start, end);
+        return transactionService.getTransactionSummaryByTimeFrame(userId, timeFrame);
     }
 
     @PostMapping
-    public Transaction addTransaction(@RequestBody Transaction transaction) {
-        return transactionService.addTransaction(transaction);
+    public Transaction addTransaction(@AuthenticationPrincipal AppUserDetails userDetails, @Valid @RequestBody TransactionRequest request) {
+        return transactionService.addTransaction(userDetails.getUsername(), request);
     }
 
     @PutMapping("/{id}")
-    public Transaction updateTransaction(@PathVariable long id,  @RequestBody Transaction transaction) {
-        return transactionService.updateTransaction(id, transaction);
+    public Transaction updateTransaction(@PathVariable long id,  @Valid @RequestBody TransactionRequest request) {
+        return transactionService.updateTransaction(id, request);
     }
 
     @DeleteMapping("/{id}")
@@ -86,7 +87,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/delete-selected")
-    public ResponseEntity<String>  deleteMultipleTransactions(@RequestBody  List<Long> ids) {
+    public ResponseEntity<String>  deleteMultipleTransactions(@RequestBody List<Long> ids) {
         transactionService.deleteTransactionsById(ids);
         return ResponseEntity.ok("Deleted " + ids.size() + " transactions");
     }

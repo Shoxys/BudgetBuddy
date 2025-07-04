@@ -1,15 +1,18 @@
 package com.shoxys.budgetbuddy_backend.Services;
 
+import com.shoxys.budgetbuddy_backend.DTOs.TransactionRequest;
 import com.shoxys.budgetbuddy_backend.Entities.Account;
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
+import com.shoxys.budgetbuddy_backend.Enums.SourceType;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Utils;
 import com.shoxys.budgetbuddy_backend.DTOs.TransactionSummaryResponse;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,8 +26,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Integer.parseInt;
 
 @Service
 public class TransactionService {
@@ -97,34 +98,73 @@ public class TransactionService {
         return transactionRepo.findByUserIdAndDateBetween(userId, startDate, LocalDate.now());
     }
 
-    public TransactionSummaryResponse getUserTransactionSummary(Long userId, LocalDate start, LocalDate end) {
-        List<Transaction> txns = transactionRepo.findByUser_IdOrderByDateAsc(userId);
-        long count = txns.size();
-        LocalDate earliest = txns.stream().map(Transaction::getDate).min(LocalDate::compareTo).orElse(null);
-        LocalDate latest = txns.stream().map(Transaction::getDate).max(LocalDate::compareTo).orElse(null);
+    public TransactionSummaryResponse getTransactionSummaryByTimeFrame(Long userId, String timeFrame) {
+        List<Transaction> transactions = getAllTransactionsByUserIdTimeFrame(userId, timeFrame);
 
-        return new TransactionSummaryResponse(txns, count, earliest, latest);
+        if (transactions.isEmpty()) {
+            return new TransactionSummaryResponse(null, null, null);
+        }
+
+        LocalDate earliest = transactions.stream()
+                .map(Transaction::getDate)
+                .min(LocalDate::compareTo)
+                .orElse(null);
+
+        LocalDate latest = transactions.stream()
+                .map(Transaction::getDate)
+                .max(LocalDate::compareTo)
+                .orElse(null);
+
+        return new TransactionSummaryResponse(transactions.size(), earliest, latest);
     }
 
-    public Transaction addTransaction(Transaction transaction) {
-        if (!transactionRepo.existsById(transaction.getId())) {
-            throw new EntityNotFoundException("transaction with id " + transaction.getId() + " not found");
-        }
-        return transactionRepo.save(transaction);
+    @Transactional
+    public Transaction addTransaction(String email, TransactionRequest request) {
+        User user = userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Account spendingAccount = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
+                .orElseGet(()-> {
+                    Account newAccount = new Account("Spending Account", AccountType.SPENDING, null, request.getBalanceAtTransaction(), true, user);
+                    return accountRepo.save(newAccount);
+                });
+
+        Transaction newTransaction = new Transaction(
+                request.getDate(),
+                request.getAmount(),
+                request.getDescription(),
+                request.getCategory(),
+                request.getMerchant(),
+                request.getBalanceAtTransaction(),
+                SourceType.MANUAL,
+                spendingAccount,
+                user
+        );
+        return transactionRepo.save(newTransaction);
     }
 
-    public Transaction updateTransaction(Long id, Transaction transaction) {
-        if (!transactionRepo.existsById(transaction.getId())) {
-            throw new EntityNotFoundException("transaction with id " + transaction.getId() + " not found");
-        }
+    @Transactional
+    public Transaction updateTransaction(Long id, TransactionRequest request) {
+        Transaction transaction = transactionRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction with id " + id + " not found"));
+
         transaction.setId(id); // Ensure ID matches
+        transaction.setDate(request.getDate());
+        transaction.setAmount(request.getAmount());
+        transaction.setDescription(request.getDescription());
+        transaction.setCategory(request.getCategory());
+        transaction.setMerchant(request.getMerchant());
+        transaction.setBalanceAtTransaction(request.getBalanceAtTransaction());
+
         return transactionRepo.save(transaction);
     }
 
+    @Transactional
     public void deleteTransaction(Long id) {
         transactionRepo.deleteById(id);
     }
 
+    @Transactional
     public void deleteTransactionsById(List<Long> ids){
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("ids must not be null or empty");
@@ -132,6 +172,7 @@ public class TransactionService {
         transactionRepo.deleteAllByIdIn(ids);
     }
 
+    @Transactional
     public void importMultipleCSVs(long userId, MultipartFile file){
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Files must not be empty");
@@ -143,13 +184,11 @@ public class TransactionService {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
             List<Transaction> transactions = new ArrayList<>();
-
             //Skip header
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-
                 // Safely parse accountNo
                 int accountNo;
                 try {
@@ -157,17 +196,7 @@ public class TransactionService {
                 } catch (NumberFormatException e) {
                     continue;
                 }
-
-                // Handle AccountNo assignment & account creation if not already exists
-                Account account = accountRepo.findByAccountNo(accountNo)
-                        .orElseGet(() -> {
-                            Account newAccount = new Account();
-                            newAccount.setAccountNo(accountNo);
-                            newAccount.setType(AccountType.SPENDING);
-                            newAccount.setName("Spending Account");
-                            newAccount.setUser(user);
-                            return accountRepo.save(newAccount);
-                        });
+                Account account = handleAccountNoAssign(accountNo, user);
 
                 Transaction txn = new Transaction();
                 txn.setDate(LocalDate.parse(parts[0]));
@@ -186,5 +215,18 @@ public class TransactionService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to read CSV file", e);
         }
+    }
+
+    public Account handleAccountNoAssign(int accountNo, User user) {
+        // Handle AccountNo assignment & account creation if not already exists
+        return accountRepo.findByAccountNo(accountNo)
+                .orElseGet(() -> {
+                    Account newAccount = new Account();
+                    newAccount.setAccountNo(accountNo);
+                    newAccount.setType(AccountType.SPENDING);
+                    newAccount.setName("Spending Account");
+                    newAccount.setUser(user);
+                    return accountRepo.save(newAccount);
+                });
     }
 }
