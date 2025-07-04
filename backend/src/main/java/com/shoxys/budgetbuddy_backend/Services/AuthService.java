@@ -29,9 +29,11 @@ public class AuthService {
         User user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         AppUserDetails userDetails = new AppUserDetails(user);
+
         String jwt = jwtUtil.generateToken(userDetails);
         return new AuthResponse(jwt, "User authenticated successfully");
     }
+
 
     public void register(RegisterRequest request) {
         if (userRepo.existsByEmail(request.getEmail())) {

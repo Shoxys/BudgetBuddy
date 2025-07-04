@@ -182,7 +182,7 @@ public class TransactionService {
                 : request.getAmount();
 
         // Sync balance after transaction update ties to transaction
-        Account account = accountService.syncAccountBalance(transaction, newAmount);
+        Account account = accountService.syncSpendingAccountBalance(transaction, newAmount);
 
         // Update transaction fields
         transaction.setDate(request.getDate());
@@ -221,7 +221,7 @@ public class TransactionService {
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
         transactionRepo.deleteAllByIdInAndUser(ids, user);
         // Recalculate account balance
-        accountService.recalculateBalanceForAccount(account);
+        accountService.recalculateBalanceForSpendingAccount(account);
     }
 
     @Transactional
@@ -268,7 +268,7 @@ public class TransactionService {
             // Save all transactions to database
             transactionRepo.saveAll(transactions);
             // Recalculate account balance
-            accountService.recalculateBalanceForAccount(account);
+            accountService.recalculateBalanceForSpendingAccount(account);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to read CSV file", e);

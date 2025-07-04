@@ -5,9 +5,11 @@ import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
+import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Utils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +27,8 @@ public class AccountService {
     private final UserRepo userRepo;
     @Autowired
     TransactionRepo transactionRepo;
+    @Autowired
+    SavingGoalsRepo  savingGoalsRepo;
 
     public AccountService(AccountRepo accountRepo, UserRepo userRepo) {
         this.accountRepo = accountRepo;
@@ -72,7 +76,13 @@ public class AccountService {
         return newAccount;
     }
 
-    public Account syncAccountBalance(Transaction transaction, BigDecimal  newAmount) {
+    public Account createGoalSavingsAccount(User user, BigDecimal balance) {
+        Account newAccount = new Account("Goal Savings", AccountType.GOALSAVINGS, null, balance, true, user);
+        accountRepo.save(newAccount);
+        return newAccount;
+    }
+
+    public Account syncSpendingAccountBalance(Transaction transaction, BigDecimal  newAmount) {
         // Spending account ties to transaction
         Account account = transaction.getAccount();
         // Old amount stored
@@ -89,10 +99,19 @@ public class AccountService {
         accountRepo.save(account);
     }
 
-    public void recalculateBalanceForAccount(Account account) {
+    public void recalculateBalanceForSpendingAccount(Account account) {
         BigDecimal newBalance = transactionRepo.sumAmountsByAccount(account);
         account.setBalance(newBalance != null ? newBalance : BigDecimal.ZERO);
         accountRepo.save(account);
+    }
+
+    public void recalculateGoalSavingsBalance(User user) {
+        Account goalSavingsAccount = accountRepo.findAccountByUserAndType(user, AccountType.GOALSAVINGS)
+                .orElseThrow(() -> new EntityNotFoundException("Goal Savings account not found"));
+
+        BigDecimal totalContributed = savingGoalsRepo.sumContributionsByUser(user);
+        goalSavingsAccount.setBalance(totalContributed != null ? totalContributed : BigDecimal.ZERO);
+        accountRepo.save(goalSavingsAccount);
     }
 
 }

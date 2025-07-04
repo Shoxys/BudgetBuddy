@@ -26,6 +26,8 @@ public class SavingGoalService {
     AccountRepo accountRepo;
     @Autowired
     UserRepo userRepo;
+    @Autowired
+    private AccountService accountService;
 
     public String getSavingGoalTitleById(String email, long id) {
         User user = userRepo.getUserByEmail(email)
@@ -104,6 +106,8 @@ public class SavingGoalService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         savingGoalsRepo.updateSavingGoalContribution(user, id, request.getContribution());
+        //Recalculate account balance
+        accountService.recalculateGoalSavingsBalance(user);
     }
 
     @Transactional
@@ -112,10 +116,7 @@ public class SavingGoalService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Account savingGoalsAccount = accountRepo.findAccountByUserAndType(user, AccountType.GOALSAVINGS)
-                .orElseGet(()-> {
-                    Account newAccount = new Account("Goal Savings", AccountType.GOALSAVINGS, null, request.getContributed(), true, user);
-                    return accountRepo.save(newAccount);
-                });
+                .orElseGet(()-> accountService.createGoalSavingsAccount(user, request.getContributed()));
 
         SavingGoal newSavingGoal = new SavingGoal(
                 request.getTitle(),
@@ -126,7 +127,10 @@ public class SavingGoalService {
                 savingGoalsAccount,
                 user
         );
-        return savingGoalsRepo.save(newSavingGoal);
+        SavingGoal savedGoal = savingGoalsRepo.save(newSavingGoal);
+        //Recalculate account balance
+        accountService.recalculateGoalSavingsBalance(user);
+        return savedGoal;
     }
 
     @Transactional
@@ -144,7 +148,10 @@ public class SavingGoalService {
         savingGoal.setDate(request.getDate());
         savingGoal.setImageRef(request.getImageRef());
 
-        return savingGoalsRepo.save(savingGoal);
+        SavingGoal updated = savingGoalsRepo.save(savingGoal);
+        //Recalculate account balance
+        accountService.recalculateGoalSavingsBalance(user);
+        return updated;
     }
 
     @Transactional
@@ -152,5 +159,7 @@ public class SavingGoalService {
         User user = userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         savingGoalsRepo.deleteSavingGoalByIdAndUser(id, user);
+        //Recalculate account balance
+        accountService.recalculateGoalSavingsBalance(user);
     }
 }
