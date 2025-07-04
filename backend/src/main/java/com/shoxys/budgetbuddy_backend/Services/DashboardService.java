@@ -1,12 +1,15 @@
 package com.shoxys.budgetbuddy_backend.Services;
 
 import com.shoxys.budgetbuddy_backend.DTOs.Dashboard.*;
+import com.shoxys.budgetbuddy_backend.DTOs.DashboardResponse;
 import com.shoxys.budgetbuddy_backend.Entities.Account;
 import com.shoxys.budgetbuddy_backend.Entities.SavingGoal;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
+import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,11 +27,27 @@ public class DashboardService {
     @Autowired
     private TransactionRepo transactionRepo;
 
+    public DashboardResponse getDashboardResponse(long userId) {
+        // All required dashboard data elements
+        BigDecimal totalBalance = getTotalBalance(userId);
+        List<AccountSummary> accountSummaryList = getAccountSummary(userId);
+        NetworthResponse networthResponse = getNetworthResponse(userId);
+        List<SpendingInsight> spendingInsights = getSpendingInsights(userId);
+        List<SavingGoalSummary>  savingGoalSummary = getSavingGoalSummary(userId);
+        List<IncomeExpenseSummary> incomeExpenseSummary = getIncomeExpenseSummary(userId);
+        IncomeTrend incomeTrend =  getIncomeTrend(userId);
+        List<ExpenseAnalysis> expenseAnalysis = getExpenseAnalysis(userId);
+        List<RecentTransactions> recentTransactions = getRecentTransactions(userId);
+
+        return new DashboardResponse(totalBalance, accountSummaryList, networthResponse, spendingInsights, savingGoalSummary,
+                incomeExpenseSummary, incomeTrend, expenseAnalysis, recentTransactions);
+    }
+
     public BigDecimal getTotalBalance(long userId) {
         return accountRepo.findTotalBalanceByUserId(userId);
     }
 
-    public List<AccountSummary> getAccountSummaryForDashboard(long userId) {
+    public List<AccountSummary> getAccountSummary(long userId) {
         List<Account> accounts = accountRepo.findAccountsTypeNameBalanceByUser_Id(userId);
 
         return accounts.stream()
