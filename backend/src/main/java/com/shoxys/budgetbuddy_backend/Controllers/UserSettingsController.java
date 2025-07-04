@@ -4,6 +4,7 @@ import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
 import com.shoxys.budgetbuddy_backend.DTOs.ChangePasswordRequest;
 import com.shoxys.budgetbuddy_backend.DTOs.UpdateEmailRequest;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,14 +23,14 @@ public class UserSettingsController {
 
     @PutMapping("/change-password")
     public ResponseEntity<String> updatePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                                 @RequestBody ChangePasswordRequest request) {
+                                                 @Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(userDetails.getUsername(), request);
         return ResponseEntity.ok("Password changed successfully");
     }
 
     @PutMapping("/update-email")
     public ResponseEntity<?> updateEmail(@AuthenticationPrincipal UserDetails userDetails,
-                                              @RequestBody UpdateEmailRequest request) {
+                                         @Valid @RequestBody UpdateEmailRequest request) {
         AuthResponse response = userService.updateEmail(userDetails.getUsername(), request);
         return ResponseEntity.ok(response);
     }

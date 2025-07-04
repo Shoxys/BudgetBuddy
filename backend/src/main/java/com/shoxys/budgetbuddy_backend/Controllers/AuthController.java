@@ -3,6 +3,7 @@ package com.shoxys.budgetbuddy_backend.Controllers;
 import com.shoxys.budgetbuddy_backend.DTOs.LoginRequest;
 import com.shoxys.budgetbuddy_backend.DTOs.RegisterRequest;
 import com.shoxys.budgetbuddy_backend.Services.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,13 +21,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid  @RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseEntity.ok("User Registered Successfully");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> register(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody LoginRequest request) {
         authService.login(request);
         return ResponseEntity.ok(authService.authenticate(request));
     }
