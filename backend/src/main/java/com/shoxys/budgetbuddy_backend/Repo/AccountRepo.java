@@ -27,5 +27,7 @@ public interface AccountRepo extends CrudRepository<Account, Long> {
 
     Optional<Account> findAccountsByUser_IdAndType(long userId, AccountType type);
 
+    List<Account> findAccountsByUser(User user);
+
     Optional<Account> findAccountByUserAndType(User user, AccountType type);
 }

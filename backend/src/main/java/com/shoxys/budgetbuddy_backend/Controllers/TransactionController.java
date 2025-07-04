@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -70,25 +71,37 @@ public class TransactionController {
         return transactionService.getTransactionSummaryByTimeFrame(userId, timeFrame);
     }
 
+    @GetMapping("/current-balance")
+    public BigDecimal getCurrentBalance(@AuthenticationPrincipal UserDetails userDetails) {
+        return transactionService.getCurrentBalanceByUser(userDetails.getUsername());
+    }
     @PostMapping
     public Transaction addTransaction(@AuthenticationPrincipal AppUserDetails userDetails, @Valid @RequestBody TransactionRequest request) {
         return transactionService.addTransaction(userDetails.getUsername(), request);
     }
 
     @PutMapping("/{id}")
-    public Transaction updateTransaction(@PathVariable long id,  @Valid @RequestBody TransactionRequest request) {
-        return transactionService.updateTransaction(id, request);
+    public Transaction updateTransaction(
+            @AuthenticationPrincipal AppUserDetails userDetails,
+            @PathVariable long id,
+            @Valid @RequestBody TransactionRequest request) {
+        return transactionService.updateTransaction(userDetails.getUsername(), id, request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTransaction(@PathVariable long id) {
-        transactionService.deleteTransaction(id);
+    public ResponseEntity<String> deleteTransaction(
+            @AuthenticationPrincipal
+            AppUserDetails userDetails,
+            @PathVariable long id) {
+        transactionService.deleteTransaction(userDetails.getUsername(), id);
         return ResponseEntity.ok("Successfully deleted transaction");
     }
 
     @DeleteMapping("/delete-selected")
-    public ResponseEntity<String>  deleteMultipleTransactions(@RequestBody List<Long> ids) {
-        transactionService.deleteTransactionsById(ids);
+    public ResponseEntity<String>  deleteMultipleTransactions(
+            @AuthenticationPrincipal AppUserDetails userDetails,
+            @RequestBody List<Long> ids) {
+        transactionService.deleteTransactionsById(userDetails.getUsername(), ids);
         return ResponseEntity.ok("Deleted " + ids.size() + " transactions");
     }
 

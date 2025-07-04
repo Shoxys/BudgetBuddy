@@ -1,22 +1,30 @@
 package com.shoxys.budgetbuddy_backend.Services;
 
 import com.shoxys.budgetbuddy_backend.Entities.Account;
+import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
+import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
+import com.shoxys.budgetbuddy_backend.Utils;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AccountService {
+    @Autowired
     private final AccountRepo accountRepo;
+    @Autowired
     private final UserRepo userRepo;
+    @Autowired
+    TransactionRepo transactionRepo;
 
     public AccountService(AccountRepo accountRepo, UserRepo userRepo) {
         this.accountRepo = accountRepo;
@@ -24,12 +32,27 @@ public class AccountService {
     }
 
     public List<Account> getAccountsByUserId(long userId) {
-        return accountRepo.findAccountsByUser_Id(userId);
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return accountRepo.findAccountsByUser(user);
     }
 
+    @Transactional
     public void upsertAccount(String email, String name, AccountType type, BigDecimal newBalance) {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (Utils.nullOrEmpty(name)){
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be empty");
+        }
+
+        if (Utils.nullOrNegative(newBalance)){
+            throw new IllegalArgumentException("New balance cannot be negative");
+        }
 
         Optional<Account> optionalAccount = accountRepo.findAccountByUserAndType(user, type);
 
@@ -42,4 +65,34 @@ public class AccountService {
             newAccount.setBalance(newBalance);
         }
     }
+
+    public Account createSpendingAccount(User user, BigDecimal balance) {
+        Account newAccount = new Account("Spending Account", AccountType.SPENDING, null, balance, true, user);
+        accountRepo.save(newAccount);
+        return newAccount;
+    }
+
+    public Account syncAccountBalance(Transaction transaction, BigDecimal  newAmount) {
+        // Spending account ties to transaction
+        Account account = transaction.getAccount();
+        // Old amount stored
+        BigDecimal oldAmount = transaction.getAmount();
+
+        // Calculate delta and apply to account balance
+        BigDecimal delta = newAmount.subtract(oldAmount);
+        account.setBalance(account.getBalance().add(delta));
+        return accountRepo.save(account);
+    }
+
+    public void updateAccountBalance(Account account, BigDecimal newBalance) {
+        account.setBalance(newBalance);
+        accountRepo.save(account);
+    }
+
+    public void recalculateBalanceForAccount(Account account) {
+        BigDecimal newBalance = transactionRepo.sumAmountsByAccount(account);
+        account.setBalance(newBalance != null ? newBalance : BigDecimal.ZERO);
+        accountRepo.save(account);
+    }
+
 }

@@ -6,6 +6,7 @@ import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import com.shoxys.budgetbuddy_backend.Enums.SourceType;
+import com.shoxys.budgetbuddy_backend.Enums.TransactionType;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
@@ -31,8 +32,12 @@ import java.util.List;
 public class TransactionService {
     @Autowired
     private TransactionRepo transactionRepo;
+    @Autowired
     private AccountRepo accountRepo;
+    @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private AccountService accountService;
 
     public List<Transaction> getAllTransactionsByUserId(long userId) {
         if (!userRepo.existsById(userId)) {
@@ -118,24 +123,43 @@ public class TransactionService {
         return new TransactionSummaryResponse(transactions.size(), earliest, latest);
     }
 
+    public BigDecimal getCurrentBalanceByUser(String email){
+        User user = userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // Find associated spending account else create new account with initial balance as 0
+        Account spendingAccount = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
+                .orElseGet(()-> accountService.createSpendingAccount(user, BigDecimal.ZERO));
+
+        return spendingAccount.getBalance();
+    }
+
     @Transactional
     public Transaction addTransaction(String email, TransactionRequest request) {
         User user = userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+        // Find associated spending account else create new account
         Account spendingAccount = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
-                .orElseGet(()-> {
-                    Account newAccount = new Account("Spending Account", AccountType.SPENDING, null, request.getBalanceAtTransaction(), true, user);
-                    return accountRepo.save(newAccount);
-                });
+                .orElseGet(()-> accountService.createSpendingAccount(user, request.getBalanceAtTransaction()));
+
+        TransactionType type = request.getType();
+        // Change to negative values if type DEBIT
+        BigDecimal amount = type == TransactionType.DEBIT ? request.getAmount().multiply(BigDecimal.valueOf(-1)) : request.getAmount();
+
+        // Update balance
+        BigDecimal newBalance = spendingAccount.getBalance().add(amount);
+
+        // Update account balance
+        accountService.updateAccountBalance(spendingAccount, newBalance);
 
         Transaction newTransaction = new Transaction(
                 request.getDate(),
-                request.getAmount(),
+                amount,
                 request.getDescription(),
                 request.getCategory(),
                 request.getMerchant(),
-                request.getBalanceAtTransaction(),
+                newBalance,
                 SourceType.MANUAL,
                 spendingAccount,
                 user
@@ -144,32 +168,60 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction updateTransaction(Long id, TransactionRequest request) {
-        Transaction transaction = transactionRepo.findById(id)
+    public Transaction updateTransaction(String email, long id, TransactionRequest request) {
+        User user = userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Transaction transaction = transactionRepo.findTransactionByIdAndUser(user, id)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction with id " + id + " not found"));
 
-        transaction.setId(id); // Ensure ID matches
+        // Calculate new amount (DEBIT = negative)
+        TransactionType type = request.getType();
+        BigDecimal newAmount = type == TransactionType.DEBIT
+                ? request.getAmount().multiply(BigDecimal.valueOf(-1))
+                : request.getAmount();
+
+        // Sync balance after transaction update ties to transaction
+        Account account = accountService.syncAccountBalance(transaction, newAmount);
+
+        // Update transaction fields
         transaction.setDate(request.getDate());
-        transaction.setAmount(request.getAmount());
+        transaction.setAmount(newAmount);
         transaction.setDescription(request.getDescription());
         transaction.setCategory(request.getCategory());
         transaction.setMerchant(request.getMerchant());
-        transaction.setBalanceAtTransaction(request.getBalanceAtTransaction());
+        transaction.setBalanceAtTransaction(account.getBalance());
 
         return transactionRepo.save(transaction);
     }
 
     @Transactional
-    public void deleteTransaction(Long id) {
-        transactionRepo.deleteById(id);
+    public void deleteTransaction(String email, Long id) {
+        User user = userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Transaction txn = transactionRepo.findTransactionByIdAndUser(user, id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction with id" + id + " not found"));
+        Account acc = txn.getAccount();
+        acc.setBalance(acc.getBalance().subtract(txn.getAmount()));
+        accountRepo.save(acc);
+        transactionRepo.delete(txn);;
     }
 
     @Transactional
-    public void deleteTransactionsById(List<Long> ids){
+    public void deleteTransactionsById(String email, List<Long> ids){
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("ids must not be null or empty");
         }
-        transactionRepo.deleteAllByIdIn(ids);
+        User user = userRepo.getUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // Associated spending account
+        Account account = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        transactionRepo.deleteAllByIdInAndUser(ids, user);
+        // Recalculate account balance
+        accountService.recalculateBalanceForAccount(account);
     }
 
     @Transactional
@@ -210,7 +262,13 @@ public class TransactionService {
 
                 transactions.add(txn);
             }
+            // Associated spending account
+            Account account = accountRepo.findAccountsByUser_IdAndType(userId, AccountType.SPENDING)
+                    .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+            // Save all transactions to database
             transactionRepo.saveAll(transactions);
+            // Recalculate account balance
+            accountService.recalculateBalanceForAccount(account);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to read CSV file", e);

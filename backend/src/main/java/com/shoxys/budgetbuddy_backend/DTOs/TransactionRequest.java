@@ -1,10 +1,8 @@
 package com.shoxys.budgetbuddy_backend.DTOs;
 
 import com.shoxys.budgetbuddy_backend.Enums.SourceType;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.shoxys.budgetbuddy_backend.Enums.TransactionType;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,6 +22,9 @@ public class TransactionRequest {
 
     @NotBlank(message = "category is required")
     private String category;
+
+    @NotNull(message = "type is required")
+    private TransactionType type;
 
     private String merchant;
 
@@ -65,6 +66,14 @@ public class TransactionRequest {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 
     public String getMerchant() {

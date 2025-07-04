@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TransactionRepo extends JpaRepository<Transaction, Long> {
@@ -111,7 +112,10 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
     LocalDate findEarliestTransactionDate(Long userId);
 
+    Optional<Transaction> findTransactionByIdAndUser(User user, long id);
 
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.account = ?1")
+    BigDecimal sumAmountsByAccount(Account account);
 
-    void deleteAllByIdIn(List<Long> ids);
+    void deleteAllByIdInAndUser(List<Long> ids, User user);
 }
