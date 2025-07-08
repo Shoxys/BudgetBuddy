@@ -17,6 +17,15 @@ public class User {
     @Column(nullable = false)
     private String hashedPassword;
 
+    public User() {
+
+    }
+
+    public User(String email, String hashedPassword) {
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+    }
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
