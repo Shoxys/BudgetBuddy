@@ -89,6 +89,11 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>6.3.2.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.10.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
