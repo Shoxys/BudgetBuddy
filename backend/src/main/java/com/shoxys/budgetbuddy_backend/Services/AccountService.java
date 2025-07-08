@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.shoxys.budgetbuddy_backend.Enums.AccountType.SPENDING;
+
 @Service
 public class AccountService {
     @Autowired
@@ -112,6 +114,19 @@ public class AccountService {
         BigDecimal totalContributed = savingGoalsRepo.sumContributionsByUser(user);
         goalSavingsAccount.setBalance(totalContributed != null ? totalContributed : BigDecimal.ZERO);
         accountRepo.save(goalSavingsAccount);
+    }
+
+    public Account handleAccountNoAssign(int accountNo, User user) {
+        // Handle AccountNo assignment & account creation if not already exists
+        return accountRepo.findByAccountNo(accountNo)
+                .orElseGet(() -> {
+                    Account newAccount = new Account();
+                    newAccount.setAccountNo(accountNo);
+                    newAccount.setType(SPENDING);
+                    newAccount.setName("Spending Account");
+                    newAccount.setUser(user);
+                    return accountRepo.save(newAccount);
+                });
     }
 
 }
