@@ -1,0 +1,3 @@
+Date,Amount,Account Number,,Transaction Type,Transaction Details,Balance,Category,Merchant Name
+15 Apr 25,12.5,898742253, ,EFTPOS CREDIT,W4242 15/04,1200,Groceries ,
+16 Apr 25,-1500.00,898742253, ,EFTPOS DEBIT,P1234 16/04,2700,Salary, Company Payroll
