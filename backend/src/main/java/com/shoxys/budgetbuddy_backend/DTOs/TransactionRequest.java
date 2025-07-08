@@ -36,6 +36,20 @@ public class TransactionRequest {
     @NotNull(message = "Source is required")
     private SourceType source;
 
+    public TransactionRequest() {
+    }
+
+    public TransactionRequest(LocalDate date, BigDecimal amount, String description, String category, TransactionType type, String merchant, BigDecimal balanceAtTransaction, SourceType source) {
+        this.date = date;
+        this.amount = amount;
+        this.description = description;
+        this.category = category;
+        this.type = type;
+        this.merchant = merchant;
+        this.balanceAtTransaction = balanceAtTransaction;
+        this.source = source;
+    }
+
     public LocalDate getDate() {
         return date;
     }

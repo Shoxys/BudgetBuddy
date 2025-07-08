@@ -13,6 +13,10 @@ public class TransactionSummaryResponse {
     private LocalDate earliest;
     private LocalDate latest;
 
+    public TransactionSummaryResponse() {
+
+    }
+
     public TransactionSummaryResponse(Integer count, LocalDate earliest, LocalDate latest) {
         this.count = count;
         this.earliest = earliest;

@@ -59,6 +59,19 @@ public class Transaction {
         this.user = user;
     }
 
+    // Copy constructor for tests
+    public Transaction(Transaction other) {
+        this.date = other.date;
+        this.amount = other.amount;
+        this.description = other.description;
+        this.category = other.category;
+        this.merchant = other.merchant;
+        this.balanceAtTransaction = other.balanceAtTransaction;
+        this.source = other.source;
+        this.account = other.account;
+        this.user = other.user;
+    }
+
     public User getUser() {
         return user;
     }
