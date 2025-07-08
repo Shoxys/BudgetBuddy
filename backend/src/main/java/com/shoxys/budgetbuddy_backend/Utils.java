@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 public final class Utils {
 
@@ -14,6 +15,11 @@ public final class Utils {
     // Check if a String is null or empty
     public static boolean nullOrEmpty(String str) {
         return str == null || str.isEmpty();
+    }
+
+    // Check if a list is null or empty
+    public static boolean nullOrEmpty(List<?>  list) {
+        return list == null || list.isEmpty();
     }
 
     // Check if a BigDecimal is null or negative
