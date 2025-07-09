@@ -5,13 +5,13 @@ import java.util.List;
 
 public class IncomeTrend {
     private List<String> months;
-    private List<BigDecimal> income;
-    private List<BigDecimal> expenses;
+    private List<BigDecimal> incomeThisYear;
+    private List<BigDecimal> incomeLastYear;
 
-    public IncomeTrend(List<String> months, List<BigDecimal> income, List<BigDecimal> expenses) {
+    public IncomeTrend(List<String> months, List<BigDecimal> incomeThisYear, List<BigDecimal> incomeLastYear) {
         this.months = months;
-        this.income = income;
-        this.expenses = expenses;
+        this.incomeThisYear = incomeThisYear;
+        this.incomeLastYear = incomeLastYear;
     }
 
     public List<String> getMonths() {
@@ -22,19 +22,19 @@ public class IncomeTrend {
         this.months = months;
     }
 
-    public List<BigDecimal> getIncome() {
-        return income;
+    public List<BigDecimal> getIncomeThisYear() {
+        return incomeThisYear;
     }
 
-    public void setIncome(List<BigDecimal> income) {
-        this.income = income;
+    public void setIncomeThisYear(List<BigDecimal> incomeThisYear) {
+        this.incomeThisYear = incomeThisYear;
     }
 
-    public List<BigDecimal> getExpenses() {
-        return expenses;
+    public List<BigDecimal> getIncomeLastYear() {
+        return incomeLastYear;
     }
 
-    public void setExpenses(List<BigDecimal> expenses) {
-        this.expenses = expenses;
+    public void setIncomeLastYear(List<BigDecimal> incomeLastYear) {
+        this.incomeLastYear = incomeLastYear;
     }
 }

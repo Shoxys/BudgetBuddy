@@ -6,6 +6,9 @@ public class ExpenseAnalysis {
     private String label;
     private BigDecimal value;
 
+    public ExpenseAnalysis() {
+    }
+
     public ExpenseAnalysis(String label, BigDecimal value) {
         this.label = label;
         this.value = value;

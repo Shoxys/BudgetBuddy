@@ -7,9 +7,7 @@ import com.shoxys.budgetbuddy_backend.Entities.SavingGoal;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
-import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

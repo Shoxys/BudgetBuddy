@@ -5,11 +5,11 @@ import java.util.List;
 
 public class NetworthResponse {
     private BigDecimal total;
-    private List<BreakdownItem> breakdown;
+    private List<BreakdownItem> breakdownItems;
 
-    public NetworthResponse(BigDecimal total, List<BreakdownItem> breakdown) {
+    public NetworthResponse(BigDecimal total, List<BreakdownItem> breakdownItems) {
         this.total = total;
-        this.breakdown = breakdown;
+        this.breakdownItems = breakdownItems;
     }
 
     public BigDecimal getTotal() {
@@ -19,12 +19,11 @@ public class NetworthResponse {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
-
-    public List<BreakdownItem> getBreakdown() {
-        return breakdown;
+    public List<BreakdownItem> getBreakdownItems() {
+        return breakdownItems;
     }
 
-    public void setBreakdown(List<BreakdownItem> breakdown) {
-        this.breakdown = breakdown;
+    public void setBreakdownItems(List<BreakdownItem> breakdownItems) {
+        this.breakdownItems = breakdownItems;
     }
 }

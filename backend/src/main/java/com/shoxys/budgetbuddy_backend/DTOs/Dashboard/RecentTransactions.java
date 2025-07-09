@@ -9,6 +9,9 @@ public class RecentTransactions {
     private String category;
     private BigDecimal amount;
 
+    public RecentTransactions() {
+    }
+
     public RecentTransactions(LocalDate date, String description, String category, BigDecimal amount) {
         this.date = date;
         this.description = description;
