@@ -6,6 +6,8 @@ import com.shoxys.budgetbuddy_backend.Entities.SavingGoal;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import com.shoxys.budgetbuddy_backend.Enums.GoalType;
+import com.shoxys.budgetbuddy_backend.Exceptions.SavingGoalNotFoundException;
+import com.shoxys.budgetbuddy_backend.Exceptions.UserNotFoundException;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
@@ -31,31 +33,31 @@ public class SavingGoalService {
 
     public String getSavingGoalTitleById(String email, long id) {
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return savingGoalsRepo.findTitleForSavingGoalByIdAndUser(id, user);
     }
 
     public BigDecimal getTotalContributionForUser(String email) {
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return savingGoalsRepo.sumContributionsByUser(user);
     }
 
     public List<SavingGoal> getPendingSavingGoalsForUser(String email){
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return savingGoalsRepo.findPendingSavingGoalsForUser(user);
     }
 
     public List<SavingGoal> getCompleteSavingGoalsForUser(String email){
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return savingGoalsRepo.findCompletedSavingGoalsForUser(user);
     }
 
     public GoalStatsResponse getGoalStatsForUser(String email) {
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<GoalStat> goalStatList = Arrays.asList(getCompletedGoalStat(user),getInProgressGoalStat(user),
                 getOverdueGoalStat(user), getTotalGoatStat(user));
@@ -67,8 +69,8 @@ public class SavingGoalService {
         int completedCount = savingGoalsRepo.findCountCompletedSavingGoalsByUser(user);
 
         int completedInWeek = savingGoalsRepo.amountOfCompletedGoalsInWeek(user, Utils.getStartOfWeek(), Utils.getEndOfWeek());
-        String completedGoalInsight = "You have Completed " + completedInWeek + " goals this week";
-
+        String plurality = completedInWeek > 1 ? "goals" : "goal";
+        String completedGoalInsight = String.format("You have completed %d %s this week", completedInWeek, plurality);
         return new GoalStat(completedGoalInsight, GoalType.COMPLETED, completedCount);
     }
 
@@ -76,26 +78,27 @@ public class SavingGoalService {
         int inProgressCount = savingGoalsRepo.findCountINPROGRESSSavingGoalsByUser(user);
 
         int inProgressInWeek = savingGoalsRepo.amountOfInProgressGoalsInWeek(user, Utils.getStartOfWeek(), Utils.getEndOfWeek());
-        String inProgressGoalInsight = "You have " + inProgressInWeek + " in progress goals this week";
+        String plurality = inProgressInWeek > 1 ? "goals" : "goal";
+        String inProgressGoalInsight = String.format("You have %d in progress %s this week", inProgressInWeek, plurality);
 
         return new GoalStat(inProgressGoalInsight, GoalType.INPROGRESS, inProgressCount);
     }
 
     public GoalStat getOverdueGoalStat(User user) {
         int overdueCount = savingGoalsRepo.findCountOVERDUESavingGoalsByUser(user);
-
         int overdueInWeek = savingGoalsRepo.amountOfOverdueGoalsInWeek(user, Utils.getStartOfWeek(), Utils.getEndOfWeek());
-        String overdueGoalInsight = "You have" + overdueInWeek + "overdue goals this week";
+        String plurality = overdueInWeek > 1 ? "goals" : "goal";
+        String overdueGoalInsight = String.format("You have %d overdue %s this week", overdueInWeek, plurality);
 
-        return new GoalStat(overdueGoalInsight, GoalType.INPROGRESS, overdueCount);
+        return new GoalStat(overdueGoalInsight, GoalType.OVERDUE, overdueCount);
     }
 
     public GoalStat getTotalGoatStat(User user) {
         int totalCount = savingGoalsRepo.findCountSavingGoalsByUser(user);
         int CompletedCount = savingGoalsRepo.findCountCompletedSavingGoalsByUser(user);
 
-        int completionPercent = (int) ((double)totalCount / CompletedCount * 100);
-        String completionPercentInsight = "You have" + completionPercent + "% overdue goals this week";
+        int completionPercent = (int) ((double)CompletedCount / totalCount * 100);
+        String completionPercentInsight = String.format("You have completed %s%% of total goals", completionPercent);
 
         return new GoalStat(completionPercentInsight, GoalType.TOTAL, totalCount);
     }
@@ -113,7 +116,7 @@ public class SavingGoalService {
     @Transactional
     public SavingGoal createSavingGoal(String email, SavingGoalRequest request) {
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Account savingGoalsAccount = accountRepo.findAccountByUserAndType(user, AccountType.GOALSAVINGS)
                 .orElseGet(()-> accountService.createGoalSavingsAccount(user, request.getContributed()));
@@ -136,10 +139,10 @@ public class SavingGoalService {
     @Transactional
     public SavingGoal updateSavingGoal(String email, Long id, SavingGoalRequest request) {
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         SavingGoal savingGoal = savingGoalsRepo.findSavingGoalByIdAndUser(id, user)
-                .orElseThrow(() -> new EntityNotFoundException("Saving Goal with id " + id + " for user not found"));
+                .orElseThrow(() -> new SavingGoalNotFoundException(id));
 
         savingGoal.setId(id); // Ensure ID matches
         savingGoal.setTitle(request.getTitle());
@@ -157,9 +160,9 @@ public class SavingGoalService {
     @Transactional
     public void deleteSavingGoal(String email, long id) {
         User user = userRepo.getUserByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         savingGoalsRepo.deleteSavingGoalByIdAndUser(id, user);
-        //Recalculate account balance
+        // Recalculate account balance
         accountService.recalculateGoalSavingsBalance(user);
     }
 }
