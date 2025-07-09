@@ -13,6 +13,12 @@ public class UpdateEmailRequest {
     @NotBlank (message = "Password is required")
     private String confirmPassword;
 
+    public UpdateEmailRequest(String currentEmail, String newEmail, String confirmPassword) {
+        this.currentEmail = currentEmail;
+        this.newEmail = newEmail;
+        this.confirmPassword = confirmPassword;
+    }
+
     public String getCurrentEmail() {
         return currentEmail;
     }

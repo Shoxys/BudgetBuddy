@@ -4,10 +4,13 @@ import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
 import com.shoxys.budgetbuddy_backend.DTOs.ChangePasswordRequest;
 import com.shoxys.budgetbuddy_backend.DTOs.UpdateEmailRequest;
 import com.shoxys.budgetbuddy_backend.Entities.User;
+import com.shoxys.budgetbuddy_backend.Exceptions.EmailExistsException;
+import com.shoxys.budgetbuddy_backend.Exceptions.UserNotFoundException;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,8 +52,8 @@ public class UserService  {
             throw new SecurityException("Incorrect account details");
         }
 
-        if (!request.getCurrentEmail().equals(request.getNewEmail())){
-            throw new IllegalArgumentException("Email is the same as current");
+        if (request.getCurrentEmail().equals(request.getNewEmail())){
+            throw new EmailExistsException("Email is the same as current");
         }
 
         user.setEmail(request.getNewEmail());
@@ -64,7 +67,7 @@ public class UserService  {
 
     public void deleteAccount(String email) {
         User user = userRepo.getUserByEmail(email)
-                        .orElseThrow(() -> new IllegalArgumentException("User doesn't exist"));
+                        .orElseThrow(() -> new UserNotFoundException("User doesn't exist"));
         userRepo.delete(user);
     }
 }
