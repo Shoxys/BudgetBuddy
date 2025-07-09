@@ -22,13 +22,13 @@ public class AccountController {
 
     @PostMapping("/update-savings")
     public ResponseEntity<?> updateSavings(@AuthenticationPrincipal AppUserDetails userDetails, @Valid @RequestBody UpdateAccountRequest updateSavings) {
-        accountService.upsertAccount(userDetails.getUsername(), updateSavings.getName(), updateSavings.getAccountType(), updateSavings.getBalance());
+        accountService.upsertAccountBalance(userDetails.getUsername(), updateSavings.getName(), updateSavings.getAccountType(), updateSavings.getBalance());
         return ResponseEntity.ok("Savings updated successfully");
     }
 
     @PostMapping("/update-investments")
     public ResponseEntity<?> updateInvestments(@AuthenticationPrincipal AppUserDetails userDetails, @Valid @RequestBody UpdateAccountRequest updateInvestments) {
-        accountService.upsertAccount(userDetails.getUsername(), updateInvestments.getName(), updateInvestments.getAccountType(), updateInvestments.getBalance());
+        accountService.upsertAccountBalance(userDetails.getUsername(), updateInvestments.getName(), updateInvestments.getAccountType(), updateInvestments.getBalance());
         return ResponseEntity.ok("Investments updated successfully");
     }
 }

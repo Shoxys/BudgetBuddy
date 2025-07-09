@@ -85,7 +85,7 @@ public class Account {
         this.balance = balance;
     }
 
-    public boolean isManual() {
+    public boolean getIsManual() {
         return isManual;
     }
 

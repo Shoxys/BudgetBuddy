@@ -4,15 +4,16 @@ import com.shoxys.budgetbuddy_backend.Entities.Account;
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
+import com.shoxys.budgetbuddy_backend.Exceptions.AccountNotFoundException;
+import com.shoxys.budgetbuddy_backend.Exceptions.SavingGoalNotFoundException;
+import com.shoxys.budgetbuddy_backend.Exceptions.UserNotFoundException;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Utils;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,30 +24,28 @@ import static com.shoxys.budgetbuddy_backend.Enums.AccountType.SPENDING;
 
 @Service
 public class AccountService {
-    @Autowired
     private final AccountRepo accountRepo;
-    @Autowired
     private final UserRepo userRepo;
-    @Autowired
-    TransactionRepo transactionRepo;
-    @Autowired
-    SavingGoalsRepo  savingGoalsRepo;
+    private final TransactionRepo transactionRepo;
+    private final SavingGoalsRepo  savingGoalsRepo;
 
-    public AccountService(AccountRepo accountRepo, UserRepo userRepo) {
+    public AccountService(AccountRepo accountRepo, UserRepo userRepo, TransactionRepo transactionRepo, SavingGoalsRepo savingGoalsRepo) {
         this.accountRepo = accountRepo;
         this.userRepo = userRepo;
+        this.transactionRepo = transactionRepo;
+        this.savingGoalsRepo = savingGoalsRepo;
     }
 
     public List<Account> getAccountsByUserId(long userId) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return accountRepo.findAccountsByUser(user);
     }
 
     @Transactional
-    public void upsertAccount(String email, String name, AccountType type, BigDecimal newBalance) {
+    public Account upsertAccountBalance(String email, String name, AccountType type, BigDecimal newBalance) {
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (Utils.nullOrEmpty(name)){
             throw new IllegalArgumentException("Name cannot be empty");
@@ -56,19 +55,21 @@ public class AccountService {
             throw new IllegalArgumentException("Type cannot be empty");
         }
 
-        if (Utils.nullOrNegative(newBalance)){
-            throw new IllegalArgumentException("New balance cannot be negative");
+        if (newBalance == null){
+            throw new IllegalArgumentException("New balance cannot be null");
         }
 
         Optional<Account> optionalAccount = accountRepo.findAccountByUserAndType(user, type);
 
         if(optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            account.setBalance(newBalance);
-            accountRepo.save(account);
+            Account updatedAccount = optionalAccount.get();
+            updatedAccount.setBalance(newBalance);
+            accountRepo.save(updatedAccount);
+            return updatedAccount;
         } else {
             Account newAccount = new Account(name, type, null, newBalance, true, user );
             newAccount.setBalance(newBalance);
+            return newAccount;
         }
     }
 
@@ -109,7 +110,7 @@ public class AccountService {
 
     public void recalculateGoalSavingsBalance(User user) {
         Account goalSavingsAccount = accountRepo.findAccountByUserAndType(user, AccountType.GOALSAVINGS)
-                .orElseThrow(() -> new EntityNotFoundException("Goal Savings account not found"));
+                .orElseThrow(() -> new AccountNotFoundException("Goal Savings account not found"));
 
         BigDecimal totalContributed = savingGoalsRepo.sumContributionsByUser(user);
         goalSavingsAccount.setBalance(totalContributed != null ? totalContributed : BigDecimal.ZERO);
