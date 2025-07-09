@@ -14,7 +14,6 @@ import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.TestUtils;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,15 +54,19 @@ public class TransactionServiceTest {
     @InjectMocks
     private TransactionService transactionService;
 
-    private static final User validUser = new User("test@example.com", "PasswordHash123");
-    private static final String validUserEmail = validUser.getEmail();
-    private static final String invalidUserEmail = "invalid@example.com";
+    private static final String VAlID_EMAIL = "valid@example.com";
+    private static final String INVALID_EMAIL = "invalid@example.com";
+    private static final long INVALID_ID = 999L;
 
-    private static final long invalidUserId = 999L;
-    private static final Account mockAccount = new Account();
+    private static Account mockAccount;
+    private static User mockUser;
 
     private static final Map<String, Transaction> transactionMap = new HashMap<>();
-    static {
+
+    @BeforeEach
+    void setUp() {
+        mockAccount = new Account();
+        mockUser = new User("test@example.com", "PasswordHash123");
 
         transactionMap.put("Transaction1", new Transaction(
                 LocalDate.of(2025, 4, 15),
@@ -74,7 +77,7 @@ public class TransactionServiceTest {
                 BigDecimal.valueOf(1200),
                 SourceType.MANUAL,
                 mockAccount,
-                validUser
+                mockUser
         ));
 
         transactionMap.put("Transaction2", new Transaction(
@@ -86,7 +89,7 @@ public class TransactionServiceTest {
                 BigDecimal.valueOf(2700),
                 SourceType.MANUAL,
                 mockAccount,
-                validUser
+                mockUser
         ));
         transactionMap.put("Transaction3", new Transaction(
                 LocalDate.of(2025, 4, 17),
@@ -97,13 +100,8 @@ public class TransactionServiceTest {
                 BigDecimal.valueOf(2625),
                 SourceType.MANUAL,
                 mockAccount,
-                validUser
+                mockUser
         ));
-
-    }
-
-    @BeforeEach
-    void setUp() {
     }
 
     @Test
@@ -119,7 +117,6 @@ public class TransactionServiceTest {
                 BigDecimal.valueOf(143.17),
                 SourceType.MANUAL);
 
-        User mockUser = validUser;
         Account mockAccount = new Account();
         mockAccount.setBalance(BigDecimal.ZERO);
 
@@ -127,12 +124,12 @@ public class TransactionServiceTest {
                 ? request.getAmount().multiply( BigDecimal.valueOf(-1))
                 : request.getAmount();
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(mockUser));
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
         when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.of(mockAccount));
         when(transactionRepo.save(any(Transaction.class))).thenAnswer(i -> i.getArgument(0));
 
         // Act
-        Transaction txn = transactionService.addTransaction(validUserEmail, request);
+        Transaction txn = transactionService.addTransaction(VAlID_EMAIL, request);
 
         // Assert
         assertEquals(expectedAmount, txn.getAmount());
@@ -141,10 +138,10 @@ public class TransactionServiceTest {
 
     @Test
     void addTransaction_shouldThrowIfUserNotFound() {
-        when(userRepo.getUserByEmail(invalidUserEmail)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.addTransaction(invalidUserEmail, new TransactionRequest()));
+                transactionService.addTransaction(INVALID_EMAIL, new TransactionRequest()));
     }
 
     @Test
@@ -165,18 +162,18 @@ public class TransactionServiceTest {
                 SourceType.MANUAL
         );
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.empty());
-        when(accountService.createSpendingAccount(validUser, mockTransactionBalance)).thenReturn(mockAccount);
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.empty());
+        when(accountService.createSpendingAccount(mockUser, mockTransactionBalance)).thenReturn(mockAccount);
         when(transactionRepo.save(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Transaction txn = transactionService.addTransaction(validUserEmail, request);
+        Transaction txn = transactionService.addTransaction(VAlID_EMAIL, request);
 
         //Assert
         // Assert
         assertEquals(mockAccount, txn.getAccount());
-        verify(accountService).createSpendingAccount(validUser, mockTransactionBalance);
+        verify(accountService).createSpendingAccount(mockUser, mockTransactionBalance);
     }
 
     @Test
@@ -187,11 +184,11 @@ public class TransactionServiceTest {
                 transactionMap.get("Transaction2"),
                 transactionMap.get("Transaction3")
         );
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
-        when(transactionRepo.findByUser_Id(validUser.getId())).thenReturn(mockTransactions);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
+        when(transactionRepo.findByUser_Id(mockUser.getId())).thenReturn(mockTransactions);
 
         // Act
-        List<Transaction> result = transactionService.getAllTransactionsByUserId(validUser.getId());
+        List<Transaction> result = transactionService.getAllTransactionsByUserId(mockUser.getId());
 
         // Assert
         assertEquals(mockTransactions, result);
@@ -199,10 +196,10 @@ public class TransactionServiceTest {
 
     @Test
     void getAllTransactionsByUserId_shouldThrowIfUserNotFound() {
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getAllTransactionsByUserId(invalidUserId));
+                transactionService.getAllTransactionsByUserId(INVALID_ID));
     }
 
     @Test
@@ -215,11 +212,11 @@ public class TransactionServiceTest {
         );
         LocalDate startDate = LocalDate.of(2025, 4, 15);
         LocalDate endDate = LocalDate.of(2025, 4, 16);
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
-        when(transactionRepo.findByUserIdAndDateBetween(validUser.getId(), startDate, endDate)).thenReturn(mockTransactions);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
+        when(transactionRepo.findByUserIdAndDateBetween(mockUser.getId(), startDate, endDate)).thenReturn(mockTransactions);
 
         // Act
-        List<Transaction> result = transactionService.getTransactionsByUserIdInTimeFrame(validUser.getId(), startDate, endDate);
+        List<Transaction> result = transactionService.getTransactionsByUserIdInTimeFrame(mockUser.getId(), startDate, endDate);
 
         //Assert
         assertEquals(mockTransactions, result);
@@ -230,10 +227,10 @@ public class TransactionServiceTest {
         LocalDate startDate = LocalDate.of(2025, 4, 15);
         LocalDate endDate = LocalDate.of(2025, 4, 16);
 
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getTransactionsByUserIdInTimeFrame(invalidUserId, startDate, endDate));
+                transactionService.getTransactionsByUserIdInTimeFrame(INVALID_ID, startDate, endDate));
     }
 
     @Test
@@ -241,10 +238,10 @@ public class TransactionServiceTest {
         LocalDate startDate = null;
         LocalDate endDate = LocalDate.of(2025, 4, 16);
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.getTransactionsByUserIdInTimeFrame(validUser.getId(), startDate, endDate));
+                transactionService.getTransactionsByUserIdInTimeFrame(mockUser.getId(), startDate, endDate));
     }
 
     @Test
@@ -252,10 +249,10 @@ public class TransactionServiceTest {
         LocalDate startDate = LocalDate.of(2025, 4, 15);
         LocalDate endDate = null;
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.getTransactionsByUserIdInTimeFrame(validUser.getId(), startDate, endDate));
+                transactionService.getTransactionsByUserIdInTimeFrame(mockUser.getId(), startDate, endDate));
     }
 
     @Test
@@ -263,20 +260,20 @@ public class TransactionServiceTest {
         LocalDate startDate = LocalDate.of(2025, 4, 16);
         LocalDate endDate = LocalDate.of(2025, 4, 15);
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
 
         assertThrows(InvalidDateRangeException.class, () ->
-                transactionService.getTransactionsByUserIdInTimeFrame(validUser.getId(), startDate, endDate));
+                transactionService.getTransactionsByUserIdInTimeFrame(mockUser.getId(), startDate, endDate));
     }
 
     @Test
     void getTransactionsByUserIdInTimeFrame_shouldThrowIfUserIdNotFound() {
         LocalDate startDate = LocalDate.of(2025, 4, 15);
         LocalDate endDate = LocalDate.of(2025, 4, 16);
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getTransactionsByUserIdInTimeFrame(invalidUserId, startDate, endDate));
+                transactionService.getTransactionsByUserIdInTimeFrame(INVALID_ID, startDate, endDate));
     }
 
     @Test
@@ -284,10 +281,10 @@ public class TransactionServiceTest {
         LocalDate startDate = null;
         LocalDate endDate = LocalDate.of(2025, 4, 16);
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.getTransactionsByUserIdInTimeFrame(validUser.getId(), startDate, endDate));
+                transactionService.getTransactionsByUserIdInTimeFrame(mockUser.getId(), startDate, endDate));
     }
 
     @Test
@@ -306,11 +303,11 @@ public class TransactionServiceTest {
                 mockTransactions.size()
         );
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
-        when(transactionRepo.findByUser_Id(validUser.getId(), PageRequest.of(page, size))).thenReturn(mockPage);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
+        when(transactionRepo.findByUser_Id(mockUser.getId(), PageRequest.of(page, size))).thenReturn(mockPage);
 
         // Act
-        Page<Transaction>  result = transactionService.getTransactionsByUserIdPaginated(validUser.getId(), page, size);
+        Page<Transaction>  result = transactionService.getTransactionsByUserIdPaginated(mockUser.getId(), page, size);
         // Assert
         assertEquals(mockPage, result);
     }
@@ -319,30 +316,30 @@ public class TransactionServiceTest {
     void getTransactionsByUserIdPaginated_shouldThrowIfUserIdNotFound() {
         int page = 0;
         int size = 3;
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getTransactionsByUserIdPaginated(invalidUserId, page, size));
+                transactionService.getTransactionsByUserIdPaginated(INVALID_ID, page, size));
     }
 
     @Test
     void getTransactionsByUserIdPaginated_shouldThrowIfPageLessThanZero() {
         int page = -1;
         int size = 3;
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.getTransactionsByUserIdPaginated(validUser.getId(), page, size));
+                transactionService.getTransactionsByUserIdPaginated(mockUser.getId(), page, size));
     }
 
     @Test
     void getTransactionsByUserIdPaginated_shouldThrowIfSizeLessThanZero() {
         int page = 0;
         int size = -1;
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.getTransactionsByUserIdPaginated(validUser.getId(), page, size));
+                transactionService.getTransactionsByUserIdPaginated(mockUser.getId(), page, size));
     }
 
     @Test
@@ -354,21 +351,21 @@ public class TransactionServiceTest {
                 transactionMap.get("Transaction3")
         );
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
-        when(transactionRepo.findByUser_IdOrderByDateAsc(validUser.getId())).thenReturn(mockTransactions);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
+        when(transactionRepo.findByUser_IdOrderByDateAsc(mockUser.getId())).thenReturn(mockTransactions);
 
         // Act
-        List<Transaction>  result = transactionService.getAllTransactionsByUserIdSortedOldest(validUser.getId());
+        List<Transaction>  result = transactionService.getAllTransactionsByUserIdSortedOldest(mockUser.getId());
         // Assert
         assertEquals(mockTransactions, result);
     }
 
     @Test
     void getAllTransactionsByUserIdSortedOldest_shouldThrowIfUserIdNotFound() {
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getAllTransactionsByUserIdSortedOldest(invalidUserId));
+                transactionService.getAllTransactionsByUserIdSortedOldest(INVALID_ID));
     }
 
     @Test
@@ -380,21 +377,21 @@ public class TransactionServiceTest {
                 transactionMap.get("Transaction3")
         );
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
-        when(transactionRepo.findByUser_IdOrderByDateDesc(validUser.getId())).thenReturn(mockTransactions);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
+        when(transactionRepo.findByUser_IdOrderByDateDesc(mockUser.getId())).thenReturn(mockTransactions);
 
         // Act
-        List<Transaction>  result = transactionService.getTransactionsByUserIdSortedNewest(validUser.getId());
+        List<Transaction>  result = transactionService.getTransactionsByUserIdSortedNewest(mockUser.getId());
         // Assert
         assertEquals(mockTransactions, result);
     }
 
     @Test
     void getTransactionsByUserIdSortedNewest_shouldThrowIfUserIdNotFound() {
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getTransactionsByUserIdSortedNewest(invalidUserId));
+                transactionService.getTransactionsByUserIdSortedNewest(INVALID_ID));
     }
 
     @Test
@@ -409,11 +406,11 @@ public class TransactionServiceTest {
                 transactionMap.get("Transaction3")
         );
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
-        when(transactionRepo.findByUserIdAndDateBetween(validUser.getId(), startDate, LocalDate.now())).thenReturn(mockTransactions);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
+        when(transactionRepo.findByUserIdAndDateBetween(mockUser.getId(), startDate, LocalDate.now())).thenReturn(mockTransactions);
 
         // Act
-        List<Transaction>  result = transactionService.getAllTransactionsByUserIdTimeFrame(validUser.getId(), timeFrame);
+        List<Transaction>  result = transactionService.getAllTransactionsByUserIdTimeFrame(mockUser.getId(), timeFrame);
         // Assert
         assertEquals(mockTransactions, result);
     }
@@ -421,10 +418,10 @@ public class TransactionServiceTest {
     @Test
     void getAllTransactionsByUserIdTimeFrame_shouldThrowIfUserIdNotFound() {
         String timeFrame = "7days";
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getAllTransactionsByUserIdTimeFrame(invalidUserId, timeFrame));
+                transactionService.getAllTransactionsByUserIdTimeFrame(INVALID_ID, timeFrame));
     }
 
     @Test
@@ -440,11 +437,11 @@ public class TransactionServiceTest {
         LocalDate earliestDate = mockTransactions.get(0).getDate();
         LocalDate latestDate = mockTransactions.get(2).getDate();
 
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
         when(transactionRepo.findByUserIdAndDateBetween(anyLong(), any(), any())).thenReturn(mockTransactions);
 
         // Act
-        TransactionSummaryResponse  result = transactionService.getTransactionSummaryByTimeFrame(validUser.getId(), timeFrame);
+        TransactionSummaryResponse  result = transactionService.getTransactionSummaryByTimeFrame(mockUser.getId(), timeFrame);
 
         // Assert
         assertEquals(mockTransactions.size(), result.getCount());
@@ -455,20 +452,20 @@ public class TransactionServiceTest {
     @Test
     void getTransactionSummaryByTimeFrame_shouldThrowIfUserIdNotFound() {
         String timeFrame = "7days";
-        when(userRepo.existsById(invalidUserId)).thenReturn(false);
+        when(userRepo.existsById(INVALID_ID)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getTransactionSummaryByTimeFrame(invalidUserId, timeFrame));
+                transactionService.getTransactionSummaryByTimeFrame(INVALID_ID, timeFrame));
     }
 
     @Test
     void getTransactionSummaryByTimeFrame_returnsEmptySummary_whenNoTransactions() {
         String timeFrame = "7days";
-        when(userRepo.existsById(validUser.getId())).thenReturn(true);
+        when(userRepo.existsById(mockUser.getId())).thenReturn(true);
         when(transactionRepo.findByUserIdAndDateBetween(anyLong(), any(), any())).thenReturn(null);
 
         // Act
-        TransactionSummaryResponse  result = transactionService.getTransactionSummaryByTimeFrame(validUser.getId(), timeFrame);
+        TransactionSummaryResponse  result = transactionService.getTransactionSummaryByTimeFrame(mockUser.getId(), timeFrame);
 
         // Assert
         assertNull(result.getCount());
@@ -483,11 +480,11 @@ public class TransactionServiceTest {
         BigDecimal balance = new BigDecimal(1000);
         mockAccount.setBalance(balance);
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.of(mockAccount));
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.of(mockAccount));
 
         // Act
-        BigDecimal result = transactionService.getCurrentBalanceByUser(validUserEmail);
+        BigDecimal result = transactionService.getCurrentBalanceByUser(VAlID_EMAIL);
 
         // Assert
         assertEquals(mockAccount.getBalance(), result);
@@ -495,10 +492,10 @@ public class TransactionServiceTest {
 
     @Test
     void getCurrentBalanceByUser_shouldThrowIfUserNotFound() {
-        when(userRepo.getUserByEmail(invalidUserEmail)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.getCurrentBalanceByUser(invalidUserEmail));
+                transactionService.getCurrentBalanceByUser(INVALID_EMAIL));
     }
 
     @Test
@@ -507,16 +504,16 @@ public class TransactionServiceTest {
         Account mockAccount = new Account();
         mockAccount.setBalance(BigDecimal.ZERO);
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.empty());
-        when(accountService.createSpendingAccount(validUser, BigDecimal.ZERO)).thenReturn(mockAccount);
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.empty());
+        when(accountService.createSpendingAccount(mockUser, BigDecimal.ZERO)).thenReturn(mockAccount);
 
         // Act
-        BigDecimal resultBalance = transactionService.getCurrentBalanceByUser(validUserEmail);
+        BigDecimal resultBalance = transactionService.getCurrentBalanceByUser(VAlID_EMAIL);
 
         //Assert
         assertEquals(mockAccount.getBalance(), resultBalance);
-        verify(accountService).createSpendingAccount(validUser, BigDecimal.ZERO);
+        verify(accountService).createSpendingAccount(mockUser, BigDecimal.ZERO);
     }
 
     @Test
@@ -540,13 +537,13 @@ public class TransactionServiceTest {
                 ? request.getAmount().multiply( BigDecimal.valueOf(-1))
                 : request.getAmount();
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(transactionRepo.findTransactionByIdAndUser(validUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));
         when(accountService.syncSpendingAccountBalance(mockTransaction, expectedAmount)).thenReturn(mockAccount);
         when(transactionRepo.save(any(Transaction.class))).thenAnswer(i -> i.getArgument(0));
 
         // Act
-        Transaction txn = transactionService.updateTransaction(validUserEmail, mockTransaction.getId(), request);
+        Transaction txn = transactionService.updateTransaction(VAlID_EMAIL, mockTransaction.getId(), request);
 
         // Assert
         assertEquals(request.getDate(), txn.getDate());
@@ -564,10 +561,10 @@ public class TransactionServiceTest {
         TransactionRequest mockRequest = new TransactionRequest();
         Transaction mockTransaction = new Transaction(transactionMap.get("Transaction1"));
         long mockTransactionId = mockTransaction.getId();
-        when(userRepo.getUserByEmail(invalidUserEmail)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.updateTransaction(invalidUserEmail, mockTransactionId, mockRequest));
+                transactionService.updateTransaction(INVALID_EMAIL, mockTransactionId, mockRequest));
     }
 
     @Test
@@ -575,11 +572,11 @@ public class TransactionServiceTest {
         TransactionRequest mockRequest = new TransactionRequest();
         Transaction mockTransaction = new Transaction(transactionMap.get("Transaction1"));
         long mockTransactionId = mockTransaction.getId();
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(transactionRepo.findTransactionByIdAndUser(validUser, mockTransactionId)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransactionId)).thenReturn(Optional.empty());
 
         assertThrows(TransactionNotFoundException.class, () ->
-                transactionService.updateTransaction(validUserEmail, mockTransactionId, mockRequest));
+                transactionService.updateTransaction(VAlID_EMAIL, mockTransactionId, mockRequest));
     }
 
     @Test
@@ -591,11 +588,11 @@ public class TransactionServiceTest {
         mockAccount.setBalance(mockStartingBalance);
         mockTransaction.setAccount(mockAccount);
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(transactionRepo.findTransactionByIdAndUser(validUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));;
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));;
         when(accountRepo.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
         // Act
-        transactionService.deleteTransaction(validUserEmail, mockTransaction.getId());
+        transactionService.deleteTransaction(VAlID_EMAIL, mockTransaction.getId());
 
         // Assert
 
@@ -607,21 +604,21 @@ public class TransactionServiceTest {
     void deleteTransaction_shouldThrowIfUserNotFound() {
         Transaction mockTransaction = new Transaction(transactionMap.get("Transaction1"));
         long mockTransactionId = mockTransaction.getId();
-        when(userRepo.getUserByEmail(invalidUserEmail)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.deleteTransaction(invalidUserEmail, mockTransactionId));
+                transactionService.deleteTransaction(INVALID_EMAIL, mockTransactionId));
     }
 
     @Test
     void deleteTransaction_shouldThrowIfTransactionNotFound() {
         Transaction mockTransaction = new Transaction();
         long mockTransactionId = mockTransaction.getId();
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(transactionRepo.findTransactionByIdAndUser(validUser, mockTransactionId)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransactionId)).thenReturn(Optional.empty());
 
         assertThrows(TransactionNotFoundException.class, () ->
-                transactionService.deleteTransaction(validUserEmail, mockTransactionId));
+                transactionService.deleteTransaction(VAlID_EMAIL, mockTransactionId));
     }
 
     @Test
@@ -633,14 +630,14 @@ public class TransactionServiceTest {
 
         Account mockAccount = new Account();
 
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.of(mockAccount));
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.of(mockAccount));
 
         // Act
-        transactionService.deleteTransactionsById(validUserEmail, mocktransactionIdList);
+        transactionService.deleteTransactionsById(VAlID_EMAIL, mocktransactionIdList);
 
         // Assert
-        verify(transactionRepo).deleteAllByIdInAndUser(mocktransactionIdList, validUser);
+        verify(transactionRepo).deleteAllByIdInAndUser(mocktransactionIdList, mockUser);
         verify(accountService).recalculateBalanceForSpendingAccount(mockAccount);
     }
 
@@ -649,10 +646,10 @@ public class TransactionServiceTest {
         List<Long> mocktransactionIdList = transactionMap.values().stream()
                 .map(Transaction::getId)
                 .toList();
-        when(userRepo.getUserByEmail(invalidUserEmail)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.deleteTransactionsById(invalidUserEmail, mocktransactionIdList));
+                transactionService.deleteTransactionsById(INVALID_EMAIL, mocktransactionIdList));
     }
 
     @Test
@@ -660,11 +657,11 @@ public class TransactionServiceTest {
         List<Long> mocktransactionIdList = transactionMap.values().stream()
                 .map(Transaction::getId)
                 .toList();
-        when(userRepo.getUserByEmail(validUserEmail)).thenReturn(Optional.of(validUser));
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.empty());
+        when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.empty());
 
         assertThrows(AccountNotFoundException.class, () ->
-                transactionService.deleteTransactionsById(validUserEmail, mocktransactionIdList));
+                transactionService.deleteTransactionsById(VAlID_EMAIL, mocktransactionIdList));
     }
 
     @Test
@@ -682,12 +679,12 @@ public class TransactionServiceTest {
                 resource.getInputStream()
         );
 
-        when(userRepo.findById(validUser.getId())).thenReturn(Optional.of(validUser));
-        when(accountService.handleAccountNoAssign(anyInt(), eq(validUser))).thenReturn(mockAccount);
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.of(mockAccount));
+        when(userRepo.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
+        when(accountService.handleAccountNoAssign(anyInt(), eq(mockUser))).thenReturn(mockAccount);
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.of(mockAccount));
 
         // Act
-        List<Transaction> importedTransactions = transactionService.importMultipleCSVs(validUser.getId(), file);
+        List<Transaction> importedTransactions = transactionService.importMultipleCSVs(mockUser.getId(), file);
 
         // Assert
         assertEquals(expectedTransactions.size(), importedTransactions.size());
@@ -716,10 +713,10 @@ public class TransactionServiceTest {
                 "text/csv",
                 resource.getInputStream()
         );
-        when(userRepo.findById(invalidUserId)).thenReturn(Optional.empty());
+        when(userRepo.findById(INVALID_ID)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () ->
-                transactionService.importMultipleCSVs(invalidUserId, file));
+                transactionService.importMultipleCSVs(INVALID_ID, file));
     }
 
     @Test
@@ -732,18 +729,18 @@ public class TransactionServiceTest {
                 resource.getInputStream()
         );
 
-        when(userRepo.findById(validUser.getId())).thenReturn(Optional.of(validUser));
-        when(accountService.handleAccountNoAssign(anyInt(), eq(validUser))).thenReturn(mockAccount);
-        when(accountRepo.findAccountByUserAndType(validUser, SPENDING)).thenReturn(Optional.empty());
+        when(userRepo.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
+        when(accountService.handleAccountNoAssign(anyInt(), eq(mockUser))).thenReturn(mockAccount);
+        when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.empty());
 
         assertThrows(AccountNotFoundException.class, () ->
-                transactionService.importMultipleCSVs(validUser.getId(), file));
+                transactionService.importMultipleCSVs(mockUser.getId(), file));
     }
 
     @Test
     void importMultipleCSVs_shouldThrowIfFileIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.importMultipleCSVs(validUser.getId(), null));
+                transactionService.importMultipleCSVs(mockUser.getId(), null));
     }
     @Test
     void importMultipleCSVs_shouldThrowIfFileIsEmpty() {
@@ -752,7 +749,7 @@ public class TransactionServiceTest {
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.importMultipleCSVs(validUser.getId(), emptyFile));
+                transactionService.importMultipleCSVs(mockUser.getId(), emptyFile));
     }
 
     @Test
@@ -762,7 +759,7 @@ public class TransactionServiceTest {
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.importMultipleCSVs(validUser.getId(), badTypeFile));
+                transactionService.importMultipleCSVs(mockUser.getId(), badTypeFile));
     }
 
     @Test
@@ -772,7 +769,7 @@ public class TransactionServiceTest {
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                transactionService.importMultipleCSVs(validUser.getId(), wrongExt));
+                transactionService.importMultipleCSVs(mockUser.getId(), wrongExt));
     }
 
 }

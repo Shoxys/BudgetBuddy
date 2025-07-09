@@ -243,7 +243,7 @@ public class TransactionService {
 
         // Associated spending account
         Account account = accountRepo.findAccountByUserAndType(user, SPENDING)
-                .orElseThrow(() -> new AccountNotFoundException(user));
+                .orElseThrow(() -> new AccountNotFoundException());
         transactionRepo.deleteAllByIdInAndUser(ids, user);
         // Recalculate account balance after deletion
         accountService.recalculateBalanceForSpendingAccount(account);
@@ -317,7 +317,7 @@ public class TransactionService {
             }
             // Associated spending account
             Account account = accountRepo.findAccountByUserAndType(user, SPENDING)
-                    .orElseThrow(() -> new AccountNotFoundException(user));
+                    .orElseThrow(AccountNotFoundException::new);
             // Save all transactions to database
             transactionRepo.saveAll(transactions);
             // Recalculate account balance
