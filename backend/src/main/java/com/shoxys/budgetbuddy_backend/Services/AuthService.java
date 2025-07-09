@@ -4,6 +4,8 @@ import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
 import com.shoxys.budgetbuddy_backend.DTOs.LoginRequest;
 import com.shoxys.budgetbuddy_backend.DTOs.RegisterRequest;
 import com.shoxys.budgetbuddy_backend.Entities.User;
+import com.shoxys.budgetbuddy_backend.Exceptions.EmailExistsException;
+import com.shoxys.budgetbuddy_backend.Exceptions.UserNotFoundException;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Security.JwtUtil;
@@ -27,7 +29,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
                 );
         User user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         AppUserDetails userDetails = new AppUserDetails(user);
 
         String jwt = jwtUtil.generateToken(userDetails);
@@ -37,7 +39,7 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
         if (userRepo.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailExistsException();
         }
         User user = new User();
         user.setEmail(request.getEmail());
@@ -47,7 +49,7 @@ public class AuthService {
 
     public void login(LoginRequest request) {
         User user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid account details"));
 
         if (!Password.check(request.getPassword(), user.getHashedPassword()).withScrypt()) {
             throw new IllegalArgumentException("Invalid account details");
