@@ -38,4 +38,9 @@ public final class Utils {
         return startOfWeek.plusDays(6);
     }
 
+    public static boolean isEmail(String email) {
+        String strictEmailRegex = "^(?=.{1,64}@)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return email.matches(strictEmailRegex);
+    }
+
 }
