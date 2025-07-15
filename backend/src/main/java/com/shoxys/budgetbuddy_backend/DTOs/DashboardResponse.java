@@ -28,4 +28,76 @@ public class DashboardResponse {
         this.expenseAnalysis = expenseAnalysis;
         this.recentTransactions = recentTransactions;
     }
+
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
+    }
+
+    public List<AccountSummary> getAccountSummaries() {
+        return accountSummaries;
+    }
+
+    public void setAccountSummaries(List<AccountSummary> accountSummaries) {
+        this.accountSummaries = accountSummaries;
+    }
+
+    public NetworthResponse getNetworthResponse() {
+        return networthResponse;
+    }
+
+    public void setNetworthResponse(NetworthResponse networthResponse) {
+        this.networthResponse = networthResponse;
+    }
+
+    public List<SpendingInsight> getSpendingInsights() {
+        return spendingInsights;
+    }
+
+    public void setSpendingInsights(List<SpendingInsight> spendingInsights) {
+        this.spendingInsights = spendingInsights;
+    }
+
+    public List<SavingGoalSummary> getSavingGoalSummary() {
+        return savingGoalSummary;
+    }
+
+    public void setSavingGoalSummary(List<SavingGoalSummary> savingGoalSummary) {
+        this.savingGoalSummary = savingGoalSummary;
+    }
+
+    public List<IncomeExpenseSummary> getIncomeExpenseSummary() {
+        return incomeExpenseSummary;
+    }
+
+    public void setIncomeExpenseSummary(List<IncomeExpenseSummary> incomeExpenseSummary) {
+        this.incomeExpenseSummary = incomeExpenseSummary;
+    }
+
+    public IncomeTrend getIncomeTrend() {
+        return incomeTrend;
+    }
+
+    public void setIncomeTrend(IncomeTrend incomeTrend) {
+        this.incomeTrend = incomeTrend;
+    }
+
+    public List<ExpenseAnalysis> getExpenseAnalysis() {
+        return expenseAnalysis;
+    }
+
+    public void setExpenseAnalysis(List<ExpenseAnalysis> expenseAnalysis) {
+        this.expenseAnalysis = expenseAnalysis;
+    }
+
+    public List<RecentTransactions> getRecentTransactions() {
+        return recentTransactions;
+    }
+
+    public void setRecentTransactions(List<RecentTransactions> recentTransactions) {
+        this.recentTransactions = recentTransactions;
+    }
 }

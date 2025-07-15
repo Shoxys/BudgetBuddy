@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.Arrays;
 import java.util.Collections;
@@ -91,10 +92,13 @@ class DashboardServiceTest {
         BigDecimal incomeLastMonth = BigDecimal.valueOf(2500);
         BigDecimal expenseLastMonth = BigDecimal.valueOf(1000);
 
+        LocalDate lastMonthStart = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+        LocalDate lastMonthEnd = lastMonthStart.withDayOfMonth(lastMonthStart.lengthOfMonth());
+
         when(transactionRepo.getTotalCreditThisMonth(userId)).thenReturn(incomeThisMonth);
         when(transactionRepo.getTotalDebitThisMonth(userId)).thenReturn(expenseThisMonth);
-        when(transactionRepo.getTotalCreditLastMonth(userId)).thenReturn(incomeLastMonth);
-        when(transactionRepo.getTotalDebitLastMonth(userId)).thenReturn(expenseLastMonth);
+        when(transactionRepo.getTotalCreditBetween(userId, lastMonthStart, lastMonthEnd)).thenReturn(incomeLastMonth);
+        when(transactionRepo.getTotalDebitBetween(userId, lastMonthStart, lastMonthEnd)).thenReturn(expenseLastMonth);
 
         List<IncomeExpenseSummary> result = dashboardService.getIncomeExpenseSummary(userId);
 
@@ -109,7 +113,7 @@ class DashboardServiceTest {
         mockAnalysis.setLabel("Food");
         mockAnalysis.setValue(BigDecimal.valueOf(500));
 
-        when(transactionRepo.findTop5CategoriesByAmountNative(userId)).thenReturn(Collections.singletonList(mockAnalysis));
+        when(transactionRepo.findTop5CategoriesByAmount(userId)).thenReturn(Collections.singletonList(mockAnalysis));
 
         List<ExpenseAnalysis> result = dashboardService.getExpenseAnalysis(userId);
         assertEquals(1, result.size());

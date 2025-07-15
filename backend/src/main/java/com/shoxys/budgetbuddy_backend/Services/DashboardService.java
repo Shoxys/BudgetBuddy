@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,8 +89,11 @@ public class DashboardService {
         BigDecimal incomeThisMonth = transactionRepo.getTotalCreditThisMonth(userId);
         BigDecimal expensesThisMonth = transactionRepo.getTotalDebitThisMonth(userId);
 
-        BigDecimal incomeLastMonth = transactionRepo.getTotalCreditLastMonth(userId);
-        BigDecimal expensesLastMonth = transactionRepo.getTotalDebitLastMonth(userId);
+        LocalDate lastMonthStart = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+        LocalDate LastMonthEnd = lastMonthStart.withDayOfMonth(lastMonthStart.lengthOfMonth());
+
+        BigDecimal incomeLastMonth = transactionRepo.getTotalCreditBetween(userId, lastMonthStart, LastMonthEnd);
+        BigDecimal expensesLastMonth = transactionRepo.getTotalDebitBetween(userId, lastMonthStart ,LastMonthEnd );
 
         IncomeExpenseSummary incomeExpenseThisMonth = new IncomeExpenseSummary("This month", incomeThisMonth, expensesThisMonth);
         IncomeExpenseSummary incomeExpenseLastMonth = new IncomeExpenseSummary("Last month", incomeLastMonth, expensesLastMonth);
@@ -109,7 +113,7 @@ public class DashboardService {
     }
 
     public List<ExpenseAnalysis> getExpenseAnalysis(long userId) {
-        return transactionRepo.findTop5CategoriesByAmountNative(userId);
+        return transactionRepo.findTop5CategoriesByAmount(userId);
     }
 
     public List<RecentTransactions> getRecentTransactions(long userId) {
