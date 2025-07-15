@@ -1,35 +1,39 @@
-name: Run Backend Tests and Spotless Check
+name: Backend CI
 
 on:
   push:
-    branches: [main]
+    paths:
+      - 'backend/**'
   pull_request:
-    branches: [main]
+    paths:
+      - 'backend/**'
 
 jobs:
-  build:
+  test-backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: '21'
           distribution: 'temurin'
+          java-version: '21'
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          restore-keys: ${{ runner.os }}-maven-
 
-      - name: Run Spotless Check
-        run: ./mvnw spotless:check
+      - name: Spotless Check
+        run: mvn spotless:check
 
       - name: Run Tests
-        run: ./mvnw test
+        run: mvn test
