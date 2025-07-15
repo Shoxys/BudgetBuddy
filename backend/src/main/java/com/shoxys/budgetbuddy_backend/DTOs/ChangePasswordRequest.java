@@ -3,40 +3,42 @@ package com.shoxys.budgetbuddy_backend.DTOs;
 import jakarta.validation.constraints.NotBlank;
 
 public class ChangePasswordRequest {
-    @NotBlank(message = "Current password is required")
-    private String currentPassword;
-    @NotBlank(message = "New password is required")
-    private String newPassword;
-    @NotBlank(message = "Confirmation password is required")
-    private String confirmPassword;
+  @NotBlank(message = "Current password is required")
+  private String currentPassword;
 
-    public ChangePasswordRequest(String currentPassword, String newPassword, String confirmPassword) {
-        this.currentPassword = currentPassword;
-        this.newPassword = newPassword;
-        this.confirmPassword = confirmPassword;
-    }
+  @NotBlank(message = "New password is required")
+  private String newPassword;
 
-    public String getCurrentPassword() {
-        return currentPassword;
-    }
+  @NotBlank(message = "Confirmation password is required")
+  private String confirmPassword;
 
-    public void setCurrentPassword(String currentPassword) {
-        this.currentPassword = currentPassword;
-    }
+  public ChangePasswordRequest(String currentPassword, String newPassword, String confirmPassword) {
+    this.currentPassword = currentPassword;
+    this.newPassword = newPassword;
+    this.confirmPassword = confirmPassword;
+  }
 
-    public String getNewPassword() {
-        return newPassword;
-    }
+  public String getCurrentPassword() {
+    return currentPassword;
+  }
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
+  public void setCurrentPassword(String currentPassword) {
+    this.currentPassword = currentPassword;
+  }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
+  public String getNewPassword() {
+    return newPassword;
+  }
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
+  }
+
+  public String getConfirmPassword() {
+    return confirmPassword;
+  }
+
+  public void setConfirmPassword(String confirmPassword) {
+    this.confirmPassword = confirmPassword;
+  }
 }

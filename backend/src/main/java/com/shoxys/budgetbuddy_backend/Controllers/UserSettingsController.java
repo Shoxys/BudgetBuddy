@@ -13,31 +13,31 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/settings")
 public class UserSettingsController {
-    private final UserService userService;
+  private final UserService userService;
 
-    public UserSettingsController(UserService userService) {
-        this.userService = userService;
-    }
+  public UserSettingsController(UserService userService) {
+    this.userService = userService;
+  }
 
-    @PutMapping("/change-password")
-    public ResponseEntity<String> updatePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                                 @Valid @RequestBody ChangePasswordRequest request) {
-        userService.changePassword(userDetails.getUsername(), request);
-        return ResponseEntity.ok("Password changed successfully");
-    }
+  @PutMapping("/change-password")
+  public ResponseEntity<String> updatePassword(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid @RequestBody ChangePasswordRequest request) {
+    userService.changePassword(userDetails.getUsername(), request);
+    return ResponseEntity.ok("Password changed successfully");
+  }
 
-    @PutMapping("/update-email")
-    public ResponseEntity<?> updateEmail(@AuthenticationPrincipal UserDetails userDetails,
-                                         @Valid @RequestBody UpdateEmailRequest request) {
-        AuthResponse response = userService.updateEmail(userDetails.getUsername(), request);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping("/update-email")
+  public ResponseEntity<?> updateEmail(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid @RequestBody UpdateEmailRequest request) {
+    AuthResponse response = userService.updateEmail(userDetails.getUsername(), request);
+    return ResponseEntity.ok(response);
+  }
 
-    @DeleteMapping("/delete-account")
-    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal UserDetails userDetails) {
-        userService.deleteAccount(userDetails.getUsername());
-        return ResponseEntity.ok("Account deleted successfully");
-    }
-
-
+  @DeleteMapping("/delete-account")
+  public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal UserDetails userDetails) {
+    userService.deleteAccount(userDetails.getUsername());
+    return ResponseEntity.ok("Account deleted successfully");
+  }
 }

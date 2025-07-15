@@ -4,42 +4,44 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class UpdateEmailRequest {
-    @Email
-    @NotBlank (message = "Email is required")
-    private String currentEmail;
-    @Email
-    @NotBlank (message = "New Email is required")
-    private String newEmail;
-    @NotBlank (message = "Password is required")
-    private String confirmPassword;
+  @Email
+  @NotBlank(message = "Email is required")
+  private String currentEmail;
 
-    public UpdateEmailRequest(String currentEmail, String newEmail, String confirmPassword) {
-        this.currentEmail = currentEmail;
-        this.newEmail = newEmail;
-        this.confirmPassword = confirmPassword;
-    }
+  @Email
+  @NotBlank(message = "New Email is required")
+  private String newEmail;
 
-    public String getCurrentEmail() {
-        return currentEmail;
-    }
+  @NotBlank(message = "Password is required")
+  private String confirmPassword;
 
-    public void setCurrentEmail(String currentEmail) {
-        this.currentEmail = currentEmail;
-    }
+  public UpdateEmailRequest(String currentEmail, String newEmail, String confirmPassword) {
+    this.currentEmail = currentEmail;
+    this.newEmail = newEmail;
+    this.confirmPassword = confirmPassword;
+  }
 
-    public String getNewEmail() {
-        return newEmail;
-    }
+  public String getCurrentEmail() {
+    return currentEmail;
+  }
 
-    public void setNewEmail(String newEmail) {
-        this.newEmail = newEmail;
-    }
+  public void setCurrentEmail(String currentEmail) {
+    this.currentEmail = currentEmail;
+  }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
+  public String getNewEmail() {
+    return newEmail;
+  }
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
+  public void setNewEmail(String newEmail) {
+    this.newEmail = newEmail;
+  }
+
+  public String getConfirmPassword() {
+    return confirmPassword;
+  }
+
+  public void setConfirmPassword(String confirmPassword) {
+    this.confirmPassword = confirmPassword;
+  }
 }

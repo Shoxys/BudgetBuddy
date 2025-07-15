@@ -3,20 +3,19 @@ package com.shoxys.budgetbuddy_backend.DTOs;
 import java.math.BigDecimal;
 
 public class GoalContributionRequest {
-    private BigDecimal contribution;
+  private BigDecimal contribution;
 
-    public GoalContributionRequest() {
-    }
+  public GoalContributionRequest() {}
 
-    public GoalContributionRequest(BigDecimal contribution) {
-        this.contribution = contribution;
-    }
+  public GoalContributionRequest(BigDecimal contribution) {
+    this.contribution = contribution;
+  }
 
-    public BigDecimal getContribution() {
-        return contribution;
-    }
+  public BigDecimal getContribution() {
+    return contribution;
+  }
 
-    public void setContribution(BigDecimal contribution) {
-        this.contribution = contribution;
-    }
+  public void setContribution(BigDecimal contribution) {
+    this.contribution = contribution;
+  }
 }

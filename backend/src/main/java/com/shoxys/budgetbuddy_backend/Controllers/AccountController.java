@@ -14,39 +14,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {
-    private final AccountService accountService;
+  private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+  public AccountController(AccountService accountService) {
+    this.accountService = accountService;
+  }
 
-    @PostMapping("/update-savings")
-    public ResponseEntity<?> updateSavings(
-            @AuthenticationPrincipal AppUserDetails userDetails,
-            @Valid @RequestBody UpdateAccountRequest updateSavings
-    ) {
-        String username = userDetails.getUsername();
-        accountService.upsertAccountBalance(
-                username,
-                updateSavings.getName(),
-                updateSavings.getAccountType(),
-                updateSavings.getBalance()
-        );
-        return ResponseEntity.ok("Savings updated successfully");
-    }
+  @PostMapping("/update-savings")
+  public ResponseEntity<?> updateSavings(
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @Valid @RequestBody UpdateAccountRequest updateSavings) {
+    String username = userDetails.getUsername();
+    accountService.upsertAccountBalance(
+        username,
+        updateSavings.getName(),
+        updateSavings.getAccountType(),
+        updateSavings.getBalance());
+    return ResponseEntity.ok("Savings updated successfully");
+  }
 
-    @PostMapping("/update-investments")
-    public ResponseEntity<?> updateInvestments(
-            @AuthenticationPrincipal AppUserDetails userDetails,
-            @Valid @RequestBody UpdateAccountRequest updateInvestments) {
+  @PostMapping("/update-investments")
+  public ResponseEntity<?> updateInvestments(
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @Valid @RequestBody UpdateAccountRequest updateInvestments) {
 
-        String username = userDetails.getUsername();
-        accountService.upsertAccountBalance(
-                username,
-                updateInvestments.getName(),
-                updateInvestments.getAccountType(),
-                updateInvestments.getBalance()
-        );
-        return ResponseEntity.ok("Investments updated successfully");
-    }
+    String username = userDetails.getUsername();
+    accountService.upsertAccountBalance(
+        username,
+        updateInvestments.getName(),
+        updateInvestments.getAccountType(),
+        updateInvestments.getBalance());
+    return ResponseEntity.ok("Investments updated successfully");
+  }
 }

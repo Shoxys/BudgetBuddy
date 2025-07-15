@@ -4,26 +4,27 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class NetworthResponse {
-    private BigDecimal total;
-    private List<BreakdownItem> breakdownItems;
+  private BigDecimal total;
+  private List<BreakdownItem> breakdownItems;
 
-    public NetworthResponse(BigDecimal total, List<BreakdownItem> breakdownItems) {
-        this.total = total;
-        this.breakdownItems = breakdownItems;
-    }
+  public NetworthResponse(BigDecimal total, List<BreakdownItem> breakdownItems) {
+    this.total = total;
+    this.breakdownItems = breakdownItems;
+  }
 
-    public BigDecimal getTotal() {
-        return total;
-    }
+  public BigDecimal getTotal() {
+    return total;
+  }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-    public List<BreakdownItem> getBreakdownItems() {
-        return breakdownItems;
-    }
+  public void setTotal(BigDecimal total) {
+    this.total = total;
+  }
 
-    public void setBreakdownItems(List<BreakdownItem> breakdownItems) {
-        this.breakdownItems = breakdownItems;
-    }
+  public List<BreakdownItem> getBreakdownItems() {
+    return breakdownItems;
+  }
+
+  public void setBreakdownItems(List<BreakdownItem> breakdownItems) {
+    this.breakdownItems = breakdownItems;
+  }
 }
