@@ -21,14 +21,32 @@ public class AccountController {
     }
 
     @PostMapping("/update-savings")
-    public ResponseEntity<?> updateSavings(@AuthenticationPrincipal AppUserDetails userDetails, @Valid @RequestBody UpdateAccountRequest updateSavings) {
-        accountService.upsertAccountBalance(userDetails.getUsername(), updateSavings.getName(), updateSavings.getAccountType(), updateSavings.getBalance());
+    public ResponseEntity<?> updateSavings(
+            @AuthenticationPrincipal AppUserDetails userDetails,
+            @Valid @RequestBody UpdateAccountRequest updateSavings
+    ) {
+        String username = userDetails.getUsername();
+        accountService.upsertAccountBalance(
+                username,
+                updateSavings.getName(),
+                updateSavings.getAccountType(),
+                updateSavings.getBalance()
+        );
         return ResponseEntity.ok("Savings updated successfully");
     }
 
     @PostMapping("/update-investments")
-    public ResponseEntity<?> updateInvestments(@AuthenticationPrincipal AppUserDetails userDetails, @Valid @RequestBody UpdateAccountRequest updateInvestments) {
-        accountService.upsertAccountBalance(userDetails.getUsername(), updateInvestments.getName(), updateInvestments.getAccountType(), updateInvestments.getBalance());
+    public ResponseEntity<?> updateInvestments(
+            @AuthenticationPrincipal AppUserDetails userDetails,
+            @Valid @RequestBody UpdateAccountRequest updateInvestments) {
+
+        String username = userDetails.getUsername();
+        accountService.upsertAccountBalance(
+                username,
+                updateInvestments.getName(),
+                updateInvestments.getAccountType(),
+                updateInvestments.getBalance()
+        );
         return ResponseEntity.ok("Investments updated successfully");
     }
 }
