@@ -5,6 +5,9 @@ import java.util.List;
 public class GoalStatsResponse {
     private List<GoalStat> goalStats;
 
+    public GoalStatsResponse() {
+    }
+
     public GoalStatsResponse(List<GoalStat> goalStats) {
         this.goalStats = goalStats;
     }

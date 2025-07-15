@@ -61,6 +61,7 @@ public class Transaction {
 
     // Copy constructor for tests
     public Transaction(Transaction other) {
+        this.id = other.id;
         this.date = other.date;
         this.amount = other.amount;
         this.description = other.description;

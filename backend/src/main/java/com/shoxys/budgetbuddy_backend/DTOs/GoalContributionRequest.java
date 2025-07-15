@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 public class GoalContributionRequest {
     private BigDecimal contribution;
 
+    public GoalContributionRequest() {
+    }
+
     public GoalContributionRequest(BigDecimal contribution) {
         this.contribution = contribution;
     }

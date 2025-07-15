@@ -2,6 +2,7 @@ package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 public class RecentTransactions {
     private LocalDate date;
@@ -12,12 +13,13 @@ public class RecentTransactions {
     public RecentTransactions() {
     }
 
-    public RecentTransactions(LocalDate date, String description, String category, BigDecimal amount) {
-        this.date = date;
+    public RecentTransactions(Date date, String description, String category, BigDecimal amount) {
+        this.date = ((java.sql.Date) date).toLocalDate();
         this.description = description;
         this.category = category;
         this.amount = amount;
     }
+
 
     public LocalDate getDate() {
         return date;
