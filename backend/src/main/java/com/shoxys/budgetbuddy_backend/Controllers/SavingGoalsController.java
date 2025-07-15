@@ -22,12 +22,12 @@ public class SavingGoalsController {
         this.savingGoalService = savingGoalService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/pending")
     public List<SavingGoal> getPendingGoals(@AuthenticationPrincipal AppUserDetails userDetails) {
         return savingGoalService.getPendingSavingGoalsForUser(userDetails.getUsername());
     }
 
-    @GetMapping("/")
+    @GetMapping("/completed")
     public List<SavingGoal> getCompleteGoals(@AuthenticationPrincipal AppUserDetails userDetails) {
         return savingGoalService.getCompleteSavingGoalsForUser(userDetails.getUsername());
     }
@@ -37,16 +37,16 @@ public class SavingGoalsController {
         return savingGoalService.getSavingGoalTitleById(userDetails.getUsername(), id);
     }
 
-    @GetMapping("/goal-stats")
+    @GetMapping("/stats")
     public GoalStatsResponse getGoalStats(@AuthenticationPrincipal AppUserDetails userDetails) {
         return savingGoalService.getGoalStatsForUser(userDetails.getUsername());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/contribute")
     public ResponseEntity<?> updateContributionForGoal(
             @AuthenticationPrincipal AppUserDetails userDetails,
             @PathVariable long id,
-            @Valid @RequestParam GoalContributionRequest request) {
+            @Valid @RequestBody GoalContributionRequest request) {
         savingGoalService.updateContributionForSavingGoal(userDetails.getUsername(), id, request);
         return ResponseEntity.ok("Goal contribution successfully updated");
     }
@@ -54,11 +54,11 @@ public class SavingGoalsController {
     @PostMapping
     public SavingGoal createNewGoal(
             @AuthenticationPrincipal AppUserDetails userDetails,
-            @Valid @RequestParam SavingGoalRequest request) {
+            @Valid @RequestBody SavingGoalRequest request) {
         return savingGoalService.createSavingGoal(userDetails.getUsername(), request);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/update")
     public SavingGoal updateGoal(
             @AuthenticationPrincipal AppUserDetails userDetails,
             @PathVariable long id,
@@ -66,7 +66,7 @@ public class SavingGoalsController {
         return savingGoalService.updateSavingGoal(userDetails.getUsername(), id, request);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public void deleteGoal(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
         savingGoalService.deleteSavingGoal(userDetails.getUsername(), id);
     }

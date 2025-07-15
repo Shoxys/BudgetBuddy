@@ -75,7 +75,7 @@ public class SavingGoalService {
     }
 
     public GoalStat getInProgressGoalStat(User user) {
-        int inProgressCount = savingGoalsRepo.findCountINPROGRESSSavingGoalsByUser(user);
+        int inProgressCount = savingGoalsRepo.findCountInProgressSavingGoalsByUser(user);
 
         int inProgressInWeek = savingGoalsRepo.amountOfInProgressGoalsInWeek(user, Utils.getStartOfWeek(), Utils.getEndOfWeek());
         String plurality = inProgressInWeek > 1 ? "goals" : "goal";
@@ -85,7 +85,7 @@ public class SavingGoalService {
     }
 
     public GoalStat getOverdueGoalStat(User user) {
-        int overdueCount = savingGoalsRepo.findCountOVERDUESavingGoalsByUser(user);
+        int overdueCount = savingGoalsRepo.findCountOverdueSavingGoalsByUser(user);
         int overdueInWeek = savingGoalsRepo.amountOfOverdueGoalsInWeek(user, Utils.getStartOfWeek(), Utils.getEndOfWeek());
         String plurality = overdueInWeek > 1 ? "goals" : "goal";
         String overdueGoalInsight = String.format("You have %d overdue %s this week", overdueInWeek, plurality);

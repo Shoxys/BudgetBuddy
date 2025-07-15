@@ -30,6 +30,9 @@ public class SavingGoalRequest {
 
     private String imageRef;
 
+    public SavingGoalRequest() {
+    }
+
     public SavingGoalRequest(String title, BigDecimal target, BigDecimal contributed, LocalDate date, String imageRef) {
         this.title = title;
         this.target = target;

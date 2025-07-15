@@ -205,9 +205,9 @@ class SavingGoalServiceTest {
         when(userRepo.getUserByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
         when(savingGoalsRepo.findCountCompletedSavingGoalsByUser(mockUser)).thenReturn(2);
         when(savingGoalsRepo.amountOfCompletedGoalsInWeek(eq(mockUser), any(), any())).thenReturn(1);
-        when(savingGoalsRepo.findCountINPROGRESSSavingGoalsByUser(mockUser)).thenReturn(3);
+        when(savingGoalsRepo.findCountInProgressSavingGoalsByUser(mockUser)).thenReturn(3);
         when(savingGoalsRepo.amountOfInProgressGoalsInWeek(eq(mockUser), any(), any())).thenReturn(2);
-        when(savingGoalsRepo.findCountOVERDUESavingGoalsByUser(mockUser)).thenReturn(1);
+        when(savingGoalsRepo.findCountOverdueSavingGoalsByUser(mockUser)).thenReturn(1);
         when(savingGoalsRepo.amountOfOverdueGoalsInWeek(eq(mockUser), any(), any())).thenReturn(1);
         when(savingGoalsRepo.findCountSavingGoalsByUser(mockUser)).thenReturn(4);
         // called twice due to method reuse
@@ -254,7 +254,7 @@ class SavingGoalServiceTest {
 
     @Test
     void getInProgressGoalStat_shouldReturnCorrectStat() {
-        when(savingGoalsRepo.findCountINPROGRESSSavingGoalsByUser(mockUser)).thenReturn(4);
+        when(savingGoalsRepo.findCountInProgressSavingGoalsByUser(mockUser)).thenReturn(4);
         when(savingGoalsRepo.amountOfInProgressGoalsInWeek(eq(mockUser), any(), any())).thenReturn(3);
 
         GoalStat stat = savingGoalService.getInProgressGoalStat(mockUser);
@@ -266,7 +266,7 @@ class SavingGoalServiceTest {
 
     @Test
     void getOverdueGoalStat_shouldReturnCorrectStat() {
-        when(savingGoalsRepo.findCountOVERDUESavingGoalsByUser(mockUser)).thenReturn(2);
+        when(savingGoalsRepo.findCountOverdueSavingGoalsByUser(mockUser)).thenReturn(2);
         when(savingGoalsRepo.amountOfOverdueGoalsInWeek(eq(mockUser), any(), any())).thenReturn(1);
 
         GoalStat stat = savingGoalService.getOverdueGoalStat(mockUser);
