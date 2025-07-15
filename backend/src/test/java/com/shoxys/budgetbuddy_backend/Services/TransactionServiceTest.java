@@ -538,7 +538,7 @@ public class TransactionServiceTest {
                 : request.getAmount();
 
         when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
-        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));
+        when(transactionRepo.findTransactionByUserAndId(mockUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));
         when(accountService.syncSpendingAccountBalance(mockTransaction, expectedAmount)).thenReturn(mockAccount);
         when(transactionRepo.save(any(Transaction.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -573,7 +573,7 @@ public class TransactionServiceTest {
         Transaction mockTransaction = new Transaction(transactionMap.get("Transaction1"));
         long mockTransactionId = mockTransaction.getId();
         when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
-        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransactionId)).thenReturn(Optional.empty());
+        when(transactionRepo.findTransactionByUserAndId(mockUser, mockTransactionId)).thenReturn(Optional.empty());
 
         assertThrows(TransactionNotFoundException.class, () ->
                 transactionService.updateTransaction(VAlID_EMAIL, mockTransactionId, mockRequest));
@@ -589,7 +589,7 @@ public class TransactionServiceTest {
         mockTransaction.setAccount(mockAccount);
 
         when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
-        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));;
+        when(transactionRepo.findTransactionByUserAndId(mockUser, mockTransaction.getId())).thenReturn(Optional.of(mockTransaction));;
         when(accountRepo.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
         // Act
         transactionService.deleteTransaction(VAlID_EMAIL, mockTransaction.getId());
@@ -615,7 +615,7 @@ public class TransactionServiceTest {
         Transaction mockTransaction = new Transaction();
         long mockTransactionId = mockTransaction.getId();
         when(userRepo.getUserByEmail(VAlID_EMAIL)).thenReturn(Optional.of(mockUser));
-        when(transactionRepo.findTransactionByIdAndUser(mockUser, mockTransactionId)).thenReturn(Optional.empty());
+        when(transactionRepo.findTransactionByUserAndId(mockUser, mockTransactionId)).thenReturn(Optional.empty());
 
         assertThrows(TransactionNotFoundException.class, () ->
                 transactionService.deleteTransaction(VAlID_EMAIL, mockTransactionId));

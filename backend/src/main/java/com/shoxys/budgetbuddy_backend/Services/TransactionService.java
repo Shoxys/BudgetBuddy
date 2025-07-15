@@ -4,8 +4,6 @@ import com.shoxys.budgetbuddy_backend.DTOs.TransactionRequest;
 import com.shoxys.budgetbuddy_backend.Entities.Account;
 import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Entities.User;
-import com.shoxys.budgetbuddy_backend.Enums.AccountType;
-import com.shoxys.budgetbuddy_backend.Enums.BankCsvColumn;
 import com.shoxys.budgetbuddy_backend.Enums.SourceType;
 import com.shoxys.budgetbuddy_backend.Enums.TransactionType;
 import com.shoxys.budgetbuddy_backend.Exceptions.AccountNotFoundException;
@@ -17,7 +15,6 @@ import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Utils;
 import com.shoxys.budgetbuddy_backend.DTOs.TransactionSummaryResponse;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -196,7 +193,7 @@ public class TransactionService {
         User user = userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
-        Transaction transaction = transactionRepo.findTransactionByIdAndUser(user, id)
+        Transaction transaction = transactionRepo.findTransactionByUserAndId(user, id)
                 .orElseThrow(() -> new TransactionNotFoundException(id));
 
         // Calculate new amount (DEBIT = negative)
@@ -224,7 +221,7 @@ public class TransactionService {
         User user = userRepo.getUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
-        Transaction txn = transactionRepo.findTransactionByIdAndUser(user, id)
+        Transaction txn = transactionRepo.findTransactionByUserAndId(user, id)
                 .orElseThrow(() -> new TransactionNotFoundException(id));
 
         Account acc = txn.getAccount();

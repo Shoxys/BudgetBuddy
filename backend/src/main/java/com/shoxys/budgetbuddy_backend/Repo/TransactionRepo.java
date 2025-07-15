@@ -20,7 +20,7 @@ import java.util.Optional;
 public interface TransactionRepo extends JpaRepository<Transaction, Long> {
     List<Transaction> findByUser_Id(Long userId);
 
-    @Query(value = "SELECT t FROM Transaction t WHERE t.user.id = ?1 AND t.date BETWEEN ?2 AND ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM transactions WHERE user_id = ?1 AND date BETWEEN ?2 AND ?3", nativeQuery = true)
     List<Transaction> findByUserIdAndDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
     Page<Transaction> findByUser_Id(Long userId, Pageable pageable);
@@ -29,20 +29,11 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findByUser_IdOrderByDateDesc(Long userId);
 
-    @Query(value = "SELECT t FROM transactions t WHERE t.user_id = ?1 AND t.date >= ?2", nativeQuery = true)
-    List<Transaction> findByUserIdAndDateAfter(Long userId, LocalDate startDate);
-
-    @Query(value = "SELECT COUNT(t) FROM transactions t WHERE t.user_id = ?1 AND t.date BETWEEN ?2 AND ?3", nativeQuery = true)
-    Long countByUserIdAndDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
-
-    @Query(value = "SELECT MIN(t.date), MAX(t.date) FROM Transaction t WHERE t.user_id.id = ?1 AND t.date BETWEEN ?2 AND ?3", nativeQuery = true)
-    Object[] findDateRangeForUserTransactions(Long userId, LocalDate startDate, LocalDate endDate);
-
     @Query(value = """
         SELECT SUM(t.amount)
         FROM transactions t
-        JOIN Account a ON t.account.id = a.id
-        WHERE t.user_id.id = ?1
+        JOIN accounts a ON t.account_id = a.id
+        WHERE t.user_id = ?1
           AND a.type = 'SPENDING'
           AND t.amount > 0
           AND MONTH(t.date) = MONTH(CURRENT_DATE())
@@ -56,16 +47,15 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
     FROM transactions t
     WHERE t.user_id = ?1
       AND t.amount > 0
-      AND MONTH(t.date) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-      AND YEAR(t.date) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+      AND t.date BETWEEN ?2 AND ?3
     """, nativeQuery = true)
-    BigDecimal getTotalCreditLastMonth(Long userId);
+    BigDecimal getTotalCreditBetween(Long userId, LocalDate start, LocalDate end);
 
     @Query(value = """
-        SELECT SUM(ABS(t.amount))
+        SELECT SUM(t.amount)
         FROM transactions t
-        JOIN Account a ON t.account.id = a.id
-        WHERE t.user_id.id = ?1
+        JOIN accounts a ON t.account_id = a.id
+        WHERE t.user_id = ?1
           AND a.type = 'SPENDING'
           AND t.amount < 0
           AND MONTH(t.date) = MONTH(CURRENT_DATE())
@@ -75,14 +65,13 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
 
     @Query(value = """
-    SELECT SUM(ABS(t.amount))
+    SELECT SUM(t.amount)
     FROM transactions t
     WHERE t.user_id = ?1
       AND t.amount < 0
-      AND MONTH(t.date) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-      AND YEAR(t.date) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+      AND t.date BETWEEN ?2 AND ?3
     """, nativeQuery = true)
-    BigDecimal getTotalDebitLastMonth(Long userId);
+    BigDecimal getTotalDebitBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
     @Query("SELECT SUM(t.amount), 0 " +
             "FROM Transaction t " +
@@ -99,10 +88,10 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
         ORDER BY total_amount DESC
         LIMIT 5
     """, nativeQuery = true)
-    List<ExpenseAnalysis> findTop5CategoriesByAmountNative(Long userId);
+    List<ExpenseAnalysis> findTop5CategoriesByAmount(Long userId);
 
     @Query(value = """
-        SELECT date, description, category, amount
+        SELECT CAST(date AS DATE) AS date, description, category, amount
         FROM transactions t
         WHERE t.user_id = ?1
         ORDER BY date DESC
@@ -110,9 +99,7 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
     """, nativeQuery = true)
     List<RecentTransactions> findLatest3TransactionSummaries(Long userId);
 
-    LocalDate findEarliestTransactionDate(Long userId);
-
-    Optional<Transaction> findTransactionByIdAndUser(User user, long id);
+    Optional<Transaction> findTransactionByUserAndId(User user, long id);
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.account = ?1")
     BigDecimal sumAmountsByAccount(Account account);
