@@ -2,6 +2,7 @@ package com.shoxys.budgetbuddy_backend.Security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,24 +27,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
-    final String authHeader = request.getHeader("Authorization");
+          HttpServletRequest request,
+          HttpServletResponse response,
+          FilterChain filterChain) throws ServletException, IOException {
 
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-      String jwt = authHeader.substring(7);
+    String jwt = null;
+
+    if (request.getCookies() != null) {
+      for (Cookie cookie : request.getCookies()) {
+        if ("jwt".equals(cookie.getName())) {
+          jwt = cookie.getValue();
+          break;
+        }
+      }
+    }
+
+    if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       String email = jwtUtil.extractUsername(jwt);
 
-      if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+      if (email != null) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
         if (jwtUtil.validateToken(jwt, userDetails)) {
-          UsernamePasswordAuthenticationToken token =
-              new UsernamePasswordAuthenticationToken(
+          UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                   userDetails, null, userDetails.getAuthorities());
 
-          token.setDetails(new WebAuthenticationDetails(request));
-          SecurityContextHolder.getContext().setAuthentication(token);
+          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authToken);
         }
       }
     }
