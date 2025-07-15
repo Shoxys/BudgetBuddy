@@ -4,10 +4,9 @@ import com.shoxys.budgetbuddy_backend.DTOs.DashboardResponse;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.DashboardService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -21,6 +20,7 @@ public class DashboardController {
     }
 
     @GetMapping("/data")
+    @ResponseBody
     public DashboardResponse getDashboardData(@AuthenticationPrincipal AppUserDetails userDetails) {
         long userId = userService.getUserIdByEmail(userDetails.getUsername());
         return dashboardService.getDashboardResponse(userId);
