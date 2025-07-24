@@ -1,35 +1,40 @@
-package com.shoxys.budgetbuddy_backend.DTOs;
+package com.shoxys.budgetbuddy_backend.DTOs.Transaction;
 
+import com.shoxys.budgetbuddy_backend.Config.Constants;
 import com.shoxys.budgetbuddy_backend.Enums.SourceType;
 import com.shoxys.budgetbuddy_backend.Enums.TransactionType;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Request object for creating or updating a financial transaction.
+ */
 public class TransactionRequest {
-
   @NotNull(message = "Date is required")
   private LocalDate date;
 
   @NotNull(message = "Amount is required")
-  @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
-  @Digits(integer = 12, fraction = 2, message = "Amount must be a valid monetary value")
+  @DecimalMin(value = Constants.MIN_BALANCE, message = "Amount must be at least " + Constants.MIN_BALANCE)
+  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Amount must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
   private BigDecimal amount;
 
   @NotBlank(message = "Description is required")
+  @Size(max = Constants.MAX_DESCRIPTION_LENGTH, message = "Description cannot exceed " + Constants.MAX_DESCRIPTION_LENGTH + " characters")
   private String description;
 
-  @NotBlank(message = "category is required")
+  @NotBlank(message = "Category is required")
+  @Size(max = Constants.MAX_CATEGORY_LENGTH, message = "Category cannot exceed " + Constants.MAX_CATEGORY_LENGTH + " characters")
   private String category;
 
-  @NotNull(message = "type is required")
+  @NotNull(message = "Type is required")
   private TransactionType type;
 
   private String merchant;
 
   @NotNull(message = "Balance is required")
-  @DecimalMin(value = "0.01", message = "Balance must be greater than 0")
-  @Digits(integer = 12, fraction = 2, message = "Balance must be a valid monetary value")
+  @DecimalMin(value = Constants.MIN_BALANCE, message = "Balance must be at least " + Constants.MIN_BALANCE)
+  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Balance must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
   private BigDecimal balanceAtTransaction;
 
   @NotNull(message = "Source is required")
@@ -38,14 +43,14 @@ public class TransactionRequest {
   public TransactionRequest() {}
 
   public TransactionRequest(
-      LocalDate date,
-      BigDecimal amount,
-      String description,
-      String category,
-      TransactionType type,
-      String merchant,
-      BigDecimal balanceAtTransaction,
-      SourceType source) {
+          LocalDate date,
+          BigDecimal amount,
+          String description,
+          String category,
+          TransactionType type,
+          String merchant,
+          BigDecimal balanceAtTransaction,
+          SourceType source) {
     this.date = date;
     this.amount = amount;
     this.description = description;
@@ -107,8 +112,6 @@ public class TransactionRequest {
   public BigDecimal getBalanceAtTransaction() {
     return balanceAtTransaction;
   }
-
-  // TODO: Add logic for this
 
   public void setBalanceAtTransaction(BigDecimal balanceAtTransaction) {
     this.balanceAtTransaction = balanceAtTransaction;

@@ -1,11 +1,14 @@
-package com.shoxys.budgetbuddy_backend.DTOs;
+package com.shoxys.budgetbuddy_backend.DTOs.SavingGoal;
 
 import com.shoxys.budgetbuddy_backend.Enums.GoalType;
 
+/**
+ * Represents a statistic or insight for a saving goal, including its type and amount.
+ */
 public class GoalStat {
   private String insight;
   private GoalType goalType;
-  private int amount;
+  private int amount; // Represents a count or metric, not a monetary value
 
   public GoalStat(String insight, GoalType goalType, int amount) {
     this.insight = insight;

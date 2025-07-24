@@ -1,7 +1,10 @@
-package com.shoxys.budgetbuddy_backend.DTOs;
+package com.shoxys.budgetbuddy_backend.DTOs.SavingGoal;
 
 import java.math.BigDecimal;
 
+/**
+ * Request object for adding a contribution to a saving goal.
+ */
 public class GoalContributionRequest {
   private BigDecimal contribution;
 
