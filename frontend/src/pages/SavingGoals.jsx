@@ -1,70 +1,129 @@
-import { useState } from "react"
-import Sidebar from "../components/Sidebar"
-import GoalStats from "../components/SavingGoals/GoalStats"
-import GoalCard from "../components/SavingGoals/GoalCard"
-import GoalModal from "../components/SavingGoals/GoalModal"
+/**
+ * SavingGoals component for displaying and managing saving goals.
+ * Renders goal statistics, pending and completed goals, and a modal for adding new goals.
+ */
 
-const data = {
-    goals: [
-        {id: 0, title: "Emergency Fund", contributed: 125, target: 2000, image: "src/assets/default.png", endDate: "2025-05-21"},
-        {id: 1, title: "PS5", contributed: 230, target: 500, image: "src/assets/ps5.png", endDate: "2025-06-30"},
-        {id: 2, title: "Nike Air Forces", contributed: 30, target: 100, image: "src/assets/default.png", endDate: "2025-02-27"},
-        {id: 3, title: "Wallet", contributed: 40, target: 85, image: "src/assets/default.png", endDate: "2025-12-30"},
-        {id: 4, title: "Emergency Fund", contributed: 125, target: 2000, image: "src/assets/default.png", endDate: "2025-05-21"},
-        {id: 5, title: "PS5", contributed: 230, target: 500, image: "src/assets/ps5.png", endDate: "2025-06-30"},
-        {id: 6, title: "Nike Air Forces", contributed: 30, target: 100, image: "src/assets/default.png", endDate: "2025-02-27"},
-        {id: 7, title: "Wallet", contributed: 40, target: 85, image: "src/assets/default.png", endDate: "2025-12-30"},
-    ],
-    goalsComplete: [
-        {id: 0, title: "Emergency Fund", contributed: 125, target: 2000, image: "src/assets/default.png", endDate: "2025-05-21"},
-        {id: 1, title: "PS5", contributed: 230, target: 500, image: "src/assets/ps5.png", endDate: "2025-06-30"},
-        {id: 2, title: "Nike Air Forces", contributed: 30, target: 100, image: "src/assets/default.png", endDate: "2025-02-27"},
-    
-    ],
-}
+// Component Imports
+import Sidebar from '../components/Sidebar';
+import GoalStats from '../components/SavingGoals/GoalStats';
+import GoalCard from '../components/SavingGoals/GoalCard';
+import GoalModal from '../components/SavingGoals/GoalModal';
+import Notification from '../components/Notification';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+// Hook Imports
+import { useState, useEffect } from 'react';
+import { usePendingGoals, useCompletedGoals } from '../api/SavingGoalsHooks';
+
+// Constant Imports
+import { GoalMeta } from '../constants/SavingGoalConstants';
+import { ROUTES } from '../constants/AppConstants';
 
 export default function SavingGoals() {
-   const [addGoal, setAddGoal] = useState(false)
+  // State for modal and notifications
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [notificationState, setNotificationState] = useState({
+    isOpen: false,
+    type: 'info',
+    message: '',
+  });
 
-   const isGoalsValid = Array.isArray(data.goals) && data.goals.length > 0;
-   const isGoalsCompleteValid = Array.isArray(data.goalsComplete) && data.goalsComplete.length > 0;
+  // Fetch goal data
+  const {
+    data: pendingGoals = [],
+    isLoading: isLoadingPending,
+    error: errorPending,
+  } = usePendingGoals();
+  const {
+    data: completedGoals = [],
+    isLoading: isLoadingCompleted,
+    error: errorCompleted,
+  } = useCompletedGoals();
 
-   return (
-      <div className="relative min-h-screen min-w-screen bg-bb_slate pl-20">
-        <Sidebar selectedNav="Dashboard"/>
-        <div className="flex flex-col pb-4 w-full">
-            <div className="flex flex-col bg-white py-1 mt-3 px-10">
-                <div className="flex flex-row justify-between">
-                    <div className="flex flex-row w-full items-center gap-2">
-                        <img className="w-10.5" src="src/assets/goals-blue.png" alt="goals icon" />
-                        <h2 className="text-2xl font-header font-bold">
-                            Saving Goals
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col gap-5 bg-white py-4 px-6 ml-8 mr-8 mt-2 text-black rounded-sm shadow-bb-general">
-                <GoalStats/>
-                <div className="flex flex-col gap-4 min-h-[40vh]">
-                    <div className="flex flex-row gap-6 items-center">
-                        <h1 className="font-header text-2xl font-bold text-gray-800"> My Goals</h1>
-                        <button onClick={() => setAddGoal(true)} className="btn-primary font-semibold text-md hover-effect ">+ New Goal</button>
-                    </div>
-                    {isGoalsValid 
-                        ? (<GoalCard data={data.goals}/>)
-                        : (<span className="font-body text-gray-800 text-md">Add new goals to get started!</span>)
-                    }
-                </div>
-            </div>
-            <div className="flex flex-col min-h-[40vh] gap-4 bg-[#E8FFF1FF] py-4 px-4 ml-8 mr-8 text-black rounded-sm shadow-bb-general">
-                <h1 className="font-header text-xl font-bold text-gray-800"> Completed</h1>  
-                {isGoalsCompleteValid 
-                        ? (<GoalCard data={data.goalsComplete} completed={true}/>) 
-                        : (<span className="font-body text-gray-800 text-md">Add new goals to get started!</span>)
-                    }       
-            </div>
-            <GoalModal isOpen={addGoal} onClose={() => setAddGoal(false)} />
+  // Handle errors
+  useEffect(() => {
+    if (errorPending || errorCompleted) {
+      setNotificationState({
+        isOpen: true,
+        type: 'error',
+        message: errorPending?.message || errorCompleted?.message || 'Failed to load goals',
+      });
+    }
+  }, [errorPending, errorCompleted]);
+
+  // Handlers
+  const openGoalModal = () => setIsGoalModalOpen(true);
+  const closeGoalModal = () => setIsGoalModalOpen(false);
+  const closeNotification = () => setNotificationState((prev) => ({ ...prev, isOpen: false }));
+
+  // Derived state
+  const hasPendingGoals = pendingGoals.length > 0;
+  const hasCompletedGoals = completedGoals.length > 0;
+  const isLoading = isLoadingPending || isLoadingCompleted;
+
+  // Layout
+  return (
+    <div className="relative min-h-screen bg-bb_slate pl-20">
+      {/* Notification */}
+      <Notification
+        type={notificationState.type}
+        message={notificationState.message}
+        isOpen={notificationState.isOpen}
+        onClose={closeNotification}
+        duration={5000}
+      />
+
+      {/* Sidebar */}
+      <Sidebar selectedNav={ROUTES.DASHBOARD} />
+
+      {/* Main Content */}
+      <div className="flex flex-col w-full pb-4">
+        {/* Header */}
+        <div className="flex flex-col bg-white py-1 mt-3 px-10">
+          <div className="flex flex-row items-center gap-2">
+            <img className="w-10.5" src={GoalMeta.TOTAL.icon} alt="Goals icon" />
+            <h2 className="text-2xl font-header font-bold">Saving Goals</h2>
+          </div>
         </div>
+
+        {/* Pending Goals Section */}
+        <div className="flex flex-col gap-5 bg-white py-4 px-6 ml-8 mr-8 mt-2 text-black rounded-sm shadow-bb-general">
+          <GoalStats />
+          <div className="flex flex-col gap-4 min-h-[40vh]">
+            <div className="flex flex-row gap-6 items-center">
+              <h1 className="font-header text-2xl font-bold text-gray-800">My Goals</h1>
+              <button
+                onClick={openGoalModal}
+                className="btn-primary font-header font-semibold text-md rounded-md px-4 py-2 hover:bg-btn_hover"
+              >
+                + New Goal
+              </button>
+            </div>
+            {isLoading ? (
+              <LoadingSpinner message="Loading goals..." />
+            ) : hasPendingGoals ? (
+              <GoalCard data={pendingGoals} />
+            ) : (
+              <span className="font-body text-gray-800 text-md">Add new goals to get started!</span>
+            )}
+          </div>
+        </div>
+
+        {/* Completed Goals Section */}
+        <div className="flex flex-col min-h-[40vh] gap-4 py-4 px-4 ml-8 mr-8 text-black rounded-sm shadow-bb-general" style={{ backgroundColor: GoalMeta.COMPLETED.color }}>
+          <h1 className="font-header text-xl font-bold text-gray-800">Completed</h1>
+          {isLoading ? (
+            <LoadingSpinner message="Loading completed goals..." />
+          ) : hasCompletedGoals ? (
+            <GoalCard data={completedGoals} completed={true} />
+          ) : (
+            <span className="font-body text-gray-800 text-md">Add new goals to get started!</span>
+          )}
+        </div>
+
+        {/* Goal Modal */}
+        <GoalModal isOpen={isGoalModalOpen} onClose={closeGoalModal} />
+      </div>
     </div>
-   )
+  );
 }

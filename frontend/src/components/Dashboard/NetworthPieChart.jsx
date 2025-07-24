@@ -1,59 +1,79 @@
-import { PieChart, Pie, Cell, Legend, ResponsiveContainer  } from "recharts";
+/**
+ * NetworthPieChart component for visualizing net worth distribution.
+ * Renders a pie chart with account type breakdown and legend.
+ */
 
-const COLORS = ["#853fff", "#e92c81", "#ffbd51", "#64e69c"];
-const EMPTY_COLOR = "#D3D3D3";
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts';
 
-export default function NetworthPieChart({ data }) {
-  const isValid = data && data.total && Array.isArray(data.breakdown) && data.breakdown.length > 0;
+const ALL_ACCOUNT_TYPES = ['Goal Savings', 'Spending Account', 'Saving Account', 'Investment Account'];
+const COLOR_MAP = {
+  'Goal Savings': '#64e69c',
+  'Spending Account': '#853fff',
+  'Saving Account': '#e92c81',
+  'Investment Account': '#ffbd51',
+};
+const EMPTY_COLOR = '#E5E7EB';
 
-  // If data is valid then transform data for pie chart else use default data values
-  const breakdown = isValid
-    ? data.breakdown.map((d) => ({ ...d, value: d.value ?? 0 }))
-    : [{ name: "No Data", value: 1 }]; 
+export default function NetworthPieChart({ data = { total: 0, breakdownItems: [] } }) {
+  // Validate data structure
+  const isDataValid = data && typeof data.total === 'number' && Array.isArray(data.breakdownItems) && data.breakdownItems.length > 0;
 
-  // Renders legend for piechart
-  const renderColorfulLegendText = (value) => {
-    // Ensures data is valid
-    if (!isValid) {
-      return <span className="text-gray-400 text-sm">No Data</span>;
-    }
+  // Transform data: include all account types, default to 0 if missing
+  const breakdownMap = new Map();
+  if (isDataValid) {
+    data.breakdownItems.forEach((item) => breakdownMap.set(item.name, item.value ?? 0));
+  }
+  const chartData = ALL_ACCOUNT_TYPES.map((name) => ({
+    name,
+    value: breakdownMap.get(name) || 0,
+  })).sort((a, b) => b.value - a.value); // Sort by value descending
 
-    const item = breakdown.find(d => d.name === value);
-    if (!item) return value;
+  // Determine if chart should show "No Data"
+  const displayNoData = !isDataValid || chartData.every((item) => item.value === 0);
 
-    const percentage = ((item.value / data.total) * 100).toFixed(0);
+  // Render legend with percentage for valid data
+  const renderLegendText = (value) => {
+    if (displayNoData) return <span className="text-gray-400 text-sm">No Data</span>;
+
+    const item = chartData.find((d) => d.name === value);
+    const percentage = data.total > 0 ? ((item.value / data.total) * 100).toFixed(0) : 0;
+
     return (
-      <span className="font-body text-gray-800 text-sm 3xl:text-lg p-1">
-        {value} {percentage}%
+      <span className="text-gray-600 text-sm p-1">
+        {value} <span className="font-semibold text-gray-800">{percentage}%</span>
       </span>
     );
   };
 
+  // Layout
   return (
-    <div className="w-full h-[20vh]">
+    <div className="w-full h-[20vh] relative">
+      {/* Pie Chart */}
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Legend
-            iconType="circle"
-            layout="vertical"
-            verticalAlign="middle"
-            align="right"
-            iconSize={10}
-            formatter={renderColorfulLegendText}
-          />
+          {!displayNoData && (
+            <Legend
+              iconType="circle"
+              layout="vertical"
+              verticalAlign="middle"
+              align="right"
+              iconSize={10}
+              formatter={renderLegendText}
+            />
+          )}
           <Pie
-            data={breakdown}
+            data={displayNoData ? [{ name: 'No Data', value: 1 }] : chartData}
             dataKey="value"
-            cx="35%"
+            cx="45%"
             cy="50%"
-            innerRadius="55%"
-            outerRadius="75%"
-            paddingAngle={isValid ? 5 : 0}
+            innerRadius="60%"
+            outerRadius="80%"
+            paddingAngle={displayNoData ? 0 : 5}
           >
-            {breakdown.map((entry, index) => (
+            {chartData.map((entry) => (
               <Cell
-                key={`cell-${index}`}
-                fill={isValid ? COLORS[index % COLORS.length] : EMPTY_COLOR}
+                key={`cell-${entry.name}`}
+                fill={displayNoData ? EMPTY_COLOR : COLOR_MAP[entry.name] || EMPTY_COLOR}
               />
             ))}
           </Pie>

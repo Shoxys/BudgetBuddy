@@ -1,17 +1,27 @@
+/**
+ * PasswordToggle component for toggling password visibility.
+ * Displays an eye icon to show/hide password input.
+ */
+
 export default function PasswordToggle({ showPassword, setShowPassword, name }) {
-    const togglePasswordVisibility = (inputId) => {
-        setShowPassword((prev) => ({
-        ...prev,
-        [inputId] : !prev[inputId],
-        }));
-    };
-    return(
-        <button type="button" onClick={() => togglePasswordVisibility(name)} className="absolute right-3 top-[2.2rem] text-gray-400">
-            <img
-            src={showPassword[name] ? '/src/assets/eye-open.png' : '/src/assets/eye-closed.png'}
-            alt={showPassword[name] ? 'Hide password' : 'Show password'}
-            className="w-[1.6rem] h-full object-contain"
-            />
-        </button>
-    )
+  // Toggle password visibility for specified input
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
+
+  // Layout
+  return (
+    <button
+      type="button"
+      onClick={togglePasswordVisibility}
+      className="absolute right-3 top-[2.2rem] text-gray-400"
+      aria-label={showPassword[name] ? 'Hide password' : 'Show password'}
+    >
+      <img
+        src={showPassword[name] ? '/assets/eye-open.png' : '/assets/eye-closed.png'}
+        alt={showPassword[name] ? 'Hide password' : 'Show password'}
+        className="w-6 h-6 object-contain"
+      />
+    </button>
+  );
 }

@@ -1,12 +1,10 @@
 export { default as ValueCard } from './ValueCard';
 export { default as InsightsCard } from './InsightsCard';
 export { default as NetworthCard } from './NetworthCard';
-export { default as DropdownPeriod } from './DropdownPeriod';
 export { default as TotalBalanceCard } from './TotalBalanceCard';
 export { default as SavingGoalsCard } from './SavingGoalsCard';
 export { default as IncomeExpenseCard } from './IncomeExpensesCard';
 export { default as IncomeCard } from './IncomeCard';
 export { default as ExpenseAnalysisCard } from './ExpenseAnalysisCard';
 export { default as TransactionsCard } from './TransactionsCard';
-export { default as UpdateSavings } from './UpdateSavings';
-export { default as UpdateInvestments } from './UpdateInvesments';
+export { default as UpdateAccount } from './UpdateAccount';

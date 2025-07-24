@@ -1,10 +1,10 @@
-export function formatMoney(amount, currency = 'AUD') {
-  return amount.toLocaleString('en-AU', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  });
-}
+// helpers.js
+export const formatMoney = (value) => {
+    if (value == null) {
+        return '0.00';
+    }
+    return Number(value).toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
+};
 
 export function formatDate(date) {
   if (!date) return "Invalid Date";

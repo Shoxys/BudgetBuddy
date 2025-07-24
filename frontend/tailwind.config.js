@@ -1,8 +1,9 @@
+/**
+ * Tailwind CSS configuration for the application.
+ */
+
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -11,19 +12,19 @@ export default {
         bb_purple: '#853FFF',
         bb_green: '#64E69C',
         bb_yellow: '#FFBD51',
-        btn_hover: '#2180F0FF',
-        bb_salmon: '#FFF8F2FF',
-        bb_darkgrey: '#17191FFF',
-        bb_neutral: '#F3F4F6FF',
+        btn_hover: '#2180F0',
+        bb_salmon: '#FFF8F2',
+        bb_darkgrey: '#17191F',
+        bb_neutral: '#F3F4F6',
         bb_aqua: '#F0F8FF80',
-        bb_slate: "#FAFAFBFF"
+        bb_slate: '#FAFAFB',
       },
       fontFamily: {
-        'header': ['Archivo', 'sans-serif'],
-        'body': ['Inter', 'sans-serif'],
+        header: ['Archivo', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
       screens: {
-        '3xl': '1921px', // Custom breakpoint for my 1440p display
+        '3xl': '1921px',
       },
       boxShadow: {
         'custom-blue': '0px 8px 17px #008cff26, 0px 0px 2px #008cff1F',
@@ -33,7 +34,7 @@ export default {
         '6/13': '47%',
       },
       border: {
-        'border_gray': '#008CFFFF',
+        border_gray: '#008CFF',
       },
     },
   },
