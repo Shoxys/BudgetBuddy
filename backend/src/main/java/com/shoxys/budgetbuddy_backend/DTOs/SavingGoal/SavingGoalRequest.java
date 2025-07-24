@@ -5,22 +5,42 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Request object for creating or updating a saving goal.
- */
+/** Request object for creating or updating a saving goal. */
 public class SavingGoalRequest {
   @NotBlank(message = "Title is required")
-  @Size(max = Constants.MAX_TITLE_LENGTH, message = "Title cannot exceed " + Constants.MAX_TITLE_LENGTH + " characters")
+  @Size(
+      max = Constants.MAX_TITLE_LENGTH,
+      message = "Title cannot exceed " + Constants.MAX_TITLE_LENGTH + " characters")
   private String title;
 
   @NotNull(message = "Target amount is required")
-  @DecimalMin(value = Constants.MIN_BALANCE, message = "Target amount must be at least " + Constants.MIN_BALANCE)
-  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Target amount must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
+  @DecimalMin(
+      value = Constants.MIN_BALANCE,
+      message = "Target amount must be at least " + Constants.MIN_BALANCE)
+  @Digits(
+      integer = Constants.MAX_BALANCE_INTEGER_DIGITS,
+      fraction = Constants.MAX_BALANCE_FRACTION_DIGITS,
+      message =
+          "Target amount must be a valid monetary value with up to "
+              + Constants.MAX_BALANCE_INTEGER_DIGITS
+              + " integer digits and "
+              + Constants.MAX_BALANCE_FRACTION_DIGITS
+              + " decimal places")
   private BigDecimal target;
 
   @NotNull(message = "Contributed amount is required")
-  @DecimalMin(value = Constants.MIN_BALANCE, message = "Contributed amount must be at least " + Constants.MIN_BALANCE)
-  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Contributed amount must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
+  @DecimalMin(
+      value = Constants.MIN_BALANCE,
+      message = "Contributed amount must be at least " + Constants.MIN_BALANCE)
+  @Digits(
+      integer = Constants.MAX_BALANCE_INTEGER_DIGITS,
+      fraction = Constants.MAX_BALANCE_FRACTION_DIGITS,
+      message =
+          "Contributed amount must be a valid monetary value with up to "
+              + Constants.MAX_BALANCE_INTEGER_DIGITS
+              + " integer digits and "
+              + Constants.MAX_BALANCE_FRACTION_DIGITS
+              + " decimal places")
   private BigDecimal contributed;
 
   @NotNull(message = "Date is required")
@@ -30,7 +50,8 @@ public class SavingGoalRequest {
 
   public SavingGoalRequest() {}
 
-  public SavingGoalRequest(String title, BigDecimal target, BigDecimal contributed, LocalDate date, String imageRef) {
+  public SavingGoalRequest(
+      String title, BigDecimal target, BigDecimal contributed, LocalDate date, String imageRef) {
     this.title = title;
     this.target = target;
     this.contributed = contributed;

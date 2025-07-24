@@ -22,7 +22,11 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
-  public UserService(UserRepo userRepo, AuthService authService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+  public UserService(
+      UserRepo userRepo,
+      AuthService authService,
+      JwtUtil jwtUtil,
+      PasswordEncoder passwordEncoder) {
     this.userRepo = userRepo;
     this.authService = authService;
     this.jwtUtil = jwtUtil;
@@ -34,12 +38,15 @@ public class UserService {
   }
 
   public User getUserByEmail(String email) {
-      return userRepo.getUserByEmail(email)
-              .orElseThrow(() -> new UserNotFoundException("User not found"));
+    return userRepo
+        .getUserByEmail(email)
+        .orElseThrow(() -> new UserNotFoundException("User not found"));
   }
 
   public void changePassword(String email, ChangePasswordRequest request) {
-    User user = userRepo.getUserByEmail(email)
+    User user =
+        userRepo
+            .getUserByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("Incorrect account details"));
 
     if (!passwordEncoder.matches(request.getCurrentPassword(), user.getHashedPassword())) {
@@ -55,14 +62,16 @@ public class UserService {
   }
 
   public AuthResponse updateEmail(String email, UpdateEmailRequest request) {
-    User user = userRepo.getUserByEmail(email)
+    User user =
+        userRepo
+            .getUserByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("Incorrect account details"));
 
     if (!passwordEncoder.matches(request.getConfirmPassword(), user.getHashedPassword())) {
       throw new SecurityException("Incorrect account details");
     }
 
-    if(!Utils.isEmail(request.getNewEmail())) {
+    if (!Utils.isEmail(request.getNewEmail())) {
       throw new IllegalArgumentException("Please enter valid email address");
     }
 

@@ -14,6 +14,7 @@ import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import com.shoxys.budgetbuddy_backend.Exceptions.UserNotFoundException;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.AccountService;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +29,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
-
 @WebMvcTest(
-        value = AccountController.class,
-        excludeFilters = {
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        classes = com.shoxys.budgetbuddy_backend.Security.JwtAuthFilter.class)
-        })
+    value = AccountController.class,
+    excludeFilters = {
+      @ComponentScan.Filter(
+          type = FilterType.ASSIGNABLE_TYPE,
+          classes = com.shoxys.budgetbuddy_backend.Security.JwtAuthFilter.class)
+    })
 @AutoConfigureMockMvc(addFilters = false)
 class AccountControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @MockitoBean
-  private AccountService accountService;
+  @MockitoBean private AccountService accountService;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
   private User mockUser;
   private AppUserDetails principal;
@@ -60,7 +56,7 @@ class AccountControllerTest {
     principal = new AppUserDetails(mockUser);
     SecurityContext context = SecurityContextHolder.createEmptyContext();
     context.setAuthentication(
-            new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
+        new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
     SecurityContextHolder.setContext(context);
   }
 
@@ -85,24 +81,24 @@ class AccountControllerTest {
             eq("My Savings"),
             eq(AccountType.SAVINGS),
             eq(BigDecimal.valueOf(15000))))
-            .thenReturn(mockAccount);
+        .thenReturn(mockAccount);
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().string("Account updated successfully"));
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(content().string("Account updated successfully"));
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(1L),
-                    eq("My Savings"),
-                    eq(AccountType.SAVINGS),
-                    eq(BigDecimal.valueOf(15000)));
+        .upsertAccountBalance(
+            eq("test@example.com"),
+            eq(1L),
+            eq("My Savings"),
+            eq(AccountType.SAVINGS),
+            eq(BigDecimal.valueOf(15000)));
   }
 
   @Test
@@ -124,24 +120,24 @@ class AccountControllerTest {
             eq("New Investments"),
             eq(AccountType.INVESTMENTS),
             eq(BigDecimal.valueOf(8000))))
-            .thenReturn(mockAccount);
+        .thenReturn(mockAccount);
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().string("Account updated successfully"));
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(content().string("Account updated successfully"));
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(null),
-                    eq("New Investments"),
-                    eq(AccountType.INVESTMENTS),
-                    eq(BigDecimal.valueOf(8000)));
+        .upsertAccountBalance(
+            eq("test@example.com"),
+            eq(null),
+            eq("New Investments"),
+            eq(AccountType.INVESTMENTS),
+            eq(BigDecimal.valueOf(8000)));
   }
 
   @Test
@@ -159,23 +155,23 @@ class AccountControllerTest {
             eq(null),
             eq(AccountType.SAVINGS),
             eq(BigDecimal.valueOf(15000))))
-            .thenThrow(new IllegalArgumentException("Name cannot be empty"));
+        .thenThrow(new IllegalArgumentException("Name cannot be empty"));
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(1L),
-                    eq(null),
-                    eq(AccountType.SAVINGS),
-                    eq(BigDecimal.valueOf(15000)));
+        .upsertAccountBalance(
+            eq("test@example.com"),
+            eq(1L),
+            eq(null),
+            eq(AccountType.SAVINGS),
+            eq(BigDecimal.valueOf(15000)));
   }
 
   @Test
@@ -193,23 +189,23 @@ class AccountControllerTest {
             eq(""),
             eq(AccountType.SAVINGS),
             eq(BigDecimal.valueOf(15000))))
-            .thenThrow(new IllegalArgumentException("Name cannot be empty"));
+        .thenThrow(new IllegalArgumentException("Name cannot be empty"));
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(1L),
-                    eq(""),
-                    eq(AccountType.SAVINGS),
-                    eq(BigDecimal.valueOf(15000)));
+        .upsertAccountBalance(
+            eq("test@example.com"),
+            eq(1L),
+            eq(""),
+            eq(AccountType.SAVINGS),
+            eq(BigDecimal.valueOf(15000)));
   }
 
   @Test
@@ -227,23 +223,23 @@ class AccountControllerTest {
             eq("My Savings"),
             eq(null),
             eq(BigDecimal.valueOf(15000))))
-            .thenThrow(new IllegalArgumentException("Type cannot be empty"));
+        .thenThrow(new IllegalArgumentException("Type cannot be empty"));
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(1L),
-                    eq("My Savings"),
-                    eq(null),
-                    eq(BigDecimal.valueOf(15000)));
+        .upsertAccountBalance(
+            eq("test@example.com"),
+            eq(1L),
+            eq("My Savings"),
+            eq(null),
+            eq(BigDecimal.valueOf(15000)));
   }
 
   @Test
@@ -256,28 +252,20 @@ class AccountControllerTest {
     request.setBalance(null); // Invalid: null balance
 
     when(accountService.upsertAccountBalance(
-            eq("test@example.com"),
-            eq(1L),
-            eq("My Savings"),
-            eq(AccountType.SAVINGS),
-            eq(null)))
-            .thenThrow(new IllegalArgumentException("New balance cannot be null"));
+            eq("test@example.com"), eq(1L), eq("My Savings"), eq(AccountType.SAVINGS), eq(null)))
+        .thenThrow(new IllegalArgumentException("New balance cannot be null"));
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(1L),
-                    eq("My Savings"),
-                    eq(AccountType.SAVINGS),
-                    eq(null));
+        .upsertAccountBalance(
+            eq("test@example.com"), eq(1L), eq("My Savings"), eq(AccountType.SAVINGS), eq(null));
   }
 
   @Test
@@ -295,23 +283,23 @@ class AccountControllerTest {
             eq("My Savings"),
             eq(AccountType.SAVINGS),
             eq(BigDecimal.valueOf(15000))))
-            .thenThrow(new UserNotFoundException("User not found"));
+        .thenThrow(new UserNotFoundException("User not found"));
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isNotFound());
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isNotFound());
 
     verify(accountService, times(1))
-            .upsertAccountBalance(
-                    eq("test@example.com"),
-                    eq(1L),
-                    eq("My Savings"),
-                    eq(AccountType.SAVINGS),
-                    eq(BigDecimal.valueOf(15000)));
+        .upsertAccountBalance(
+            eq("test@example.com"),
+            eq(1L),
+            eq("My Savings"),
+            eq(AccountType.SAVINGS),
+            eq(BigDecimal.valueOf(15000)));
   }
 
   @Test
@@ -326,11 +314,11 @@ class AccountControllerTest {
 
     // Act & Assert
     mockMvc
-            .perform(
-                    post("/api/account/update")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isUnauthorized());
+        .perform(
+            post("/api/account/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isUnauthorized());
 
     verify(accountService, never()).upsertAccountBalance(any(), any(), any(), any(), any());
   }
@@ -343,20 +331,20 @@ class AccountControllerTest {
     BigDecimal balance = BigDecimal.valueOf(2500);
 
     when(accountService.getAccountBalance(eq("test@example.com"), eq(name), eq(accountType)))
-            .thenReturn(balance);
+        .thenReturn(balance);
 
     // Act & Assert
     mockMvc
-            .perform(
-                    get("/api/account/balance")
-                            .param("name", name)
-                            .param("accountType", accountType.name())
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().json("2500"));
+        .perform(
+            get("/api/account/balance")
+                .param("name", name)
+                .param("accountType", accountType.name())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json("2500"));
 
     verify(accountService, times(1))
-            .getAccountBalance(eq("test@example.com"), eq(name), eq(accountType));
+        .getAccountBalance(eq("test@example.com"), eq(name), eq(accountType));
   }
 
   @Test
@@ -366,20 +354,19 @@ class AccountControllerTest {
     AccountType type = AccountType.SAVINGS;
 
     when(accountService.getAccountBalance(eq("test@example.com"), eq(name), eq(type)))
-            .thenReturn(null);
+        .thenReturn(null);
 
     // Act & Assert
     mockMvc
-            .perform(
-                    get("/api/account/balance")
-                            .param("name", name)
-                            .param("accountType", type.name())
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().json("0"));
+        .perform(
+            get("/api/account/balance")
+                .param("name", name)
+                .param("accountType", type.name())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json("0"));
 
-    verify(accountService, times(1))
-            .getAccountBalance(eq("test@example.com"), eq(name), eq(type));
+    verify(accountService, times(1)).getAccountBalance(eq("test@example.com"), eq(name), eq(type));
   }
 
   @Test
@@ -389,19 +376,18 @@ class AccountControllerTest {
     AccountType type = AccountType.SAVINGS;
 
     when(accountService.getAccountBalance(eq("test@example.com"), eq(name), eq(type)))
-            .thenThrow(new UserNotFoundException("User not found"));
+        .thenThrow(new UserNotFoundException("User not found"));
 
     // Act & Assert
     mockMvc
-            .perform(
-                    get("/api/account/balance")
-                            .param("name", name)
-                            .param("accountType", type.name())
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+        .perform(
+            get("/api/account/balance")
+                .param("name", name)
+                .param("accountType", type.name())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
 
-    verify(accountService, times(1))
-            .getAccountBalance(eq("test@example.com"), eq(name), eq(type));
+    verify(accountService, times(1)).getAccountBalance(eq("test@example.com"), eq(name), eq(type));
   }
 
   @Test
@@ -413,12 +399,12 @@ class AccountControllerTest {
 
     // Act & Assert
     mockMvc
-            .perform(
-                    get("/api/account/balance")
-                            .param("name", name)
-                            .param("accountType", type.name())
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());
+        .perform(
+            get("/api/account/balance")
+                .param("name", name)
+                .param("accountType", type.name())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
 
     verify(accountService, never()).getAccountBalance(any(), any(), any());
   }

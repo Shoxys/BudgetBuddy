@@ -2,9 +2,7 @@ package com.shoxys.budgetbuddy_backend.Exceptions;
 
 import com.shoxys.budgetbuddy_backend.Utils.Utils;
 
-/**
- * Exception thrown when a user is not found by ID or email.
- */
+/** Exception thrown when a user is not found by ID or email. */
 public class UserNotFoundException extends RuntimeException {
 
   /**
@@ -18,7 +16,8 @@ public class UserNotFoundException extends RuntimeException {
 
   /**
    * Constructs an exception with a message indicating the email or custom input that was not found.
-   * If the input is a valid email format, the message specifies the email; otherwise, it uses the input as-is.
+   * If the input is a valid email format, the message specifies the email; otherwise, it uses the
+   * input as-is.
    *
    * @param input the email or custom message
    */

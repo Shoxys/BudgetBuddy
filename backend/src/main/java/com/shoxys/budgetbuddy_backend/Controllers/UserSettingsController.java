@@ -8,6 +8,7 @@ import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
-
-/**
- * Handles HTTP requests for managing user settings.
- */
+/** Handles HTTP requests for managing user settings. */
 @RestController
 @RequestMapping(Constants.SETTINGS_ENDPOINT)
 public class UserSettingsController {
@@ -39,7 +36,8 @@ public class UserSettingsController {
    * @return the user's email
    */
   @GetMapping("/current-email")
-  public ResponseEntity<String> getCurrentEmail(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<String> getCurrentEmail(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching current email for user: {}", username);
     return ResponseEntity.ok(username);
@@ -54,8 +52,8 @@ public class UserSettingsController {
    */
   @PutMapping("/change-password")
   public ResponseEntity<String> updatePassword(
-          @AuthenticationPrincipal AppUserDetails userDetails,
-          @Valid @RequestBody ChangePasswordRequest request) {
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @Valid @RequestBody ChangePasswordRequest request) {
     String username = validateUserDetails(userDetails);
     logger.info("Updating password for user: {}", username);
     userService.changePassword(username, request);
@@ -73,17 +71,18 @@ public class UserSettingsController {
    */
   @PutMapping("/update-email")
   public ResponseEntity<AuthResponse> updateEmail(
-          @AuthenticationPrincipal AppUserDetails userDetails,
-          @Valid @RequestBody UpdateEmailRequest request,
-          HttpServletResponse response) {
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @Valid @RequestBody UpdateEmailRequest request,
+      HttpServletResponse response) {
     String username = validateUserDetails(userDetails);
     logger.info("Updating email for user: {}", username);
     AuthResponse authResponse = userService.updateEmail(username, request);
     User updatedUser = userService.getUserByEmail(request.getNewEmail());
     AppUserDetails updatedUserDetails = new AppUserDetails(updatedUser);
-    SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(updatedUserDetails, null, updatedUserDetails.getAuthorities())
-    );
+    SecurityContextHolder.getContext()
+        .setAuthentication(
+            new UsernamePasswordAuthenticationToken(
+                updatedUserDetails, null, updatedUserDetails.getAuthorities()));
     addJwtCookie(response, authResponse.getToken());
     logger.info("Email updated for user: {}, new email: {}", username, request.getNewEmail());
     return ResponseEntity.ok(authResponse);
@@ -98,7 +97,7 @@ public class UserSettingsController {
    */
   @DeleteMapping("/delete-account")
   public ResponseEntity<String> deleteAccount(
-          @AuthenticationPrincipal AppUserDetails userDetails, HttpServletResponse response) {
+      @AuthenticationPrincipal AppUserDetails userDetails, HttpServletResponse response) {
     String username = validateUserDetails(userDetails);
     logger.info("Deleting account for user: {}", username);
     userService.deleteAccount(username);

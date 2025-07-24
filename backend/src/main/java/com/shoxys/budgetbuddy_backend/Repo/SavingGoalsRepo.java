@@ -12,8 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /**
- * Repository interface for managing {@link SavingGoal} entities, providing CRUD operations and custom queries
- * for retrieving and updating saving goals based on user, contributions, and status.
+ * Repository interface for managing {@link SavingGoal} entities, providing CRUD operations and
+ * custom queries for retrieving and updating saving goals based on user, contributions, and status.
  */
 public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
 
@@ -28,7 +28,7 @@ public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
   /**
    * Retrieves the title of a saving goal by its ID and associated user.
    *
-   * @param id   the saving goal ID
+   * @param id the saving goal ID
    * @param user the user entity
    * @return the title of the saving goal, or null if not found
    */
@@ -37,7 +37,7 @@ public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
   /**
    * Deletes a saving goal by its ID and associated user.
    *
-   * @param id   the saving goal ID
+   * @param id the saving goal ID
    * @param user the user entity
    */
   void deleteSavingGoalByIdAndUser(@Param("id") long id, @Param("user") User user);
@@ -45,7 +45,7 @@ public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
   /**
    * Finds a saving goal by its ID and associated user.
    *
-   * @param id   the saving goal ID
+   * @param id the saving goal ID
    * @param user the user entity
    * @return an {@code Optional} containing the saving goal, or empty if not found
    */
@@ -54,15 +54,18 @@ public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
   /**
    * Updates the contributed amount for a saving goal by adding the specified amount.
    *
-   * @param user        the user entity
-   * @param goalId      the saving goal ID
+   * @param user the user entity
+   * @param goalId the saving goal ID
    * @param contributed the amount to add to the existing contribution
    */
   @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Transactional
-  @Query("UPDATE SavingGoal sg SET sg.contributed = COALESCE(sg.contributed, 0) + ?3 WHERE sg.user = ?1 AND sg.id = ?2")
-  void updateSavingGoalContribution(@Param("user") User user, @Param("goalId") Long goalId,
-                                    @Param("contributed") BigDecimal contributed);
+  @Query(
+      "UPDATE SavingGoal sg SET sg.contributed = COALESCE(sg.contributed, 0) + ?3 WHERE sg.user = ?1 AND sg.id = ?2")
+  void updateSavingGoalContribution(
+      @Param("user") User user,
+      @Param("goalId") Long goalId,
+      @Param("contributed") BigDecimal contributed);
 
   /**
    * Calculates the total contributed amount across all saving goals for a user.
@@ -97,7 +100,8 @@ public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
    * @param user the user entity
    * @return the number of overdue saving goals
    */
-  @Query("SELECT COUNT(g) FROM SavingGoal g WHERE g.target > g.contributed AND g.user = ?1 AND g.date < CURDATE()")
+  @Query(
+      "SELECT COUNT(g) FROM SavingGoal g WHERE g.target > g.contributed AND g.user = ?1 AND g.date < CURDATE()")
   int findCountOverdueSavingGoalsByUser(@Param("user") User user);
 
   /**
@@ -130,7 +134,7 @@ public interface SavingGoalsRepo extends JpaRepository<SavingGoal, Long> {
   /**
    * Checks if a saving goal exists by its ID and associated user.
    *
-   * @param id   the saving goal ID
+   * @param id the saving goal ID
    * @param user the user entity
    * @return true if the saving goal exists, false otherwise
    */

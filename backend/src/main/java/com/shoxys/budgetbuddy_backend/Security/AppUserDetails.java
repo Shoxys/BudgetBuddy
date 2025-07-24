@@ -1,15 +1,14 @@
 package com.shoxys.budgetbuddy_backend.Security;
 
 import com.shoxys.budgetbuddy_backend.Entities.User;
+import java.util.Collection;
+import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-
 /**
- * Implementation of {@link UserDetails} for Spring Security, wrapping a {@link User} entity to provide
- * authentication details such as username, password, and authorities.
+ * Implementation of {@link UserDetails} for Spring Security, wrapping a {@link User} entity to
+ * provide authentication details such as username, password, and authorities.
  */
 public class AppUserDetails implements UserDetails {
 

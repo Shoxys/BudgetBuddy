@@ -19,16 +19,6 @@ import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Utils.Utils;
 import jakarta.transaction.Transactional;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,10 +30,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Service for managing transactions, including CRUD operations and CSV imports.
- */
+/** Service for managing transactions, including CRUD operations and CSV imports. */
 @Service
 public class TransactionService {
   private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
@@ -56,14 +53,20 @@ public class TransactionService {
    * Constructs a TransactionService with required dependencies.
    *
    * @param transactionRepo Repository for transaction-related data access
-   * @param accountRepo     Repository for account-related data access
-   * @param userRepo        Repository for user-related data access
-   * @param accountService  Service for account-related operations
+   * @param accountRepo Repository for account-related data access
+   * @param userRepo Repository for user-related data access
+   * @param accountService Service for account-related operations
    */
-  public TransactionService(TransactionRepo transactionRepo, AccountRepo accountRepo,
-                            UserRepo userRepo, AccountService accountService) {
+  public TransactionService(
+      TransactionRepo transactionRepo,
+      AccountRepo accountRepo,
+      UserRepo userRepo,
+      AccountService accountService) {
     logger.debug("Initializing TransactionService");
-    if (transactionRepo == null || accountRepo == null || userRepo == null || accountService == null) {
+    if (transactionRepo == null
+        || accountRepo == null
+        || userRepo == null
+        || accountService == null) {
       logger.error("One or more dependencies are null");
       throw new IllegalArgumentException("All dependencies must be non-null");
     }
@@ -78,7 +81,7 @@ public class TransactionService {
    * Retrieves a transaction by ID for the specified user.
    *
    * @param email the user's email
-   * @param id    the transaction ID
+   * @param id the transaction ID
    * @return the transaction
    * @throws TransactionNotFoundException if the transaction is not found
    * @throws UserNotFoundException if the user is not found
@@ -86,8 +89,10 @@ public class TransactionService {
   public Transaction getTransactionById(String email, Long id) {
     logger.info("Fetching transaction for user: {}, ID: {}", email, id);
     User user = validateUser(email);
-    return transactionRepo.findTransactionByUserAndId(user, id)
-            .orElseThrow(() -> {
+    return transactionRepo
+        .findTransactionByUserAndId(user, id)
+        .orElseThrow(
+            () -> {
               logger.error("Transaction not found for user: {}, ID: {}", email, id);
               return new TransactionNotFoundException(id);
             });
@@ -113,19 +118,21 @@ public class TransactionService {
   /**
    * Retrieves transactions for a user within a date range.
    *
-   * @param userId    the user's ID
+   * @param userId the user's ID
    * @param startDate the start date
-   * @param endDate   the end date
+   * @param endDate the end date
    * @return a list of transactions
    */
-  public List<Transaction> getTransactionsByUserIdInTimeFrame(Long userId, LocalDate startDate, LocalDate endDate) {
+  public List<Transaction> getTransactionsByUserIdInTimeFrame(
+      Long userId, LocalDate startDate, LocalDate endDate) {
     logger.info("Fetching transactions for user ID: {}, from {} to {}", userId, startDate, endDate);
     if (!userRepo.existsById(userId)) {
       logger.error("User not found: {}", userId);
       throw new UserNotFoundException(userId);
     }
     validateDateRange(startDate, endDate);
-    List<Transaction> transactions = transactionRepo.findByUserIdAndDateBetween(userId, startDate, endDate);
+    List<Transaction> transactions =
+        transactionRepo.findByUserIdAndDateBetween(userId, startDate, endDate);
     logger.info("Retrieved {} transactions for user ID: {}", transactions.size(), userId);
     return transactions;
   }
@@ -134,13 +141,19 @@ public class TransactionService {
    * Retrieves paginated transactions for a user.
    *
    * @param userId the user's ID
-   * @param page   the page number
-   * @param size   the page size
-   * @param sort   the sort order (e.g., "date,asc")
+   * @param page the page number
+   * @param size the page size
+   * @param sort the sort order (e.g., "date,asc")
    * @return a page of transactions
    */
-  public Page<Transaction> getTransactionsByUserIdPaginated(Long userId, int page, int size, String sort) {
-    logger.info("Fetching paginated transactions for user ID: {}, page: {}, size: {}, sort: {}", userId, page, size, sort);
+  public Page<Transaction> getTransactionsByUserIdPaginated(
+      Long userId, int page, int size, String sort) {
+    logger.info(
+        "Fetching paginated transactions for user ID: {}, page: {}, size: {}, sort: {}",
+        userId,
+        page,
+        size,
+        sort);
     if (!userRepo.existsById(userId)) {
       logger.error("User not found: {}", userId);
       throw new UserNotFoundException(userId);
@@ -154,10 +167,12 @@ public class TransactionService {
       throw new IllegalArgumentException("Size must be greater than 0");
     }
     PageRequest pageRequest = PageRequest.of(page, size);
-    Page<Transaction> transactions = "date,asc".equalsIgnoreCase(sort) ?
-            transactionRepo.findByUser_IdOrderByDateAsc(userId, pageRequest) :
-            transactionRepo.findByUser_IdOrderByDateDesc(userId, pageRequest);
-    logger.info("Retrieved {} transactions for user ID: {}", transactions.getContent().size(), userId);
+    Page<Transaction> transactions =
+        "date,asc".equalsIgnoreCase(sort)
+            ? transactionRepo.findByUser_IdOrderByDateAsc(userId, pageRequest)
+            : transactionRepo.findByUser_IdOrderByDateDesc(userId, pageRequest);
+    logger.info(
+        "Retrieved {} transactions for user ID: {}", transactions.getContent().size(), userId);
     return transactions;
   }
 
@@ -198,7 +213,7 @@ public class TransactionService {
   /**
    * Retrieves transactions for a user within a time frame (e.g., "7days").
    *
-   * @param userId    the user's ID
+   * @param userId the user's ID
    * @param timeFrame the time frame (e.g., "7days", "30days")
    * @return a list of transactions
    */
@@ -234,7 +249,8 @@ public class TransactionService {
       default:
         startDate = LocalDate.MIN; // "all time"
     }
-    List<Transaction> transactions = transactionRepo.findByUserIdAndDateBetween(userId, startDate, endDate);
+    List<Transaction> transactions =
+        transactionRepo.findByUserIdAndDateBetween(userId, startDate, endDate);
     logger.info("Retrieved {} transactions for user ID: {}", transactions.size(), userId);
     return transactions;
   }
@@ -242,11 +258,12 @@ public class TransactionService {
   /**
    * Retrieves a transaction summary for a user by time frame.
    *
-   * @param userId    the user's ID
+   * @param userId the user's ID
    * @param timeFrame the time frame (e.g., "7days")
    * @return the transaction summary
    */
-  public TransactionSummaryResponse getTransactionSummaryByTimeFrame(Long userId, String timeFrame) {
+  public TransactionSummaryResponse getTransactionSummaryByTimeFrame(
+      Long userId, String timeFrame) {
     logger.info("Fetching transaction summary for user ID: {}, timeFrame: {}", userId, timeFrame);
     Utils.validatePositiveId(userId, "User ID must be positive");
     if (Utils.nullOrEmpty(timeFrame)) {
@@ -262,17 +279,20 @@ public class TransactionService {
       logger.info("No transactions found for user ID: {}, timeFrame: {}", userId, timeFrame);
       return new TransactionSummaryResponse(null, null, null);
     }
-    LocalDate earliest = transactions.stream()
+    LocalDate earliest =
+        transactions.stream()
             .map(Transaction::getDate)
             .filter(Objects::nonNull)
             .min(LocalDate::compareTo)
             .orElse(null);
-    LocalDate latest = transactions.stream()
+    LocalDate latest =
+        transactions.stream()
             .map(Transaction::getDate)
             .filter(Objects::nonNull)
             .max(LocalDate::compareTo)
             .orElse(null);
-    logger.info("Retrieved transaction summary for user ID: {}, count: {}", userId, transactions.size());
+    logger.info(
+        "Retrieved transaction summary for user ID: {}, count: {}", userId, transactions.size());
     return new TransactionSummaryResponse(transactions.size(), earliest, latest);
   }
 
@@ -285,11 +305,14 @@ public class TransactionService {
   public BigDecimal getCurrentBalanceByUser(String email) {
     logger.info("Fetching current balance for user: {}", email);
     User user = validateUser(email);
-    Account spendingAccount = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
-            .orElseGet(() -> {
-              logger.info("No spending account found for user: {}, creating new", email);
-              return accountService.createSpendingAccount(user, BigDecimal.ZERO);
-            });
+    Account spendingAccount =
+        accountRepo
+            .findAccountByUserAndType(user, AccountType.SPENDING)
+            .orElseGet(
+                () -> {
+                  logger.info("No spending account found for user: {}, creating new", email);
+                  return accountService.createSpendingAccount(user, BigDecimal.ZERO);
+                });
     logger.info("Retrieved balance for user: {}", email);
     return spendingAccount.getBalance();
   }
@@ -297,7 +320,7 @@ public class TransactionService {
   /**
    * Adds a new transaction for a user.
    *
-   * @param email   the user's email
+   * @param email the user's email
    * @param request the transaction request
    * @return the created transaction
    */
@@ -305,16 +328,22 @@ public class TransactionService {
   public Transaction addTransaction(String email, TransactionRequest request) {
     logger.info("Adding transaction for user: {}", email);
     User user = validateUser(email);
-    Account spendingAccount = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
-            .orElseGet(() -> {
-              logger.info("No spending account found for user: {}, creating new", email);
-              return accountService.createSpendingAccount(user, request.getBalanceAtTransaction());
-            });
+    Account spendingAccount =
+        accountRepo
+            .findAccountByUserAndType(user, AccountType.SPENDING)
+            .orElseGet(
+                () -> {
+                  logger.info("No spending account found for user: {}, creating new", email);
+                  return accountService.createSpendingAccount(
+                      user, request.getBalanceAtTransaction());
+                });
     TransactionType type = request.getType();
-    BigDecimal amount = type == TransactionType.DEBIT ? request.getAmount().negate() : request.getAmount();
+    BigDecimal amount =
+        type == TransactionType.DEBIT ? request.getAmount().negate() : request.getAmount();
     BigDecimal newBalance = spendingAccount.getBalance().add(amount);
     accountService.updateAccountBalance(spendingAccount, newBalance);
-    Transaction newTransaction = new Transaction(
+    Transaction newTransaction =
+        new Transaction(
             request.getDate(),
             amount,
             request.getDescription(),
@@ -332,8 +361,8 @@ public class TransactionService {
   /**
    * Updates an existing transaction for a user.
    *
-   * @param email   the user's email
-   * @param id      the transaction ID
+   * @param email the user's email
+   * @param id the transaction ID
    * @param request the transaction request
    * @return the updated transaction
    */
@@ -341,13 +370,17 @@ public class TransactionService {
   public Transaction updateTransaction(String email, long id, TransactionRequest request) {
     logger.info("Updating transaction for user: {}, ID: {}", email, id);
     User user = validateUser(email);
-    Transaction transaction = transactionRepo.findTransactionByUserAndId(user, id)
-            .orElseThrow(() -> {
-              logger.error("Transaction not found for user: {}, ID: {}", email, id);
-              return new TransactionNotFoundException(id);
-            });
+    Transaction transaction =
+        transactionRepo
+            .findTransactionByUserAndId(user, id)
+            .orElseThrow(
+                () -> {
+                  logger.error("Transaction not found for user: {}, ID: {}", email, id);
+                  return new TransactionNotFoundException(id);
+                });
     TransactionType type = request.getType();
-    BigDecimal newAmount = type == TransactionType.DEBIT ? request.getAmount().negate() : request.getAmount();
+    BigDecimal newAmount =
+        type == TransactionType.DEBIT ? request.getAmount().negate() : request.getAmount();
     Account account = accountService.syncSpendingAccountBalance(transaction, newAmount);
     transaction.setDate(request.getDate());
     transaction.setAmount(newAmount);
@@ -364,17 +397,20 @@ public class TransactionService {
    * Deletes a transaction for a user.
    *
    * @param email the user's email
-   * @param id    the transaction ID
+   * @param id the transaction ID
    */
   @Transactional
   public void deleteTransaction(String email, Long id) {
     logger.info("Deleting transaction for user: {}, ID: {}", email, id);
     User user = validateUser(email);
-    Transaction transaction = transactionRepo.findTransactionByUserAndId(user, id)
-            .orElseThrow(() -> {
-              logger.error("Transaction not found for user: {}, ID: {}", email, id);
-              return new TransactionNotFoundException(id);
-            });
+    Transaction transaction =
+        transactionRepo
+            .findTransactionByUserAndId(user, id)
+            .orElseThrow(
+                () -> {
+                  logger.error("Transaction not found for user: {}, ID: {}", email, id);
+                  return new TransactionNotFoundException(id);
+                });
     Account account = transaction.getAccount();
     account.setBalance(account.getBalance().subtract(transaction.getAmount()));
     accountRepo.save(account);
@@ -386,7 +422,7 @@ public class TransactionService {
    * Deletes multiple transactions for a user.
    *
    * @param email the user's email
-   * @param ids   the list of transaction IDs
+   * @param ids the list of transaction IDs
    */
   @Transactional
   public void deleteTransactionsById(String email, List<Long> ids) {
@@ -396,11 +432,14 @@ public class TransactionService {
       throw new IllegalArgumentException("IDs must not be null or empty");
     }
     User user = validateUser(email);
-    Account account = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
-            .orElseThrow(() -> {
-              logger.error("No spending account found for user: {}", email);
-              return new AccountNotFoundException();
-            });
+    Account account =
+        accountRepo
+            .findAccountByUserAndType(user, AccountType.SPENDING)
+            .orElseThrow(
+                () -> {
+                  logger.error("No spending account found for user: {}", email);
+                  return new AccountNotFoundException();
+                });
     transactionRepo.deleteAllByIdInAndUser(ids, user);
     accountService.recalculateBalanceForSpendingAccount(account);
     logger.info("Deleted {} transactions for user: {}", ids.size(), email);
@@ -410,7 +449,7 @@ public class TransactionService {
    * Imports transactions from a CSV file for a user.
    *
    * @param userId the user's ID
-   * @param file   the CSV file
+   * @param file the CSV file
    * @return the list of imported transactions
    * @throws IllegalArgumentException if the file is invalid
    * @throws RuntimeException if CSV parsing fails
@@ -427,11 +466,14 @@ public class TransactionService {
       List<Transaction> transactions = parseTransactions(csvParser, user);
       transactionRepo.saveAll(transactions);
       if (!transactions.isEmpty()) {
-        Account account = accountRepo.findAccountByUserAndType(user, AccountType.SPENDING)
-                .orElseThrow(() -> {
-                  logger.error("No spending account found for user ID: {}", userId);
-                  return new AccountNotFoundException();
-                });
+        Account account =
+            accountRepo
+                .findAccountByUserAndType(user, AccountType.SPENDING)
+                .orElseThrow(
+                    () -> {
+                      logger.error("No spending account found for user ID: {}", userId);
+                      return new AccountNotFoundException();
+                    });
         accountService.recalculateBalanceForSpendingAccount(account);
       }
       logger.info("Imported {} transactions for user ID: {}", transactions.size(), userId);
@@ -485,17 +527,22 @@ public class TransactionService {
       }
     }
     logger.warn("Invalid date format in CSV: {}", rawDate);
-    throw new IllegalArgumentException("Invalid date format in CSV: " + rawDate + ". Supported formats: " +
-            Constants.CSV_DATE_FORMATTERS.stream()
-                    .map(DateTimeFormatter::toString)
-                    .collect(Collectors.joining(", ")));
+    throw new IllegalArgumentException(
+        "Invalid date format in CSV: "
+            + rawDate
+            + ". Supported formats: "
+            + Constants.CSV_DATE_FORMATTERS.stream()
+                .map(DateTimeFormatter::toString)
+                .collect(Collectors.joining(", ")));
   }
 
   private Transaction createTransactionForCsv(CSVRecord record, User user) {
     logger.debug("Creating transaction from CSV record: {}", record);
     Account account = accountService.handleFetchAccount(user);
     LocalDate date = parseDate(record.get(BankCsvColumn.DATE.getStr()));
-    String merchant = record.isSet(BankCsvColumn.MERCHANT.getStr()) && !record.get(BankCsvColumn.MERCHANT.getStr()).isEmpty()
+    String merchant =
+        record.isSet(BankCsvColumn.MERCHANT.getStr())
+                && !record.get(BankCsvColumn.MERCHANT.getStr()).isEmpty()
             ? record.get(BankCsvColumn.MERCHANT.getStr()).trim()
             : null;
     BigDecimal amount;
@@ -504,7 +551,8 @@ public class TransactionService {
       logger.debug("Parsed amount: {}", amount);
     } catch (NumberFormatException e) {
       logger.warn("Invalid amount format in CSV: {}", record.get(BankCsvColumn.AMOUNT.getStr()));
-      throw new IllegalArgumentException("Invalid amount format in CSV: " + record.get(BankCsvColumn.AMOUNT.getStr()));
+      throw new IllegalArgumentException(
+          "Invalid amount format in CSV: " + record.get(BankCsvColumn.AMOUNT.getStr()));
     }
     BigDecimal balanceAtTransaction;
     try {
@@ -512,7 +560,8 @@ public class TransactionService {
       logger.debug("Parsed balance: {}", balanceAtTransaction);
     } catch (NumberFormatException e) {
       logger.warn("Invalid balance format in CSV: {}", record.get(BankCsvColumn.BALANCE.getStr()));
-      throw new IllegalArgumentException("Invalid balance format in CSV: " + record.get(BankCsvColumn.BALANCE.getStr()));
+      throw new IllegalArgumentException(
+          "Invalid balance format in CSV: " + record.get(BankCsvColumn.BALANCE.getStr()));
     }
     Transaction transaction = new Transaction();
     transaction.setDate(date);
@@ -543,10 +592,13 @@ public class TransactionService {
       logger.warn("Invalid email: null or empty");
       throw new IllegalArgumentException("Email must not be null or empty");
     }
-    return userRepo.getUserByEmail(email).orElseThrow(() -> {
-      logger.error("User not found: {}", email);
-      return new UserNotFoundException(email);
-    });
+    return userRepo
+        .getUserByEmail(email)
+        .orElseThrow(
+            () -> {
+              logger.error("User not found: {}", email);
+              return new UserNotFoundException(email);
+            });
   }
 
   private User validateUserById(Long userId) {
@@ -554,10 +606,13 @@ public class TransactionService {
       logger.warn("Invalid user ID: null");
       throw new IllegalArgumentException("User ID must not be null");
     }
-    return userRepo.findById(userId).orElseThrow(() -> {
-      logger.error("User not found: {}", userId);
-      return new UserNotFoundException(userId);
-    });
+    return userRepo
+        .findById(userId)
+        .orElseThrow(
+            () -> {
+              logger.error("User not found: {}", userId);
+              return new UserNotFoundException(userId);
+            });
   }
 
   private void validateDateRange(LocalDate startDate, LocalDate endDate) {

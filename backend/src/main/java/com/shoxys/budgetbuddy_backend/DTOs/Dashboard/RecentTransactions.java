@@ -4,10 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
-/**
- * Represents a recent transaction for dashboard display.
- */
-
+/** Represents a recent transaction for dashboard display. */
 public class RecentTransactions {
   private LocalDate date;
   private String description;

@@ -8,20 +8,20 @@ import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * Service for generating dashboard-related data, including account summaries, net worth, spending insights,
- * saving goals, income/expense summaries, income trends, expense analysis, and recent transactions.
+ * Service for generating dashboard-related data, including account summaries, net worth, spending
+ * insights, saving goals, income/expense summaries, income trends, expense analysis, and recent
+ * transactions.
  */
 @Service
 public class DashboardService {
@@ -40,16 +40,19 @@ public class DashboardService {
   /**
    * Constructs a DashboardService with required dependencies.
    *
-   * @param accountRepo        Repository for account-related data access
-   * @param savingGoalsRepo    Repository for saving goals data access
-   * @param transactionRepo    Repository for transaction data access
+   * @param accountRepo Repository for account-related data access
+   * @param savingGoalsRepo Repository for saving goals data access
+   * @param transactionRepo Repository for transaction data access
    * @param transactionService Service for transaction-related operations
-   * @param aiInsightService   Service for generating AI-based spending insights
+   * @param aiInsightService Service for generating AI-based spending insights
    */
   @Autowired
-  public DashboardService(AccountRepo accountRepo, SavingGoalsRepo savingGoalsRepo,
-                          TransactionRepo transactionRepo, TransactionService transactionService,
-                          AiInsightService aiInsightService) {
+  public DashboardService(
+      AccountRepo accountRepo,
+      SavingGoalsRepo savingGoalsRepo,
+      TransactionRepo transactionRepo,
+      TransactionService transactionService,
+      AiInsightService aiInsightService) {
     this.accountRepo = accountRepo;
     this.savingGoalsRepo = savingGoalsRepo;
     this.transactionRepo = transactionRepo;
@@ -84,8 +87,15 @@ public class DashboardService {
     logger.debug("Fetching account summary for userId: {}", userId);
     Utils.validatePositiveId(userId, "User ID must be positive");
     List<Account> accounts = accountRepo.findAccountsTypeNameBalanceByUserId(userId);
-    List<AccountSummary> summaries = accounts.stream()
-            .map(account -> new AccountSummary(account.getId(), account.getType(), account.getName(), account.getBalance()))
+    List<AccountSummary> summaries =
+        accounts.stream()
+            .map(
+                account ->
+                    new AccountSummary(
+                        account.getId(),
+                        account.getType(),
+                        account.getName(),
+                        account.getBalance()))
             .toList();
     logger.info("Retrieved {} account summaries for userId: {}", summaries.size(), userId);
     return summaries;
@@ -103,10 +113,15 @@ public class DashboardService {
     Utils.validatePositiveId(userId, "User ID must be positive");
     BigDecimal totalNetWorth = getTotalBalance(userId);
     List<Account> accounts = accountRepo.findAccountsNameBalanceByUserId(userId);
-    List<BreakdownItem> breakdownItemList = accounts.stream()
+    List<BreakdownItem> breakdownItemList =
+        accounts.stream()
             .map(account -> new BreakdownItem(account.getName(), account.getBalance()))
             .toList();
-    logger.info("Net worth for userId {}: {} with {} breakdown items", userId, totalNetWorth, breakdownItemList.size());
+    logger.info(
+        "Net worth for userId {}: {} with {} breakdown items",
+        userId,
+        totalNetWorth,
+        breakdownItemList.size());
     return new NetworthResponse(totalNetWorth, breakdownItemList);
   }
 
@@ -122,11 +137,17 @@ public class DashboardService {
     Utils.validatePositiveId(userId, "User ID must be positive");
     LocalDate endDate = LocalDate.now();
     LocalDate startDate = endDate.minusDays(SPENDING_INSIGHT_DAYS);
-    List<Transaction> recentTransactions = transactionService.getTransactionsByUserIdInTimeFrame(userId, startDate, endDate);
+    List<Transaction> recentTransactions =
+        transactionService.getTransactionsByUserIdInTimeFrame(userId, startDate, endDate);
 
     if (recentTransactions.isEmpty()) {
-      logger.warn("No transactions found for userId {} in the last {} days", userId, SPENDING_INSIGHT_DAYS);
-      return List.of(new SpendingInsight("Not enough transaction data for the last " + SPENDING_INSIGHT_DAYS + " days to generate insights."));
+      logger.warn(
+          "No transactions found for userId {} in the last {} days", userId, SPENDING_INSIGHT_DAYS);
+      return List.of(
+          new SpendingInsight(
+              "Not enough transaction data for the last "
+                  + SPENDING_INSIGHT_DAYS
+                  + " days to generate insights."));
     }
 
     String transactionStats = createTransactionStats(recentTransactions);
@@ -145,16 +166,22 @@ public class DashboardService {
    */
   private String createTransactionStats(List<Transaction> transactions) {
     logger.debug("Creating transaction stats for {} transactions", transactions.size());
-    Map<String, BigDecimal> spendingByCategory = transactions.stream()
+    Map<String, BigDecimal> spendingByCategory =
+        transactions.stream()
             .filter(t -> t.getAmount() != null && t.getAmount().compareTo(BigDecimal.ZERO) < 0)
-            .collect(Collectors.groupingBy(
+            .collect(
+                Collectors.groupingBy(
                     Transaction::getCategory,
                     Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add)));
 
-    StringBuilder summary = new StringBuilder("User's spending over the last " + SPENDING_INSIGHT_DAYS + " days:\n");
+    StringBuilder summary =
+        new StringBuilder("User's spending over the last " + SPENDING_INSIGHT_DAYS + " days:\n");
     spendingByCategory.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .forEach(entry -> summary.append(String.format("- %s: $%.2f\n", entry.getKey(), entry.getValue().abs())));
+        .sorted(Map.Entry.comparingByKey())
+        .forEach(
+            entry ->
+                summary.append(
+                    String.format("- %s: $%.2f\n", entry.getKey(), entry.getValue().abs())));
     logger.debug("Transaction stats created: {}", summary);
     return summary.toString();
   }
@@ -170,8 +197,11 @@ public class DashboardService {
     logger.debug("Fetching saving goal summary for userId: {}", userId);
     Utils.validatePositiveId(userId, "User ID must be positive");
     List<SavingGoal> goals = savingGoalsRepo.findTop3ByUser_IdOrderByTargetDesc(userId);
-    List<SavingGoalSummary> summaries = goals.stream()
-            .map(goal -> new SavingGoalSummary(goal.getTitle(), goal.getContributed(), goal.getTarget()))
+    List<SavingGoalSummary> summaries =
+        goals.stream()
+            .map(
+                goal ->
+                    new SavingGoalSummary(goal.getTitle(), goal.getContributed(), goal.getTarget()))
             .toList();
     logger.info("Retrieved {} saving goal summaries for userId: {}", summaries.size(), userId);
     return summaries;
@@ -190,17 +220,24 @@ public class DashboardService {
     LocalDate lastMonthStart = LocalDate.now().minusMonths(1).withDayOfMonth(1);
     LocalDate lastMonthEnd = lastMonthStart.withDayOfMonth(lastMonthStart.lengthOfMonth());
 
-    BigDecimal incomeThisMonth = Optional.ofNullable(transactionRepo.getTotalCreditThisMonth(userId))
+    BigDecimal incomeThisMonth =
+        Optional.ofNullable(transactionRepo.getTotalCreditThisMonth(userId))
             .orElse(BigDecimal.ZERO);
-    BigDecimal expensesThisMonth = Optional.ofNullable(transactionRepo.getTotalDebitThisMonth(userId))
+    BigDecimal expensesThisMonth =
+        Optional.ofNullable(transactionRepo.getTotalDebitThisMonth(userId)).orElse(BigDecimal.ZERO);
+    BigDecimal incomeLastMonth =
+        Optional.ofNullable(
+                transactionRepo.getTotalCreditBetween(userId, lastMonthStart, lastMonthEnd))
             .orElse(BigDecimal.ZERO);
-    BigDecimal incomeLastMonth = Optional.ofNullable(transactionRepo.getTotalCreditBetween(userId, lastMonthStart, lastMonthEnd))
-            .orElse(BigDecimal.ZERO);
-    BigDecimal expensesLastMonth = Optional.ofNullable(transactionRepo.getTotalDebitBetween(userId, lastMonthStart, lastMonthEnd))
+    BigDecimal expensesLastMonth =
+        Optional.ofNullable(
+                transactionRepo.getTotalDebitBetween(userId, lastMonthStart, lastMonthEnd))
             .orElse(BigDecimal.ZERO);
 
-    IncomeExpenseSummary thisMonth = new IncomeExpenseSummary("This month", incomeThisMonth, expensesThisMonth);
-    IncomeExpenseSummary lastMonth = new IncomeExpenseSummary("Last month", incomeLastMonth, expensesLastMonth);
+    IncomeExpenseSummary thisMonth =
+        new IncomeExpenseSummary("This month", incomeThisMonth, expensesThisMonth);
+    IncomeExpenseSummary lastMonth =
+        new IncomeExpenseSummary("Last month", incomeLastMonth, expensesLastMonth);
     logger.info("Retrieved income/expense summaries for userId: {}", userId);
     return List.of(thisMonth, lastMonth);
   }
@@ -215,13 +252,17 @@ public class DashboardService {
   public IncomeTrend getIncomeTrend(Long userId) {
     logger.debug("Fetching income trend for userId: {}", userId);
     Utils.validatePositiveId(userId, "User ID must be positive");
-    List<String> months = List.of("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+    List<String> months =
+        List.of("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
     int currentYear = Year.now().getValue();
     int lastYear = currentYear - 1;
 
-    List<BigDecimal> incomeThisYear = fillMissingMonthsWithZero(transactionRepo.getMonthlyIncomeForYear(userId, currentYear));
-    List<BigDecimal> incomeLastYear = fillMissingMonthsWithZero(transactionRepo.getMonthlyIncomeForYear(userId, lastYear));
-    logger.info("Retrieved income trend for userId: {} for years {} and {}", userId, currentYear, lastYear);
+    List<BigDecimal> incomeThisYear =
+        fillMissingMonthsWithZero(transactionRepo.getMonthlyIncomeForYear(userId, currentYear));
+    List<BigDecimal> incomeLastYear =
+        fillMissingMonthsWithZero(transactionRepo.getMonthlyIncomeForYear(userId, lastYear));
+    logger.info(
+        "Retrieved income trend for userId: {} for years {} and {}", userId, currentYear, lastYear);
     return new IncomeTrend(months, incomeThisYear, incomeLastYear);
   }
 

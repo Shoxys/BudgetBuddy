@@ -6,9 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
-/**
- * Entity representing a financial account owned by a user.
- */
+/** Entity representing a financial account owned by a user. */
 @Entity
 @Table(name = "accounts")
 public class Account {
@@ -18,7 +16,9 @@ public class Account {
   private Long id;
 
   @NotBlank(message = "Name is required")
-  @Size(max = Constants.MAX_ACCOUNT_NAME_LENGTH, message = "Name cannot exceed " + Constants.MAX_ACCOUNT_NAME_LENGTH + " characters")
+  @Size(
+      max = Constants.MAX_ACCOUNT_NAME_LENGTH,
+      message = "Name cannot exceed " + Constants.MAX_ACCOUNT_NAME_LENGTH + " characters")
   @Column(nullable = false)
   private String name;
 
@@ -31,9 +31,22 @@ public class Account {
   private Integer accountNo;
 
   @NotNull(message = "Balance is required")
-  @DecimalMin(value = Constants.MIN_BALANCE, message = "Balance must be at least " + Constants.MIN_BALANCE)
-  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Balance must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
-  @Column(nullable = false, precision = Constants.MAX_BALANCE_INTEGER_DIGITS, scale = Constants.MAX_BALANCE_FRACTION_DIGITS)
+  @DecimalMin(
+      value = Constants.MIN_BALANCE,
+      message = "Balance must be at least " + Constants.MIN_BALANCE)
+  @Digits(
+      integer = Constants.MAX_BALANCE_INTEGER_DIGITS,
+      fraction = Constants.MAX_BALANCE_FRACTION_DIGITS,
+      message =
+          "Balance must be a valid monetary value with up to "
+              + Constants.MAX_BALANCE_INTEGER_DIGITS
+              + " integer digits and "
+              + Constants.MAX_BALANCE_FRACTION_DIGITS
+              + " decimal places")
+  @Column(
+      nullable = false,
+      precision = Constants.MAX_BALANCE_INTEGER_DIGITS,
+      scale = Constants.MAX_BALANCE_FRACTION_DIGITS)
   private BigDecimal balance;
 
   @Column(nullable = false)
@@ -48,12 +61,12 @@ public class Account {
   }
 
   public Account(
-          String name,
-          AccountType type,
-          Integer accountNo,
-          BigDecimal balance,
-          boolean isManual,
-          User user) {
+      String name,
+      AccountType type,
+      Integer accountNo,
+      BigDecimal balance,
+      boolean isManual,
+      User user) {
     this.name = name;
     this.type = type;
     this.accountNo = accountNo;

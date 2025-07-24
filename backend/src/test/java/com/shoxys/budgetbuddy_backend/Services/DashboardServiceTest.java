@@ -10,6 +10,7 @@ import com.shoxys.budgetbuddy_backend.Entities.Transaction;
 import com.shoxys.budgetbuddy_backend.Repo.AccountRepo;
 import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
+import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -18,8 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,13 +76,20 @@ class DashboardServiceTest {
     when(dashboardService.getTotalBalance(userId)).thenReturn(mockAccount.getBalance());
 
     when(accountRepo.findAccountsNameBalanceByUserId(userId))
-            .thenReturn(Collections.singletonList(mockAccount));
+        .thenReturn(Collections.singletonList(mockAccount));
 
     NetworthResponse response = dashboardService.getNetworthResponse(userId);
 
-    assertEquals(mockAccount.getBalance(), response.getTotal(), "Total should match the account balance");
-    assertEquals(mockAccount.getName(), response.getBreakdownItems().getFirst().getName(), "Breakdown item name should match");
-    assertEquals(mockAccount.getBalance(), response.getBreakdownItems().getFirst().getValue(), "Breakdown item value should match");
+    assertEquals(
+        mockAccount.getBalance(), response.getTotal(), "Total should match the account balance");
+    assertEquals(
+        mockAccount.getName(),
+        response.getBreakdownItems().getFirst().getName(),
+        "Breakdown item name should match");
+    assertEquals(
+        mockAccount.getBalance(),
+        response.getBreakdownItems().getFirst().getValue(),
+        "Breakdown item value should match");
   }
 
   @Test
@@ -156,21 +162,34 @@ class DashboardServiceTest {
     int currentYear = Year.now().getValue();
     int lastYear = currentYear - 1;
 
-    List<String> months = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-    List<Object[]> thisYearIncome = IntStream.rangeClosed(1, 12)
-            .mapToObj(i -> new Object[]{i, BigDecimal.valueOf(100.00 + (i - 1) * 100.00).setScale(2, RoundingMode.HALF_UP)})
+    List<String> months =
+        Arrays.asList(
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+    List<Object[]> thisYearIncome =
+        IntStream.rangeClosed(1, 12)
+            .mapToObj(
+                i ->
+                    new Object[] {
+                      i,
+                      BigDecimal.valueOf(100.00 + (i - 1) * 100.00)
+                          .setScale(2, RoundingMode.HALF_UP)
+                    })
             .toList();
-    List<Object[]> lastYearIncome = IntStream.rangeClosed(1, 12)
-            .mapToObj(i -> new Object[]{i, BigDecimal.valueOf(50.00 + (i - 1) * 100.00).setScale(2, RoundingMode.HALF_UP)})
+    List<Object[]> lastYearIncome =
+        IntStream.rangeClosed(1, 12)
+            .mapToObj(
+                i ->
+                    new Object[] {
+                      i,
+                      BigDecimal.valueOf(50.00 + (i - 1) * 100.00).setScale(2, RoundingMode.HALF_UP)
+                    })
             .toList();
 
     // Expected BigDecimal lists for assertions
-    List<BigDecimal> expectedThisYearIncome = thisYearIncome.stream()
-            .map(row -> (BigDecimal) row[1])
-            .toList();
-    List<BigDecimal> expectedLastYearIncome = lastYearIncome.stream()
-            .map(row -> (BigDecimal) row[1])
-            .toList();
+    List<BigDecimal> expectedThisYearIncome =
+        thisYearIncome.stream().map(row -> (BigDecimal) row[1]).toList();
+    List<BigDecimal> expectedLastYearIncome =
+        lastYearIncome.stream().map(row -> (BigDecimal) row[1]).toList();
 
     when(transactionRepo.getMonthlyIncomeForYear(userId, currentYear)).thenReturn(thisYearIncome);
     when(transactionRepo.getMonthlyIncomeForYear(userId, lastYear)).thenReturn(lastYearIncome);
@@ -180,8 +199,10 @@ class DashboardServiceTest {
 
     // Assert
     assertEquals(months, trend.getMonths(), "Months should match");
-    assertEquals(expectedThisYearIncome, trend.getIncomeThisYear(), "Current year income should match");
-    assertEquals(expectedLastYearIncome, trend.getIncomeLastYear(), "Last year income should match");
+    assertEquals(
+        expectedThisYearIncome, trend.getIncomeThisYear(), "Current year income should match");
+    assertEquals(
+        expectedLastYearIncome, trend.getIncomeLastYear(), "Last year income should match");
   }
 
   @Test
@@ -198,17 +219,22 @@ class DashboardServiceTest {
     t2.setCategory("Subscription");
     List<Transaction> mockTransactions = Arrays.asList(t1, t2);
 
-    String transactionStats = "User's spending over the last 30 days:\n" +
-            "- Food: $50.00\n" +
-            "- Subscription: $25.00\n";
-    String rawInsights = "Insight 1: Consider shifting just 1 meal/week to home cooking, you could save $120/month while still enjoying the occasional treat!\n" +
-            "Insight 2: Bundling or pausing just 1–2 rarely used ones could save around $25–$40/month, with no major impact on your routine!";
-    List<SpendingInsight> expectedInsights = Arrays.asList(
-            new SpendingInsight("Consider shifting just 1 meal/week to home cooking, you could save $120/month while still enjoying the occasional treat!"),
-            new SpendingInsight("Bundling or pausing just 1–2 rarely used ones could save around $25–$40/month, with no major impact on your routine!")
-    );
+    String transactionStats =
+        "User's spending over the last 30 days:\n"
+            + "- Food: $50.00\n"
+            + "- Subscription: $25.00\n";
+    String rawInsights =
+        "Insight 1: Consider shifting just 1 meal/week to home cooking, you could save $120/month while still enjoying the occasional treat!\n"
+            + "Insight 2: Bundling or pausing just 1–2 rarely used ones could save around $25–$40/month, with no major impact on your routine!";
+    List<SpendingInsight> expectedInsights =
+        Arrays.asList(
+            new SpendingInsight(
+                "Consider shifting just 1 meal/week to home cooking, you could save $120/month while still enjoying the occasional treat!"),
+            new SpendingInsight(
+                "Bundling or pausing just 1–2 rarely used ones could save around $25–$40/month, with no major impact on your routine!"));
 
-    when(transactionService.getTransactionsByUserIdInTimeFrame(userId, startDate, endDate)).thenReturn(mockTransactions);
+    when(transactionService.getTransactionsByUserIdInTimeFrame(userId, startDate, endDate))
+        .thenReturn(mockTransactions);
     when(aiInsightService.buildStrictPrompt(transactionStats)).thenReturn("mocked prompt");
     when(aiInsightService.getInsightsFromText("mocked prompt")).thenReturn(rawInsights);
     when(aiInsightService.parseInsightsToList(rawInsights)).thenReturn(expectedInsights);
@@ -218,8 +244,13 @@ class DashboardServiceTest {
 
     // Assert
     assertEquals(2, insights.size(), "Should return 2 insights");
-    assertEquals(expectedInsights.get(0).getInsight(), insights.get(0).getInsight(), "First insight should match");
-    assertEquals(expectedInsights.get(1).getInsight(), insights.get(1).getInsight(), "Second insight should match");
+    assertEquals(
+        expectedInsights.get(0).getInsight(),
+        insights.get(0).getInsight(),
+        "First insight should match");
+    assertEquals(
+        expectedInsights.get(1).getInsight(),
+        insights.get(1).getInsight(),
+        "Second insight should match");
   }
 }
-

@@ -29,14 +29,11 @@ import org.springframework.test.context.ActiveProfiles;
 @DataJpaTest
 public class TransactionRepoTest {
 
-  @Autowired
-  private TransactionRepo transactionRepo;
+  @Autowired private TransactionRepo transactionRepo;
 
-  @Autowired
-  private UserRepo userRepo;
+  @Autowired private UserRepo userRepo;
 
-  @Autowired
-  private AccountRepo accountRepo;
+  @Autowired private AccountRepo accountRepo;
 
   private User user;
   private Account account;
@@ -76,7 +73,8 @@ public class TransactionRepoTest {
 
     // Create transactions with varied dates
     for (int i = 1; i <= TOTAL_TRANSACTIONS; i++) {
-      Transaction transaction = new Transaction(
+      Transaction transaction =
+          new Transaction(
               LocalDate.of(2025, 4, i),
               BigDecimal.valueOf(100),
               "W4242 15/04",
@@ -85,18 +83,16 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      );
+              user);
       transactionRepo.save(transaction);
     }
 
-    List<Transaction> dateRangedTxns = transactionRepo.findByUserIdAndDateBetween(user.getId(), startDate, endDate);
+    List<Transaction> dateRangedTxns =
+        transactionRepo.findByUserIdAndDateBetween(user.getId(), startDate, endDate);
 
     assertThat(dateRangedTxns).hasSize(expectedDays.size());
-    List<Integer> actualDays = dateRangedTxns.stream()
-            .map(txn -> txn.getDate().getDayOfMonth())
-            .sorted()
-            .toList();
+    List<Integer> actualDays =
+        dateRangedTxns.stream().map(txn -> txn.getDate().getDayOfMonth()).sorted().toList();
     assertThat(actualDays).isEqualTo(expectedDays);
   }
 
@@ -107,7 +103,8 @@ public class TransactionRepoTest {
 
     // Debit transactions for this month
     for (int i = 0; i < 4; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -116,13 +113,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Credit transactions for this month
     for (int i = 0; i < 4; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(100),
               "W4242 15/04",
@@ -131,13 +128,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Credit transactions for last month
     for (int i = 0; i < 5; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, lastMonth, 1),
               BigDecimal.valueOf(100),
               "W4242 15/04",
@@ -146,8 +143,7 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     BigDecimal totalCredit = transactionRepo.getTotalCreditThisMonth(user.getId());
@@ -162,7 +158,8 @@ public class TransactionRepoTest {
 
     // Credit transactions for last month
     for (int i = 0; i < 5; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(100),
               "W4242 15/04",
@@ -171,13 +168,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Debit transactions for last month
     for (int i = 0; i < 4; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -186,11 +183,11 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
-    BigDecimal totalCredit = transactionRepo.getTotalCreditBetween(user.getId(), startLastMonth, endLastMonth);
+    BigDecimal totalCredit =
+        transactionRepo.getTotalCreditBetween(user.getId(), startLastMonth, endLastMonth);
     assertThat(totalCredit).isEqualByComparingTo(BigDecimal.valueOf(500));
   }
 
@@ -201,7 +198,8 @@ public class TransactionRepoTest {
 
     // Credit transactions for this month
     for (int i = 0; i < 2; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(100),
               "W4242 15/04",
@@ -210,13 +208,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Debit transactions for this month
     for (int i = 0; i < 3; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -225,13 +223,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Debit transactions for last month
     for (int i = 0; i < 2; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, lastMonth, 1),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -240,8 +238,7 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     BigDecimal totalDebit = transactionRepo.getTotalDebitThisMonth(user.getId());
@@ -256,7 +253,8 @@ public class TransactionRepoTest {
 
     // Credit transactions for last month
     for (int i = 0; i < 2; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(100),
               "W4242 15/04",
@@ -265,13 +263,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Debit transactions for last month
     for (int i = 0; i < 3; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -280,11 +278,11 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
-    BigDecimal totalDebit = transactionRepo.getTotalDebitBetween(user.getId(), startLastMonth, endLastMonth);
+    BigDecimal totalDebit =
+        transactionRepo.getTotalDebitBetween(user.getId(), startLastMonth, endLastMonth);
     assertThat(totalDebit).isEqualByComparingTo(BigDecimal.valueOf(-300));
   }
 
@@ -293,14 +291,16 @@ public class TransactionRepoTest {
     int year = 2025;
 
     // Create transactions for specific months
-    List<BigDecimal> expectedIncomes = List.of(
+    List<BigDecimal> expectedIncomes =
+        List.of(
             BigDecimal.valueOf(100), // January
             BigDecimal.valueOf(200), // February
-            BigDecimal.valueOf(300)  // March
-    );
+            BigDecimal.valueOf(300) // March
+            );
 
     for (int month = 1; month <= 3; month++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(year, month, 1),
               expectedIncomes.get(month - 1),
               "W4242 15/04",
@@ -309,10 +309,10 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
       // Add a debit transaction to ensure only credits are summed
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(year, month, 1),
               BigDecimal.valueOf(-50),
               "W4242 15/04",
@@ -321,8 +321,7 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     List<Object[]> monthlyIncome = transactionRepo.getMonthlyIncomeForYear(user.getId(), year);
@@ -331,23 +330,26 @@ public class TransactionRepoTest {
     for (int i = 0; i < monthlyIncome.size(); i++) {
       Object[] result = monthlyIncome.get(i);
       assertThat(result[0]).isEqualTo(i + 1); // Month
-      assertEquals(0, ((BigDecimal) result[1]).compareTo(expectedIncomes.get(i)),
-              "BigDecimal values should be numerically equal"); // Income
+      assertEquals(
+          0,
+          ((BigDecimal) result[1]).compareTo(expectedIncomes.get(i)),
+          "BigDecimal values should be numerically equal"); // Income
     }
   }
 
   @Test
   void testFindTop5ExpenseCategoriesByAmount() {
-    List<ExpenseAnalysis> expectedCategories = List.of(
+    List<ExpenseAnalysis> expectedCategories =
+        List.of(
             new ExpenseAnalysis("Personal Care", BigDecimal.valueOf(-1000)),
             new ExpenseAnalysis("Groceries", BigDecimal.valueOf(-900)),
             new ExpenseAnalysis("Entertainment", BigDecimal.valueOf(-800)),
             new ExpenseAnalysis("Uncategorised", BigDecimal.valueOf(-700)),
-            new ExpenseAnalysis("Restaurants", BigDecimal.valueOf(-500))
-    );
+            new ExpenseAnalysis("Restaurants", BigDecimal.valueOf(-500)));
 
     for (ExpenseAnalysis category : expectedCategories) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, 1),
               category.getValue(),
               "W4242 15/04",
@@ -356,12 +358,12 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     // Add a transfer transaction that should be excluded
-    transactionRepo.save(new Transaction(
+    transactionRepo.save(
+        new Transaction(
             LocalDate.of(2025, 7, 1),
             BigDecimal.valueOf(-600),
             "W4242 15/04",
@@ -370,22 +372,25 @@ public class TransactionRepoTest {
             BigDecimal.valueOf(1000),
             SourceType.MANUAL,
             account,
-            user
-    ));
+            user));
 
-    List<ExpenseAnalysis> actualCategories = transactionRepo.findTop5ExpenseCategoriesByAmount(user.getId());
+    List<ExpenseAnalysis> actualCategories =
+        transactionRepo.findTop5ExpenseCategoriesByAmount(user.getId());
     assertThat(actualCategories).hasSize(5);
 
     for (int i = 0; i < actualCategories.size(); i++) {
-      assertThat(actualCategories.get(i).getLabel()).isEqualTo(expectedCategories.get(i).getLabel());
-      assertThat(actualCategories.get(i).getValue()).isEqualByComparingTo(expectedCategories.get(i).getValue());
+      assertThat(actualCategories.get(i).getLabel())
+          .isEqualTo(expectedCategories.get(i).getLabel());
+      assertThat(actualCategories.get(i).getValue())
+          .isEqualByComparingTo(expectedCategories.get(i).getValue());
     }
   }
 
   @Test
   void testFindByUserIdOrderByDateAsc() {
     for (int i = 1; i <= 3; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
@@ -394,8 +399,7 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     List<Transaction> result = transactionRepo.findByUser_IdOrderByDateAsc(user.getId());
@@ -406,7 +410,8 @@ public class TransactionRepoTest {
   @Test
   void testFindByUserIdOrderByDateDesc() {
     for (int i = 1; i <= 3; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
@@ -415,8 +420,7 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     List<Transaction> result = transactionRepo.findByUser_IdOrderByDateDesc(user.getId());
@@ -427,7 +431,8 @@ public class TransactionRepoTest {
   @Test
   void testFindByUserIdOrderByDateAscPageable() {
     for (int i = 1; i <= 5; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
@@ -436,8 +441,7 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     Pageable pageable = PageRequest.of(0, 3);
@@ -450,7 +454,8 @@ public class TransactionRepoTest {
   @Test
   void testFindByUserIdOrderByDateDescPageable() {
     for (int i = 1; i <= 5; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
@@ -459,21 +464,22 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     Pageable pageable = PageRequest.of(0, 3);
     Page<Transaction> result = transactionRepo.findByUser_IdOrderByDateDesc(user.getId(), pageable);
     assertThat(result.getContent()).hasSize(3);
     assertThat(result.getTotalElements()).isEqualTo(5);
-    assertThat(result.getContent()).isSortedAccordingTo(Comparator.comparing(Transaction::getDate).reversed());
+    assertThat(result.getContent())
+        .isSortedAccordingTo(Comparator.comparing(Transaction::getDate).reversed());
   }
 
   @Test
   void testFindByAccountOrderByDateDesc() {
     for (int i = 1; i <= 3; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
@@ -482,8 +488,7 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
     List<Transaction> result = transactionRepo.findByAccountOrderByDateDesc(account);
@@ -493,7 +498,8 @@ public class TransactionRepoTest {
 
   @Test
   void testFindTransactionByUserAndId() {
-    Transaction transaction = new Transaction(
+    Transaction transaction =
+        new Transaction(
             LocalDate.of(2025, 7, 1),
             BigDecimal.valueOf(100),
             "desc",
@@ -502,11 +508,11 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user
-    );
+            user);
     transaction = transactionRepo.save(transaction);
 
-    Optional<Transaction> result = transactionRepo.findTransactionByUserAndId(user, transaction.getId());
+    Optional<Transaction> result =
+        transactionRepo.findTransactionByUserAndId(user, transaction.getId());
     assertThat(result).isPresent();
     assertThat(result.get().getId()).isEqualTo(transaction.getId());
     assertThat(result.get().getUser()).isEqualTo(user);
@@ -514,7 +520,8 @@ public class TransactionRepoTest {
 
   @Test
   void testDeleteAllByIdInAndUser() {
-    Transaction transaction1 = new Transaction(
+    Transaction transaction1 =
+        new Transaction(
             LocalDate.of(2025, 7, 1),
             BigDecimal.valueOf(100),
             "desc",
@@ -523,9 +530,9 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user
-    );
-    Transaction transaction2 = new Transaction(
+            user);
+    Transaction transaction2 =
+        new Transaction(
             LocalDate.of(2025, 7, 2),
             BigDecimal.valueOf(200),
             "desc",
@@ -534,8 +541,7 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user
-    );
+            user);
     transaction1 = transactionRepo.save(transaction1);
     transaction2 = transactionRepo.save(transaction2);
 
@@ -549,7 +555,8 @@ public class TransactionRepoTest {
   @Test
   void testFindLatest3TransactionSummaries() {
     for (int i = 1; i <= 5; i++) {
-      transactionRepo.save(new Transaction(
+      transactionRepo.save(
+          new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(100 + i),
               "Txn " + i,
@@ -558,13 +565,14 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user
-      ));
+              user));
     }
 
-    List<RecentTransactions> summaries = transactionRepo.findLatest3TransactionSummaries(user.getId());
+    List<RecentTransactions> summaries =
+        transactionRepo.findLatest3TransactionSummaries(user.getId());
     assertThat(summaries).hasSize(3);
-    assertThat(summaries).isSortedAccordingTo(Comparator.comparing(RecentTransactions::getDate).reversed());
+    assertThat(summaries)
+        .isSortedAccordingTo(Comparator.comparing(RecentTransactions::getDate).reversed());
     assertThat(summaries.get(0).getDescription()).isEqualTo("Txn 5");
     assertThat(summaries.get(0).getCategory()).isEqualTo("Category5");
     assertThat(summaries.get(0).getAmount()).isEqualByComparingTo(BigDecimal.valueOf(105));
@@ -572,7 +580,8 @@ public class TransactionRepoTest {
 
   @Test
   void testSumAmountsByAccount() {
-    transactionRepo.save(new Transaction(
+    transactionRepo.save(
+        new Transaction(
             LocalDate.of(2025, 7, 1),
             BigDecimal.valueOf(100),
             "desc",
@@ -581,10 +590,10 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user
-    ));
+            user));
 
-    transactionRepo.save(new Transaction(
+    transactionRepo.save(
+        new Transaction(
             LocalDate.of(2025, 7, 2),
             BigDecimal.valueOf(200),
             "desc",
@@ -593,8 +602,7 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user
-    ));
+            user));
 
     BigDecimal sum = transactionRepo.sumAmountsByAccount(account);
     assertThat(sum).isEqualByComparingTo(BigDecimal.valueOf(300));

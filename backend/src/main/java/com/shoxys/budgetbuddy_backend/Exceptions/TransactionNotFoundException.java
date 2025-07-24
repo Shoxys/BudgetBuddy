@@ -1,8 +1,6 @@
 package com.shoxys.budgetbuddy_backend.Exceptions;
 
-/**
- * Exception thrown when a transaction is not found for a given ID.
- */
+/** Exception thrown when a transaction is not found for a given ID. */
 public class TransactionNotFoundException extends RuntimeException {
 
   /**

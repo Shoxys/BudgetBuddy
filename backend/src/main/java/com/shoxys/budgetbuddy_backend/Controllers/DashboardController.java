@@ -6,18 +6,15 @@ import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.DashboardService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
+import java.math.BigDecimal;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-/**
- * Handles HTTP requests for dashboard-related data and insights.
- */
+/** Handles HTTP requests for dashboard-related data and insights. */
 @RestController
 @RequestMapping(Constants.DASHBOARD_ENDPOINT)
 public class DashboardController {
@@ -37,7 +34,8 @@ public class DashboardController {
    * @return the total balance
    */
   @GetMapping("/total-balance")
-  public ResponseEntity<BigDecimal> getTotalBalance(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<BigDecimal> getTotalBalance(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching total balance for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -53,7 +51,8 @@ public class DashboardController {
    * @return a list of account summaries
    */
   @GetMapping("/accounts-summary")
-  public ResponseEntity<List<AccountSummary>> getAccountsSummary(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<AccountSummary>> getAccountsSummary(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching accounts summary for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -69,7 +68,8 @@ public class DashboardController {
    * @return the net worth response
    */
   @GetMapping("/networth")
-  public ResponseEntity<NetworthResponse> getNetworth(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<NetworthResponse> getNetworth(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching net worth for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -85,7 +85,8 @@ public class DashboardController {
    * @return a list of spending insights
    */
   @GetMapping("/spending-insights")
-  public ResponseEntity<List<SpendingInsight>> getSpendingInsights(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<SpendingInsight>> getSpendingInsights(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching spending insights for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -101,7 +102,8 @@ public class DashboardController {
    * @return a list of saving goal summaries
    */
   @GetMapping("/saving-goals")
-  public ResponseEntity<List<SavingGoalSummary>> getSavingGoals(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<SavingGoalSummary>> getSavingGoals(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching saving goals for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -117,12 +119,14 @@ public class DashboardController {
    * @return a list of income/expense summaries
    */
   @GetMapping("/income-expense-summary")
-  public ResponseEntity<List<IncomeExpenseSummary>> getIncomeExpenseSummary(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<IncomeExpenseSummary>> getIncomeExpenseSummary(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching income/expense summary for user: {}", username);
     User user = userService.getUserByEmail(username);
     List<IncomeExpenseSummary> summary = dashboardService.getIncomeExpenseSummary(user.getId());
-    logger.info("Income/expense summary retrieved for user: {}, count: {}", username, summary.size());
+    logger.info(
+        "Income/expense summary retrieved for user: {}, count: {}", username, summary.size());
     return ResponseEntity.ok(summary);
   }
 
@@ -133,7 +137,8 @@ public class DashboardController {
    * @return the income trend
    */
   @GetMapping("/income-trend")
-  public ResponseEntity<IncomeTrend> getIncomeTrend(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<IncomeTrend> getIncomeTrend(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching income trend for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -149,7 +154,8 @@ public class DashboardController {
    * @return a list of expense analyses
    */
   @GetMapping("/expense-analysis")
-  public ResponseEntity<List<ExpenseAnalysis>> getExpenseAnalysis(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<ExpenseAnalysis>> getExpenseAnalysis(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching expense analysis for user: {}", username);
     User user = userService.getUserByEmail(username);
@@ -165,12 +171,14 @@ public class DashboardController {
    * @return a list of recent transactions
    */
   @GetMapping("/recent-transactions")
-  public ResponseEntity<List<RecentTransactions>> getRecentTransactions(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<RecentTransactions>> getRecentTransactions(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching recent transactions for user: {}", username);
     User user = userService.getUserByEmail(username);
     List<RecentTransactions> transactions = dashboardService.getRecentTransactions(user.getId());
-    logger.info("Recent transactions retrieved for user: {}, count: {}", username, transactions.size());
+    logger.info(
+        "Recent transactions retrieved for user: {}, count: {}", username, transactions.size());
     return ResponseEntity.ok(transactions);
   }
 

@@ -7,9 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-/**
- * Service for loading user-specific data for Spring Security authentication.
- */
+/** Service for loading user-specific data for Spring Security authentication. */
 @Service
 public class AppUserDetailsService implements UserDetailsService {
 
@@ -33,7 +31,9 @@ public class AppUserDetailsService implements UserDetailsService {
    */
   @Override
   public UserDetails loadUserByUsername(String email) throws UserNotFoundException {
-    User user = userRepo.findByEmail(email)
+    User user =
+        userRepo
+            .findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     return new AppUserDetails(user);
   }
