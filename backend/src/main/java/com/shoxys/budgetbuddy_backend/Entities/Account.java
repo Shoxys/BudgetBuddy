@@ -1,20 +1,28 @@
 package com.shoxys.budgetbuddy_backend.Entities;
 
+import com.shoxys.budgetbuddy_backend.Config.Constants;
 import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
+/**
+ * Entity representing a financial account owned by a user.
+ */
 @Entity
 @Table(name = "accounts")
 public class Account {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
+  @NotBlank(message = "Name is required")
+  @Size(max = Constants.MAX_ACCOUNT_NAME_LENGTH, message = "Name cannot exceed " + Constants.MAX_ACCOUNT_NAME_LENGTH + " characters")
   @Column(nullable = false)
   private String name;
 
+  @NotNull(message = "Account type is required")
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private AccountType type;
@@ -22,7 +30,10 @@ public class Account {
   @Column(nullable = true)
   private Integer accountNo;
 
-  @Column(nullable = false, precision = 10, scale = 2)
+  @NotNull(message = "Balance is required")
+  @DecimalMin(value = Constants.MIN_BALANCE, message = "Balance must be at least " + Constants.MIN_BALANCE)
+  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Balance must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
+  @Column(nullable = false, precision = Constants.MAX_BALANCE_INTEGER_DIGITS, scale = Constants.MAX_BALANCE_FRACTION_DIGITS)
   private BigDecimal balance;
 
   @Column(nullable = false)
@@ -32,15 +43,17 @@ public class Account {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User user;
 
-  public Account() {}
+  public Account() {
+    this.balance = BigDecimal.ZERO;
+  }
 
   public Account(
-      String name,
-      AccountType type,
-      Integer accountNo,
-      BigDecimal balance,
-      boolean isManual,
-      User user) {
+          String name,
+          AccountType type,
+          Integer accountNo,
+          BigDecimal balance,
+          boolean isManual,
+          User user) {
     this.name = name;
     this.type = type;
     this.accountNo = accountNo;
@@ -49,11 +62,11 @@ public class Account {
     this.user = user;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -89,12 +102,12 @@ public class Account {
     this.balance = balance;
   }
 
-  public boolean getIsManual() {
+  public boolean isManual() {
     return isManual;
   }
 
-  public void setManual(boolean manual) {
-    isManual = manual;
+  public void setManual(boolean isManual) {
+    this.isManual = isManual;
   }
 
   public User getUser() {

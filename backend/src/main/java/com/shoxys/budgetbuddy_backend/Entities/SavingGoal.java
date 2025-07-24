@@ -1,29 +1,45 @@
 package com.shoxys.budgetbuddy_backend.Entities;
 
+import com.shoxys.budgetbuddy_backend.Config.Constants;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Entity representing a user's saving goal linked to an account.
+ */
 @Entity
 @Table(name = "savingGoals")
 public class SavingGoal {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
+  @NotBlank(message = "Title is required")
+  @Size(max = Constants.MAX_TITLE_LENGTH, message = "Title cannot exceed " + Constants.MAX_TITLE_LENGTH + " characters")
   @Column(nullable = false)
   private String title;
 
-  @Column(nullable = false, precision = 10, scale = 2)
+  @NotNull(message = "Target amount is required")
+  @DecimalMin(value = Constants.MIN_BALANCE, message = "Target amount must be at least " + Constants.MIN_BALANCE)
+  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Target amount must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
+  @Column(nullable = false, precision = Constants.MAX_BALANCE_INTEGER_DIGITS, scale = Constants.MAX_BALANCE_FRACTION_DIGITS)
   private BigDecimal target;
 
-  @Column(nullable = false, precision = 10, scale = 2)
-  private BigDecimal contributed;
+  @NotNull(message = "Contributed amount is required")
+  @DecimalMin(value = Constants.MIN_BALANCE, message = "Contributed amount must be at least " + Constants.MIN_BALANCE)
+  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Contributed amount must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
+  @Column(nullable = false, precision = Constants.MAX_BALANCE_INTEGER_DIGITS, scale = Constants.MAX_BALANCE_FRACTION_DIGITS)
+  private BigDecimal contributed = BigDecimal.ZERO;
 
+  @NotNull(message = "Date is required")
   @Column(nullable = false)
   private LocalDate date;
 
+  @Size(max = Constants.MAX_IMAGE_REF_LENGTH, message = "Image reference cannot exceed " + Constants.MAX_IMAGE_REF_LENGTH + " characters")
+  @Column(nullable = true)
   private String imageRef;
 
   @ManyToOne
@@ -37,13 +53,13 @@ public class SavingGoal {
   public SavingGoal() {}
 
   public SavingGoal(
-      String title,
-      BigDecimal target,
-      BigDecimal contributed,
-      LocalDate date,
-      String imageRef,
-      Account account,
-      User user) {
+          String title,
+          BigDecimal target,
+          BigDecimal contributed,
+          LocalDate date,
+          String imageRef,
+          Account account,
+          User user) {
     this.title = title;
     this.target = target;
     this.contributed = contributed;
@@ -53,11 +69,11 @@ public class SavingGoal {
     this.user = user;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
