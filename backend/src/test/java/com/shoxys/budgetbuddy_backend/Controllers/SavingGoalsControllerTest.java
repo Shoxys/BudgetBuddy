@@ -6,10 +6,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shoxys.budgetbuddy_backend.DTOs.GoalContributionRequest;
-import com.shoxys.budgetbuddy_backend.DTOs.GoalStat;
-import com.shoxys.budgetbuddy_backend.DTOs.GoalStatsResponse;
-import com.shoxys.budgetbuddy_backend.DTOs.SavingGoalRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.GoalContributionRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.GoalStat;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.GoalStatsResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.SavingGoalRequest;
 import com.shoxys.budgetbuddy_backend.Entities.SavingGoal;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Enums.GoalType;

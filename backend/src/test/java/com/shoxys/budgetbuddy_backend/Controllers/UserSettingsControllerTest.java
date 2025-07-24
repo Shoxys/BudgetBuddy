@@ -7,9 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shoxys.budgetbuddy_backend.DTOs.AuthResponse;
-import com.shoxys.budgetbuddy_backend.DTOs.ChangePasswordRequest;
-import com.shoxys.budgetbuddy_backend.DTOs.UpdateEmailRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.Auth.AuthResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.Auth.ChangePasswordRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.Auth.UpdateEmailRequest;
 import com.shoxys.budgetbuddy_backend.Entities.User;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
