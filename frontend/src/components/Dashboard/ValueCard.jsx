@@ -1,68 +1,122 @@
-import { formatMoney } from "../../Utils/helpers"
-import { useNavigate } from "react-router-dom";
+/**
+ * ValueCard component for displaying account balances.
+ * Renders cards for each account type with edit/navigation actions.
+ */
 
-export default function ValueCard({ accounts, setUpdateActioned }) {
-    const valueObjects = [
-    {name: "Spending Account", icon: "src/assets/spending-icon.png", navIcon: "src/assets/spending-plus.png", action: "/transactions", editable: false},
-    {name: "Savings Account", icon: "src/assets/savings-icon.png", navIcon: "src/assets/savings-plus.png", action: "Savings" ,editable: true},
-    {name: "Investments", icon: "src/assets/investments-icon.png", navIcon: "src/assets/investments-plus.png", action: "Investments", editable: true},
-    {name: "Goal Savings", icon: "src/assets/saving-goals-icon.png", navIcon: "src/assets/goal-plus.png", action: "/saving-goals", editable: false}
-    ]
+import { useNavigate } from 'react-router-dom';
+import { formatMoney } from '../../Utils/helpers';
+import { AccountTypes } from '../../constants/AccountConstants';
+import { ROUTES } from '../../constants/AppConstants';
 
-    const isValid = Array.isArray(accounts) && accounts.length > 0;
-    const navigate = useNavigate();
+export default function ValueCard({ accounts = [], setUpdateActioned }) {
+  const navigate = useNavigate();
 
-    return (
-        <>
-        {isValid 
-          /* Accounts cards with data */
-         ? (accounts.map(({ name, balance }) => {
-            const account = valueObjects.find(value => value.name === name);
-            if (!account) return null; // Skip unmatched accounts
+  // Define account templates
+  const accountTemplates = [
+    {
+      type: AccountTypes.SPENDING,
+      name: 'Spending Account',
+      icon: '/assets/spending-icon.png',
+      navIcon: '/assets/spending-plus.png',
+      action: ROUTES.TRANSACTIONS,
+      editable: false,
+    },
+    {
+      type: AccountTypes.SAVINGS,
+      name: 'Saving Account',
+      icon: '/assets/savings-icon.png',
+      navIcon: '/assets/savings-plus.png',
+      action: ROUTES.SAVINGS,
+      editable: true,
+    },
+    {
+      type: AccountTypes.INVESTMENTS,
+      name: 'Investment Account',
+      icon: '/assets/investments-icon.png',
+      navIcon: '/assets/investments-plus.png',
+      action: ROUTES.INVESTMENTS,
+      editable: true,
+    },
+    {
+      type: AccountTypes.GOALSAVINGS,
+      name: 'Goal Savings',
+      icon: '/assets/saving-goals-icon.png',
+      navIcon: '/assets/goal-plus.png',
+      action: ROUTES.SAVING_GOALS,
+      editable: false,
+    },
+  ];
 
-            return (
-                <div className="px-4 pt-3 pb-2 flex flex-row justify-between gap-2 rounded-lg w-72 shadow-bb-general" key={name}>
-                    <div>
-                        <div className="flex flex-row">
-                            <h2 className="font-body text-md text-gray-600 font-normal">{name}</h2>
-                            {account.editable && (
-                            <button onClick={() => setUpdateActioned(name)}>
-                                <img className="w-6" src="src/assets/edit-icon.png" alt="Edit icon" />
-                            </button>
-                            )}
-                        </div>
-                        <h1 className="text-2xl text-gray-700 font-header font-bold">
-                            {formatMoney(balance)}
-                        </h1>
-                    </div>
-                    <div className="flex items-center">
-                        <img className="w-13 h-12" src={account.icon} alt={`${name} icon`} />
-                    </div>
-                </div>
-            )}))
-            /* Default Accounts cards empty data */
-            : valueObjects.map (({name, action, navIcon, editable }) => (
-                <div className="px-4 pt-3 pb-2 flex flex-row justify-between gap-2 rounded-lg w-72 shadow-bb-general" key={name}>
-                    <div>
-                        <div className="flex flex-row">
-                            <h2 className="font-body text-md text-gray-600 font-normal">{name}</h2>
-                        </div>
-                        <h1 className="text-2xl text-gray-700 font-header font-bold">
-                            $0
-                        </h1>
-                    </div>
-                    <div className="flex items-center">
-                        <button 
-                            onClick= {editable
-                                ? () => setUpdateActioned(name)
-                                : () => navigate(action)
-                            }>
-                            <img className="w-13 h-12" src={navIcon} alt={`${name} icon`} />
-                        </button>
-                    </div>
-                </div>
-            ))
-        }
-        </>
-        )
+  // Generate cards: include matching accounts and default templates
+  const cardData = accountTemplates.reduce((cards, template) => {
+    const matchingAccounts = accounts.filter((acc) => acc.type === template.type);
+
+    // Add default card for template if no matching accounts or default name missing
+    const hasDefaultName = matchingAccounts.some((acc) => acc.name === template.name);
+    cards.push({
+      type: template.type,
+      name: template.name,
+      balance: hasDefaultName ? matchingAccounts.find((acc) => acc.name === template.name)?.balance || 0 : 0,
+      id: hasDefaultName ? matchingAccounts.find((acc) => acc.name === template.name)?.id : undefined,
+      icon: hasDefaultName ? template.icon : template.navIcon,
+      action: template.action,
+      editable: template.editable,
+      hasData: hasDefaultName,
+    });
+
+    // Add non-default named accounts
+    matchingAccounts.forEach((account) => {
+      if (account.name !== template.name) {
+        cards.push({
+          type: account.type,
+          name: account.name,
+          balance: account.balance,
+          id: account.id,
+          icon: template.icon,
+          action: template.action,
+          editable: template.editable,
+          hasData: true,
+        });
+      }
+    });
+
+    return cards;
+  }, []);
+
+  // Layout
+  return (
+    <>
+      {cardData.map((card, index) => (
+        <div
+          className="p-4 flex flex-row justify-between items-center gap-4 rounded-xl w-72 shadow-bb-general bg-white transition-all hover:shadow-lg hover:-translate-y-1"
+          key={`${card.type}-${card.name}-${index}`}
+        >
+          {/* Account Info */}
+          <div>
+            <div className="flex flex-row items-center gap-2">
+              <h2 className="text-md text-gray-600 font-normal font-body">{card.name}</h2>
+              {card.editable && card.hasData && (
+                <button
+                  onClick={() => setUpdateActioned(card.type, card.name, card.id)}
+                  className="text-gray-400 hover:text-blue-600 transition-colors"
+                >
+                  <img className="w-6 h-6" src="/assets/edit-icon.png" alt="Edit icon" />
+                </button>
+              )}
+            </div>
+            <h1 className="text-2xl text-gray-800 font-bold font-header">{formatMoney(card.balance)}</h1>
+          </div>
+          {/* Action Button */}
+          <div className="flex items-center">
+            <button
+              className="w-12 h-12"
+              onClick={() => (card.editable && !card.hasData ? setUpdateActioned(card.type, card.name, undefined) : navigate(card.action))}
+            >
+              <img src={card.icon} alt={`${card.name} icon`} className="w-12 h-12" />
+            </button>
+          </div>
+        </div>
+      ))}
+    </>
+  );
 }

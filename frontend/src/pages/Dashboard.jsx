@@ -1,135 +1,176 @@
-import Sidebar from "../components/Sidebar";
+/**
+ * Dashboard component displaying account overview and financial insights.
+ */
+import { useState, useEffect } from 'react';
+import Sidebar from '../components/Sidebar';
+import Notification from '../components/Notification';
+import { AccountDisplayNames } from '../constants/AccountConstants';
 import {
   ValueCard,
   InsightsCard,
   NetworthCard,
-  DropdownPeriod,
   TotalBalanceCard,
   SavingGoalsCard,
   IncomeExpenseCard,
   IncomeCard,
   ExpenseAnalysisCard,
   TransactionsCard,
-  UpdateSavings,
-  UpdateInvestments,
-} from "../components/Dashboard";
+  UpdateAccount,
+} from '../components/Dashboard';
+import {
+  useTotalBalance,
+  useAccountsSummary,
+  useNetworth,
+  useSpendingInsights,
+  useSavingGoals,
+  useIncomeExpenseSummary,
+  useIncomeTrend,
+  useExpenseAnalysis,
+  useRecentTransactions,
+} from '../api';
 
-import { formatIncome } from "../Utils/transformers";
-import { useState } from "react";
+/**
+ * Main dashboard page for displaying financial data and managing accounts.
+ * @returns {JSX.Element} Dashboard component.
+ */
+export default function Dashboard() {
+  const [update, setUpdate] = useState(null);
+  const [notification, setNotification] = useState({ isOpen: false, type: '', message: '' });
 
-let data = {
-  "totalBalance": 4950,
-  "accounts": [
-    { "type": "Spending", "name": "Spending Account", "balance": 1850 },
-    { "type": "Savings", "name": "Savings Account", "balance": 2000 },
-    { "type": "Investments", "name": "Investments", "balance": 1232 },
-    { "type": "GoalSavings", "name": "Goal Savings", "balance": 1232 }
-  ],
-  "netWorth": {
-    "total": 4950,
-    "breakdown": [
-      {"name": "Spending", "value": 1850},
-      {"name": "Savings", "value": 2000},
-      {"name": "Investments", "value": 1232},
-      {"name": "Goal Savings", "value": 325}
-    ]},
-  "spendingInsights": [
-    {"insight" : "Consider shifting just 1 meal/week to home cooking, you could save $120/month while still enjoying the occasional treat!"},
-    {"insight": "Bundling or pausing just 1–2 rarely used ones could save around $25–$40/month, with no major impact on your routine!"}
-  ],
+  // Data fetching hooks
+  const { data: totalBalanceData, isLoading: isLoadingTotalBalance, error: errorTotalBalance } = useTotalBalance();
+  const { data: accountsSummaryData, isLoading: isLoadingAccountsSummary, error: errorAccountsSummary } = useAccountsSummary();
+  const { data: networthData, isLoading: isLoadingNetworth, error: errorNetworth } = useNetworth();
+  const { data: spendingInsightsData, isLoading: isLoadingSpendingInsights, error: errorSpendingInsights } = useSpendingInsights();
+  const { data: savingGoalsData, isLoading: isLoadingSavingGoals, error: errorSavingGoals } = useSavingGoals();
+  const { data: incomeExpenseSummaryData, isLoading: isLoadingIncomeExpenseSummary, error: errorIncomeExpenseSummary } = useIncomeExpenseSummary();
+  const { data: incomeTrendData, isLoading: isLoadingIncomeTrend, error: errorIncomeTrend } = useIncomeTrend();
+  const { data: expenseAnalysisData, isLoading: isLoadingExpenseAnalysis, error: errorExpenseAnalysis } = useExpenseAnalysis();
+  const { data: recentTransactionsData, isLoading: isLoadingRecentTransactions, error: errorRecentTransactions } = useRecentTransactions();
 
-  "savingGoals": [
-    { "title": "PS5", "contributed": 261, "target": 500 },
-    { "title": "Nike Airforces", "contributed": 35, "target": 140 },
-    { "title": "Wallet", "contributed": 12, "target": 50 }
-  ],
-  "incomeVsExpenses": [
-    {"name": "Last month", "income": 2600, "expenses": 1850 },
-    {"name" : "This month", "income": 2000, "expenses": 1350 }
-  ],
-  "incomeTrend": {
-    "months": ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    "thisYear": [3200, 3400, 3600, 3500, 3700, 3900, 4000, 4200, 4300, 4500, 4700, 4800],
-    "lastYear": [3000, 3100, 3300, 3400, 3600, 3800, 4000, 4100, 4200, 4300, 4400, 4600]
-  },
-  "expenseAnalysis": [
-    {"label": "Groceries", "value": 1750},
-    {"label": "Personal Care", "value": 600},
-    {"label": "Fees & Charges", "value": 1200},
-    {"label": "Transfers out", "value": 450},
-    {"label": "Restaurants", "value": 1000}
-  ],
-  "recentTransactions": [
-    {
-      "date": "2025-04-17",
-      "description": "Grocery Store",
-      "category": "Personal Care",
-      "amount": -85.5
-    },
-    {
-      "date": "2025-04-16",
-      "description": "Salary Deposit",
-      "category": "Restaurants",
-      "amount": 1500.0
-    },
-    {
-      "date": "2025-03-01",
-      "description": "Electricity Bill",
-      "category": "Attractions & Events",
-      "amount": -85.5
+  // Loading state
+  const isLoadingAny =
+    isLoadingTotalBalance ||
+    isLoadingAccountsSummary ||
+    isLoadingNetworth ||
+    isLoadingSpendingInsights ||
+    isLoadingSavingGoals ||
+    isLoadingIncomeExpenseSummary ||
+    isLoadingIncomeTrend ||
+    isLoadingExpenseAnalysis ||
+    isLoadingRecentTransactions;
+
+  // Handle errors
+  useEffect(() => {
+    const errors = [
+      errorTotalBalance,
+      errorAccountsSummary,
+      errorNetworth,
+      errorSpendingInsights,
+      errorSavingGoals,
+      errorIncomeExpenseSummary,
+      errorIncomeTrend,
+      errorExpenseAnalysis,
+      errorRecentTransactions,
+    ].filter(Boolean);
+
+    if (errors.length > 0) {
+      const message = errors
+        .map((err) => err.response?.data?.message || err.message || 'Unknown error')
+        .join('; ');
+      setNotification({ isOpen: true, type: 'error', message: `Data loading failed: ${message}` });
     }
-  ]
-}
+  }, [
+    errorTotalBalance,
+    errorAccountsSummary,
+    errorNetworth,
+    errorSpendingInsights,
+    errorSavingGoals,
+    errorIncomeExpenseSummary,
+    errorIncomeTrend,
+    errorExpenseAnalysis,
+    errorRecentTransactions,
+  ]);
 
-data = null;
+  // Handlers
+  const handleCloseNotification = () => setNotification({ ...notification, isOpen: false });
 
-export default function Dashboard () {
-   const UPDATE_TYPES = {
-      SAVINGS: "Savings Account",
-      INVESTMENTS: "Investments"
-   };
-   const transformedIncome = data ? formatIncome(data.incomeTrend) : null;
-   const [update, setUpdate] = useState(null);
-   return (
-      <div className="relative min-h-screen min-w-screen bg-bb_slate pl-16">
-        <Sidebar selectedNav="Dashboard"/>
-        <div className="flex flex-col px-5 pb-4 w-full h-full gap-2">
-         <div className="flex flex-row justify-between">
-             <h2 className={`text-2xl font-header font-bold ml-4 mt-3`}>
-                <span className="text-primary_blue">Budget</span>
-                <span className="text-secondary_red">Buddy</span>
-                <span> Dashboard</span>
-            </h2>
-            <DropdownPeriod/>
-         </div>
-            <div className="w-full h-full">
-               <div className="flex flex-col bg-white pl-4 pb-3 pt-3 w-full text-black rounded-sm shadow-bb-general">
-                  <h1 className="font-header text-md font-semibold text-gray-700 mb-2"> Account Overview</h1>
-                  <div className="flex flex-row gap-6">
-                     <TotalBalanceCard totalBalance={data?.netWorth?.total ?? null}/>
-                     <ValueCard accounts={data?.accounts ?? null} setUpdateActioned={setUpdate}/>
-                     <div>
-                     </div>
-                  </div>
-               </div>
-               <div className="flex gap-2 mt-3 h-full">
-                  <div className="w-1/2 grid grid-col grid-auto-rows gap-3">
-                     <InsightsCard data={data?.spendingInsights ?? null}/>
-                     <NetworthCard data={data?.netWorth ?? null}/>
-                     <SavingGoalsCard data={data?.savingGoals ?? null}/>
-                     <IncomeExpenseCard data={data?.incomeVsExpenses ?? null}/>
-                  </div>   
-                  <div className="w-1/2 grid grid-cols-2 grid-auto-rows gap-3">
-                     <IncomeCard data={transformedIncome}/>
-                     <ExpenseAnalysisCard expenses={data?.expenseAnalysis ?? null}/>
-                     <TransactionsCard data={data?.recentTransactions ?? null}/>
-                  </div>
-               </div>
-            </div>    
+  const handleUpdateModalClose = (result) => {
+    setUpdate(null);
+    if (result?.success) {
+      setNotification({ isOpen: true, type: 'success', message: result.message });
+    } else if (result?.error) {
+      setNotification({ isOpen: true, type: 'error', message: result.error.message || 'Update failed' });
+    }
+  };
+
+  const handleUpdateActioned = (type, name, id) => {
+    setUpdate({ type, name: name || AccountDisplayNames[type], id });
+  };
+
+  // Main layout
+  return (
+    <div className="relative min-h-screen bg-slate-100 pl-16">
+      {/* Sidebar and notification */}
+      <Sidebar selectedNav="Dashboard" />
+      <Notification
+        isOpen={notification.isOpen}
+        message={notification.message}
+        type={notification.type}
+        onClose={handleCloseNotification}
+      />
+      {/* Content container */}
+      <div className="flex flex-col px-5 pb-4 w-full h-full gap-4">
+        {/* Header */}
+        <div className="flex flex-row justify-between items-center">
+          <h2 className="text-3xl font-bold ml-4 mt-3">
+            <span className="text-blue-600">Budget</span>
+            <span className="text-pink-500">Buddy</span>
+            <span className="text-gray-800"> Dashboard</span>
+          </h2>
         </div>
-        <UpdateSavings isOpen={update === UPDATE_TYPES.SAVINGS} onClose={() => setUpdate(null)} />
-        <UpdateInvestments isOpen={update === UPDATE_TYPES.INVESTMENTS} onClose={() => setUpdate(null)} />
+        {/* Loading state */}
+        {isLoadingAny ? (
+          <div className="flex-grow flex justify-center items-center h-[calc(100vh-150px)]">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+          </div>
+        ) : (
+          <div className="w-full h-full">
+            {/* Account overview section */}
+            <div className="flex flex-col bg-white/50 backdrop-blur-sm p-4 w-full text-black rounded-xl shadow-md">
+              <h1 className="text-lg font-semibold text-gray-700 mb-4">Account Overview</h1>
+              <div className="flex flex-wrap flex-row gap-6">
+                <TotalBalanceCard totalBalance={totalBalanceData} />
+                <ValueCard accounts={accountsSummaryData} setUpdateActioned={handleUpdateActioned} />
+              </div>
+            </div>
+            {/* Insights and transactions section */}
+            <div className="flex flex-col lg:flex-row gap-4 mt-4 h-full">
+              <div className="w-full lg:w-1/2 grid grid-cols-1 gap-4 auto-rows-min">
+                <InsightsCard data={spendingInsightsData} />
+                <NetworthCard data={networthData} />
+                <SavingGoalsCard data={savingGoalsData} />
+                <IncomeExpenseCard data={incomeExpenseSummaryData} />
+              </div>
+              <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-min">
+                <IncomeCard data={incomeTrendData} />
+                <ExpenseAnalysisCard expenses={expenseAnalysisData} />
+                <TransactionsCard data={recentTransactionsData} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-   )
+      {/* Update account modal */}
+      {update && (
+        <UpdateAccount
+          isOpen={!!update}
+          onClose={handleUpdateModalClose}
+          accountType={update.type}
+          accountName={update.name}
+          accountId={update.id}
+        />
+      )}
+    </div>
+  );
 }

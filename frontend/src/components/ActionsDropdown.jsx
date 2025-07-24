@@ -1,52 +1,59 @@
-import { useState, useRef, useEffect } from "react";
+/**
+ * ActionsDropdown component for displaying edit and delete actions.
+ * Closes on outside click and supports disabled state.
+ */
 
-export default function ActionsDropdown({ onEdit, onDelete, children }) {
-  const [open, setOpen] = useState(false);
+import { useState, useRef, useEffect } from 'react';
+
+export default function ActionsDropdown({ onEdit, onDelete, children, disabled = false }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setOpen(false)
-        }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Layout
   return (
     <div className="relative" ref={dropdownRef}>
-        <button 
-            onClick={() => setOpen(!open)}
-            className="text-2xl text-gray-600 hover:text-black"
-        >
-            {children}
-        </button>
-        {open && (
-            <div className="absolute right-0 z-10 mt-2 w-36 bg-white rounded-md shadow-md border">
-                <button
-                    className="flex items-center gap-2 px-3 py-2 w-full h-full hover:bg-gray-100"
-                    onClick={() => {
-                        setOpen(false);
-                        onEdit();
-                    }}>
-                    <img className="h-8" src="src/assets/edit-icon.png" alt="edit icon" />
-                    Edit
-                </button>
-                <button
-                    className="flex items-center gap-1 px-3 py-2 text-pink-600 hover:bg-gray-100 w-full text-left"
-                    onClick={() => {
-                    setOpen(false);
-                    onDelete();
-                    }}
-                >
-                <img className="w-8" src="src/assets/trash.png" alt="trash icon" />
-                Delete
-                </button>
-            </div>
-        )}
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="text-2xl text-gray-600 hover:text-black transition-colors"
+        disabled={disabled}
+      >
+        {children}
+      </button>
+      {isDropdownOpen && (
+        <div className="absolute right-0 z-10 mt-2 w-36 bg-white rounded-md shadow-bb-general border">
+          <button
+            className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 transition-colors"
+            onClick={() => {
+              setIsDropdownOpen(false);
+              onEdit();
+            }}
+          >
+            <img className="h-8" src="/assets/edit-icon.png" alt="Edit icon" />
+            Edit
+          </button>
+          <button
+            className="flex items-center gap-2 px-3 py-2 text-secondary_red hover:bg-gray-100 w-full text-left transition-colors"
+            onClick={() => {
+              setIsDropdownOpen(false);
+              onDelete();
+            }}
+          >
+            <img className="h-8" src="/assets/trash.png" alt="Delete icon" />
+            Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }
