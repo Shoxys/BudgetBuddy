@@ -1,4 +1,0 @@
-Date,Amount,Account Number,,Transaction Type,Transaction Details,Balance,Category,Merchant Name
-15 Apr 25,12.5,898742253, ,EFTPOS CREDIT,W4242 15/04,1200,Groceries ,Woolworths Market
-16 Apr 25,-1500.00,898742253, ,EFTPOS DEBIT,P1234 16/04,2700,Salary, Company Payroll
-17 Apr 25,-75.00,898742253, ,EFTPOS DEBIT,T5678 17/04,2625,Transport,Uber Ride
