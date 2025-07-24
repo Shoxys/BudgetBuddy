@@ -1,4 +1,13 @@
-export const categoryColors = {
+/**
+ * Constants for Transactions
+ */
+
+export const TransactionType = {
+    CREDIT: 'CREDIT',
+    DEBIT: 'DEBIT'
+};
+
+export const CategoryColors = {
   // Essentials
   'Groceries': 'bg-green-100 text-green-600',
   'Fuel': 'bg-purple-100 text-purple-600',
@@ -6,22 +15,26 @@ export const categoryColors = {
   'Utilities': 'bg-blue-100 text-blue-600',
   'Rent': 'bg-gray-200 text-gray-600',
   'Insurance': 'bg-sky-100 text-sky-600',
+  'Accommodation': 'bg-stone-100 text-stone-600',
+  'Homeware': 'bg-gray-100 text-gray-600',
 
   // Personal
-  'Personal Care': 'bg-pink-100 text-pink-500',
-  'Personal': 'bg-pink-100 text-pink-500',
-  'Clothing': 'bg-rose-100 text-rose-500',
+  'Personal care': 'bg-pink-100 text-pink-500',
+  'Clothing & accessories': 'bg-rose-100 text-rose-500',
   'Health & Fitness': 'bg-lime-100 text-lime-600',
 
   // Eating Out / Fun
-  'Restaurants': 'bg-yellow-100 text-yellow-600',
+  'Restaurants & takeaway': 'bg-yellow-100 text-yellow-600',
   'Entertainment': 'bg-orange-100 text-orange-600',
   'Attractions & Events': 'bg-indigo-100 text-indigo-500',
   'Subscriptions': 'bg-amber-100 text-amber-600',
+  'Media': 'bg-fuchsia-100 text-fuchsia-600',
+  'Gambling': 'bg-red-200 text-red-600',
 
   // Travel
-  'Transport': 'bg-violet-100 text-violet-600',
-  'Travel': 'bg-cyan-100 text-cyan-600',
+  'Travel expenses': 'bg-cyan-100 text-cyan-600',
+  'Public transport': 'bg-violet-100 text-violet-600',
+  'Taxis & ride shares': 'bg-slate-100 text-slate-600',
   'Parking': 'bg-slate-100 text-slate-600',
 
   // Transfers / Banking
@@ -37,13 +50,19 @@ export const categoryColors = {
   'Refund': 'bg-lime-100 text-lime-600',
   'Government Payment': 'bg-green-100 text-green-700',
   'Cash Deposit': 'bg-zinc-100 text-zinc-600',
+  'Investment income': 'bg-indigo-100 text-indigo-600',
 
   // Other
   'Uncategorised': 'bg-gray-100 text-gray-500',
-  'Miscellaneous': 'bg-stone-100 text-stone-600',
-  'Fees & Charges': 'bg-red-100 text-red-600',
+  'Other shopping': 'bg-amber-200 text-amber-700',
+  'Fees': 'bg-red-100 text-red-600',
   'Charity': 'bg-fuchsia-100 text-fuchsia-600',
   'Education': 'bg-cyan-100 text-cyan-700',
+  'Services': 'bg-teal-200 text-teal-700',
+  'Electronics & technology': 'bg-purple-200 text-purple-700',
+
+  // Misc
+  'Other': 'bg-gray-100 text-gray-500',
 };
 
-//TODO: UNION IMPORTED CATEGORIES TO GENERATE POSSIBLY UNIMPLMENTED ONES ON IMPORT
+export const Categories = Object.keys(CategoryColors);
