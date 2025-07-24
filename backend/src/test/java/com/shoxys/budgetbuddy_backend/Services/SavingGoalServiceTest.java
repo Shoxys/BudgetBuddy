@@ -250,22 +250,25 @@ class SavingGoalServiceTest {
     // Assert
 
     List<GoalStat> expectedStats =
-            List.of(
-                    new GoalStat("You have completed 2 goals", GoalType.COMPLETED, 2),
-                    new GoalStat("You're making progress — 3 goals (75%) are still in progress", GoalType.IN_PROGRESS, 3),
-                    new GoalStat( "About 33% of your pending goals are overdue. Time to catch up!", GoalType.OVERDUE, 1),
-                    new GoalStat("You have completed 50% of total goals", GoalType.TOTAL, 4));
+        List.of(
+            new GoalStat("You have completed 2 goals", GoalType.COMPLETED, 2),
+            new GoalStat(
+                "You're making progress — 3 goals (75%) are still in progress",
+                GoalType.IN_PROGRESS, 3),
+            new GoalStat(
+                "About 33% of your pending goals are overdue. Time to catch up!",
+                GoalType.OVERDUE, 1),
+            new GoalStat("You have completed 50% of total goals", GoalType.TOTAL, 4));
 
     TestUtils.assertListElementsMatch(
-            expectedStats,
-            actual.getGoalStats(),
-            (expected, actualStat) -> {
-              assertEquals(expected.getInsight(), actualStat.getInsight());
-              assertEquals(expected.getGoalType(), actualStat.getGoalType());
-              assertEquals(expected.getAmount(), actualStat.getAmount());
-            });
+        expectedStats,
+        actual.getGoalStats(),
+        (expected, actualStat) -> {
+          assertEquals(expected.getInsight(), actualStat.getInsight());
+          assertEquals(expected.getGoalType(), actualStat.getGoalType());
+          assertEquals(expected.getAmount(), actualStat.getAmount());
+        });
   }
-
 
   @Test
   void getGoalStatsForUser_shouldThrowIfUserNotFound() {
@@ -307,9 +310,9 @@ class SavingGoalServiceTest {
 
     assertEquals(GoalType.OVERDUE, stat.getGoalType());
     assertEquals(2, stat.getAmount());
-    assertEquals("About 33% of your pending goals are overdue. Time to catch up!", stat.getInsight());
+    assertEquals(
+        "About 33% of your pending goals are overdue. Time to catch up!", stat.getInsight());
   }
-
 
   @Test
   void getTotalGoalStat_shouldReturnCorrectStat() {

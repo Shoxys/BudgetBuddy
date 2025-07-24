@@ -1,20 +1,18 @@
 package com.shoxys.budgetbuddy_backend.Utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Utility class providing common validation and date-related methods for the application.
- */
+/** Utility class providing common validation and date-related methods for the application. */
 public final class Utils {
   private static final Logger logger = LoggerFactory.getLogger(Utils.class);
-  private static final String EMAIL_REGEX = "^(?=.{1,64}@)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+  private static final String EMAIL_REGEX =
+      "^(?=.{1,64}@)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
   private Utils() {
     logger.error("Attempted to instantiate Utils class");
@@ -112,11 +110,10 @@ public final class Utils {
     return isValid;
   }
 
-
   /**
    * Validates if the provided ID is positive (greater than 0).
    *
-   * @param id      the ID to validate
+   * @param id the ID to validate
    * @param message the error message to include in the exception if invalid
    * @throws IllegalArgumentException if the ID is not positive
    */

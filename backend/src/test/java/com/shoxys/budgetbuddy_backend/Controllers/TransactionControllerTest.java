@@ -17,20 +17,10 @@ import com.shoxys.budgetbuddy_backend.Repo.TransactionRepo;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.TransactionService;
 import com.shoxys.budgetbuddy_backend.Services.UserService;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.multipart.MultipartFile;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,18 +28,27 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(
-        value = TransactionController.class,
-        excludeFilters =
+    value = TransactionController.class,
+    excludeFilters =
         @ComponentScan.Filter(
-                type = FilterType.ASSIGNABLE_TYPE,
-                classes = com.shoxys.budgetbuddy_backend.Security.JwtAuthFilter.class))
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = com.shoxys.budgetbuddy_backend.Security.JwtAuthFilter.class))
 @AutoConfigureMockMvc(addFilters = false)
 public class TransactionControllerTest {
 
@@ -70,7 +69,7 @@ public class TransactionControllerTest {
     principal = new AppUserDetails(mockUser);
     SecurityContext context = SecurityContextHolder.createEmptyContext();
     context.setAuthentication(
-            new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
+        new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
     SecurityContextHolder.setContext(context);
     when(userService.getUserIdByEmail(testEmail)).thenReturn(1L);
   }
@@ -85,11 +84,11 @@ public class TransactionControllerTest {
     when(transactionService.getAllTransactionsByUserId(eq(1L))).thenReturn(transactions);
 
     mockMvc
-            .perform(get("/api/transactions/").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].amount").value(100.0));
+        .perform(get("/api/transactions/").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].amount").value(100.0));
 
     verify(transactionService, times(1)).getAllTransactionsByUserId(eq(1L));
     verify(userService, times(1)).getUserIdByEmail(eq(testEmail));
@@ -105,21 +104,21 @@ public class TransactionControllerTest {
     transaction.setAmount(BigDecimal.valueOf(100));
     List<Transaction> transactions = Collections.singletonList(transaction);
     when(transactionService.getTransactionsByUserIdInTimeFrame(eq(1L), eq(startDate), eq(endDate)))
-            .thenReturn(transactions);
+        .thenReturn(transactions);
 
     mockMvc
-            .perform(
-                    get("/api/transactions/timeframe")
-                            .param("startDate", startDate.toString())
-                            .param("endDate", endDate.toString())
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].amount").value(100.0));
+        .perform(
+            get("/api/transactions/timeframe")
+                .param("startDate", startDate.toString())
+                .param("endDate", endDate.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].amount").value(100.0));
 
     verify(transactionService, times(1))
-            .getTransactionsByUserIdInTimeFrame(eq(1L), eq(startDate), eq(endDate));
+        .getTransactionsByUserIdInTimeFrame(eq(1L), eq(startDate), eq(endDate));
     verify(userService, times(1)).getUserIdByEmail(eq(testEmail));
   }
 
@@ -131,14 +130,14 @@ public class TransactionControllerTest {
     transaction.setAmount(BigDecimal.valueOf(100));
     List<Transaction> transactions = Collections.singletonList(transaction);
     when(transactionService.getAllTransactionsByUserIdSortedOldest(eq(1L)))
-            .thenReturn(transactions);
+        .thenReturn(transactions);
 
     mockMvc
-            .perform(get("/api/transactions/oldest").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].amount").value(100.0));
+        .perform(get("/api/transactions/oldest").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].amount").value(100.0));
 
     verify(transactionService, times(1)).getAllTransactionsByUserIdSortedOldest(eq(1L));
     verify(userService, times(1)).getUserIdByEmail(eq(testEmail));
@@ -154,11 +153,11 @@ public class TransactionControllerTest {
     when(transactionService.getTransactionsByUserIdSortedNewest(eq(1L))).thenReturn(transactions);
 
     mockMvc
-            .perform(get("/api/transactions/newest").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].amount").value(100.0));
+        .perform(get("/api/transactions/newest").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].amount").value(100.0));
 
     verify(transactionService, times(1)).getTransactionsByUserIdSortedNewest(eq(1L));
     verify(userService, times(1)).getUserIdByEmail(eq(testEmail));
@@ -175,23 +174,27 @@ public class TransactionControllerTest {
     User mockUser = new User(testEmail, "testPassword");
     mockUser.setId(1L);
     when(userService.getUserByEmail(testEmail)).thenReturn(mockUser);
-    when(transactionService.getTransactionsByUserIdPaginated(eq(1L), eq(0), eq(20), eq("date,desc")))
-            .thenReturn(page);
-    when(transactionModelAssembler.toModel(any(Transaction.class))).thenReturn(EntityModel.of(transaction));
-    PagedModel<EntityModel<Transaction>> pagedModel = PagedModel.of(
+    when(transactionService.getTransactionsByUserIdPaginated(
+            eq(1L), eq(0), eq(20), eq("date,desc")))
+        .thenReturn(page);
+    when(transactionModelAssembler.toModel(any(Transaction.class)))
+        .thenReturn(EntityModel.of(transaction));
+    PagedModel<EntityModel<Transaction>> pagedModel =
+        PagedModel.of(
             Collections.singletonList(EntityModel.of(transaction)),
-            new PagedModel.PageMetadata(20, 0, 1, 1)
-    );
-    when(pagedResourcesAssembler.toModel(eq(page), eq(transactionModelAssembler))).thenReturn(pagedModel);
+            new PagedModel.PageMetadata(20, 0, 1, 1));
+    when(pagedResourcesAssembler.toModel(eq(page), eq(transactionModelAssembler)))
+        .thenReturn(pagedModel);
 
     // Act & Assert
-    MvcResult result = mockMvc
+    MvcResult result =
+        mockMvc
             .perform(
-                    get("/api/transactions/paginated")
-                            .param("page", "0")
-                            .param("size", "20")
-                            .param("sort", "date,desc")
-                            .contentType(MediaType.APPLICATION_JSON))
+                get("/api/transactions/paginated")
+                    .param("page", "0")
+                    .param("size", "20")
+                    .param("sort", "date,desc")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/hal+json"))
             .andExpect(jsonPath("$._embedded.transactionList[0].id").value(1))
@@ -200,7 +203,8 @@ public class TransactionControllerTest {
             .andExpect(jsonPath("$.page.totalPages").value(1))
             .andReturn();
 
-    verify(transactionService, times(1)).getTransactionsByUserIdPaginated(eq(1L), eq(0), eq(20), eq("date,desc"));
+    verify(transactionService, times(1))
+        .getTransactionsByUserIdPaginated(eq(1L), eq(0), eq(20), eq("date,desc"));
     verify(userService, times(1)).getUserByEmail(eq(testEmail));
   }
 
@@ -218,12 +222,11 @@ public class TransactionControllerTest {
 
     // Act & Assert
     mockMvc
-            .perform(get("/api/transactions/{id}", id)
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/hal+json"))
-            .andExpect(jsonPath("$.id").value(id))
-            .andExpect(jsonPath("$.amount").value(100.0));
+        .perform(get("/api/transactions/{id}", id).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/hal+json"))
+        .andExpect(jsonPath("$.id").value(id))
+        .andExpect(jsonPath("$.amount").value(100.0));
 
     verify(transactionService, times(1)).getTransactionById(eq(testEmail), eq(id));
     verify(transactionModelAssembler, times(1)).toModel(eq(transaction));
@@ -234,13 +237,12 @@ public class TransactionControllerTest {
     // Arrange
     Long id = 1L;
     when(transactionService.getTransactionById(eq(testEmail), eq(id)))
-            .thenThrow(new TransactionNotFoundException(id));
+        .thenThrow(new TransactionNotFoundException(id));
 
     // Act & Assert
     mockMvc
-            .perform(get("/api/transactions/{id}", id)
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+        .perform(get("/api/transactions/{id}", id).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
 
     verify(transactionService, times(1)).getTransactionById(eq(testEmail), eq(id));
     verify(transactionModelAssembler, never()).toModel(any());
@@ -253,18 +255,18 @@ public class TransactionControllerTest {
     summary.setEarliest(LocalDate.of(2025, 1, 1));
     summary.setLatest(LocalDate.of(2025, 1, 10));
     when(transactionService.getTransactionSummaryByTimeFrame(eq(1L), eq("30days")))
-            .thenReturn(summary);
+        .thenReturn(summary);
 
     mockMvc
-            .perform(
-                    get("/api/transactions/summary")
-                            .param("timeFrame", "30days")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.count").value(23))
-            .andExpect(jsonPath("$.earliest").value("2025-01-01"))
-            .andExpect(jsonPath("$.latest").value("2025-01-10"));
+        .perform(
+            get("/api/transactions/summary")
+                .param("timeFrame", "30days")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.count").value(23))
+        .andExpect(jsonPath("$.earliest").value("2025-01-01"))
+        .andExpect(jsonPath("$.latest").value("2025-01-10"));
 
     verify(transactionService, times(1)).getTransactionSummaryByTimeFrame(eq(1L), eq("30days"));
     verify(userService, times(1)).getUserIdByEmail(eq(testEmail));
@@ -273,13 +275,13 @@ public class TransactionControllerTest {
   @Test
   void testGetCurrentBalance_Returns200AndBalance() throws Exception {
     when(transactionService.getCurrentBalanceByUser(testEmail))
-            .thenReturn(BigDecimal.valueOf(1000.0));
+        .thenReturn(BigDecimal.valueOf(1000.0));
 
     mockMvc
-            .perform(get("/api/transactions/current-balance").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").value(1000.0));
+        .perform(get("/api/transactions/current-balance").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$").value(1000.0));
 
     verify(transactionService, times(1)).getCurrentBalanceByUser(testEmail);
   }
@@ -295,20 +297,20 @@ public class TransactionControllerTest {
     transaction.setDate(LocalDate.now());
     transaction.setAmount(BigDecimal.valueOf(100));
     when(transactionService.addTransaction(eq(testEmail), any(TransactionRequest.class)))
-            .thenReturn(transaction);
+        .thenReturn(transaction);
 
     mockMvc
-            .perform(
-                    post("/api/transactions")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.amount").value(100.0));
+        .perform(
+            post("/api/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.amount").value(100.0));
 
     verify(transactionService, times(1))
-            .addTransaction(eq(testEmail), any(TransactionRequest.class));
+        .addTransaction(eq(testEmail), any(TransactionRequest.class));
   }
 
   @Test
@@ -323,20 +325,20 @@ public class TransactionControllerTest {
     transaction.setDate(LocalDate.now());
     transaction.setAmount(BigDecimal.valueOf(200));
     when(transactionService.updateTransaction(eq(testEmail), eq(id), any(TransactionRequest.class)))
-            .thenReturn(transaction);
+        .thenReturn(transaction);
 
     mockMvc
-            .perform(
-                    put("/api/transactions/{id}", id)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id").value(id))
-            .andExpect(jsonPath("$.amount").value(200.0));
+        .perform(
+            put("/api/transactions/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id").value(id))
+        .andExpect(jsonPath("$.amount").value(200.0));
 
     verify(transactionService, times(1))
-            .updateTransaction(eq(testEmail), eq(id), any(TransactionRequest.class));
+        .updateTransaction(eq(testEmail), eq(id), any(TransactionRequest.class));
   }
 
   @Test
@@ -345,10 +347,10 @@ public class TransactionControllerTest {
     doNothing().when(transactionService).deleteTransaction(eq(testEmail), eq(id));
 
     mockMvc
-            .perform(delete("/api/transactions/{id}", id))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(content().string("Successfully deleted transaction"));
+        .perform(delete("/api/transactions/{id}", id))
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+        .andExpect(content().string("Successfully deleted transaction"));
 
     verify(transactionService, times(1)).deleteTransaction(eq(testEmail), eq(id));
   }
@@ -359,13 +361,13 @@ public class TransactionControllerTest {
     doNothing().when(transactionService).deleteTransactionsById(eq(testEmail), eq(ids));
 
     mockMvc
-            .perform(
-                    delete("/api/transactions/delete-selected")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(ids)))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(content().string("Deleted 2 transactions"));
+        .perform(
+            delete("/api/transactions/delete-selected")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ids)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+        .andExpect(content().string("Deleted 2 transactions"));
 
     verify(transactionService, times(1)).deleteTransactionsById(eq(testEmail), eq(ids));
   }
@@ -382,21 +384,20 @@ public class TransactionControllerTest {
     mockUser.setId(1L);
     when(userService.getUserByEmail(testEmail)).thenReturn(mockUser);
     when(transactionService.importMultipleCSVs(eq(1L), any(MultipartFile.class)))
-            .thenReturn(mockTransactions);
+        .thenReturn(mockTransactions);
 
     MockMultipartFile file =
-            new MockMultipartFile(
-                    "files", "test.csv", "text/csv", "sample content".getBytes());
+        new MockMultipartFile("files", "test.csv", "text/csv", "sample content".getBytes());
 
     // Act & Assert
     mockMvc
-            .perform(
-                    multipart("/api/transactions/upload")
-                            .file(file)
-                            .contentType(MediaType.MULTIPART_FORM_DATA))
-            .andExpect(status().isOk())
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(content().string("All CSVs imported successfully"));
+        .perform(
+            multipart("/api/transactions/upload")
+                .file(file)
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+        .andExpect(content().string("All CSVs imported successfully"));
 
     verify(transactionService, times(1)).importMultipleCSVs(eq(1L), any(MultipartFile.class));
     verify(userService, times(1)).getUserByEmail(eq(testEmail));

@@ -1,5 +1,9 @@
 package com.shoxys.budgetbuddy_backend.Services;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import com.shoxys.budgetbuddy_backend.DTOs.Auth.AuthResponse;
 import com.shoxys.budgetbuddy_backend.DTOs.Auth.LoginRequest;
 import com.shoxys.budgetbuddy_backend.DTOs.Auth.RegisterRequest;
@@ -8,6 +12,7 @@ import com.shoxys.budgetbuddy_backend.Exceptions.*;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Security.JwtUtil;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,12 +22,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
   @Mock private UserRepo userRepo;
@@ -52,7 +51,7 @@ class AuthServiceTest {
   @Test
   void testAuthenticate_Success() {
     when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-            .thenReturn(new UsernamePasswordAuthenticationToken("test@example.com", null));
+        .thenReturn(new UsernamePasswordAuthenticationToken("test@example.com", null));
     when(userRepo.findByEmail("test@example.com")).thenReturn(Optional.of(user));
     when(jwtUtil.generateToken(any(AppUserDetails.class))).thenReturn("jwt-token");
     AuthResponse response = authService.authenticate(loginRequest);
@@ -71,7 +70,7 @@ class AuthServiceTest {
   @Test
   void testAuthenticate_BadCredentials() {
     when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-            .thenThrow(new BadCredentialsException("Invalid credentials"));
+        .thenThrow(new BadCredentialsException("Invalid credentials"));
     assertThrows(InvalidCredentialsException.class, () -> authService.authenticate(loginRequest));
     verify(authenticationManager, times(1)).authenticate(any());
   }

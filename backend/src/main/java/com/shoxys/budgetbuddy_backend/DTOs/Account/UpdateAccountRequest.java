@@ -5,24 +5,34 @@ import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
-/**
- * Data transfer object for updating an account's details, including name, type, and balance.
- */
+/** Data transfer object for updating an account's details, including name, type, and balance. */
 public class UpdateAccountRequest {
 
   @NotNull(message = "Account ID is required")
   private Long id;
 
   @NotBlank(message = "Account name is required")
-  @Size(max = Constants.MAX_ACCOUNT_NAME_LENGTH, message = "Account name cannot exceed " + Constants.MAX_ACCOUNT_NAME_LENGTH + " characters")
+  @Size(
+      max = Constants.MAX_ACCOUNT_NAME_LENGTH,
+      message = "Account name cannot exceed " + Constants.MAX_ACCOUNT_NAME_LENGTH + " characters")
   private String name;
 
   @NotNull(message = "Account type is required")
   private AccountType accountType;
 
   @NotNull(message = "Balance is required")
-  @DecimalMin(value = Constants.MIN_BALANCE, message = "Balance must be at least " + Constants.MIN_BALANCE)
-  @Digits(integer = Constants.MAX_BALANCE_INTEGER_DIGITS, fraction = Constants.MAX_BALANCE_FRACTION_DIGITS, message = "Balance must be a valid monetary value with up to " + Constants.MAX_BALANCE_INTEGER_DIGITS + " integer digits and " + Constants.MAX_BALANCE_FRACTION_DIGITS + " decimal places")
+  @DecimalMin(
+      value = Constants.MIN_BALANCE,
+      message = "Balance must be at least " + Constants.MIN_BALANCE)
+  @Digits(
+      integer = Constants.MAX_BALANCE_INTEGER_DIGITS,
+      fraction = Constants.MAX_BALANCE_FRACTION_DIGITS,
+      message =
+          "Balance must be a valid monetary value with up to "
+              + Constants.MAX_BALANCE_INTEGER_DIGITS
+              + " integer digits and "
+              + Constants.MAX_BALANCE_FRACTION_DIGITS
+              + " decimal places")
   private BigDecimal balance;
 
   public UpdateAccountRequest(Long id, String name, AccountType accountType, BigDecimal balance) {
@@ -32,8 +42,7 @@ public class UpdateAccountRequest {
     this.balance = balance;
   }
 
-  public UpdateAccountRequest() {
-  }
+  public UpdateAccountRequest() {}
 
   public Long getId() {
     return id;

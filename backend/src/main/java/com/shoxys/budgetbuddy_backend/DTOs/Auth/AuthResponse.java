@@ -1,8 +1,6 @@
 package com.shoxys.budgetbuddy_backend.DTOs.Auth;
 
-/**
- * Response object for authentication operations, containing a JWT token and a message.
- */
+/** Response object for authentication operations, containing a JWT token and a message. */
 public class AuthResponse {
   private String token;
   private String message;

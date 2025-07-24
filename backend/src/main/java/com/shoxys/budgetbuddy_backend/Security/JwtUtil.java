@@ -1,20 +1,17 @@
 package com.shoxys.budgetbuddy_backend.Security;
 
+import static com.shoxys.budgetbuddy_backend.Config.Constants.JWT_EXPIRATION_DAYS;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-
-import static com.shoxys.budgetbuddy_backend.Config.Constants.JWT_EXPIRATION_DAYS;
-
-/**
- * Utility class for generating, parsing, and validating JWT tokens.
- */
+/** Utility class for generating, parsing, and validating JWT tokens. */
 @Component
 public class JwtUtil {
 
@@ -29,11 +26,11 @@ public class JwtUtil {
    */
   public String generateToken(UserDetails userDetails) {
     return Jwts.builder()
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plus(JWT_EXPIRATION_DAYS, ChronoUnit.DAYS)))
-            .signWith(SignatureAlgorithm.HS256, jwtSecret)
-            .compact();
+        .setSubject(userDetails.getUsername())
+        .setIssuedAt(new Date())
+        .setExpiration(Date.from(Instant.now().plus(JWT_EXPIRATION_DAYS, ChronoUnit.DAYS)))
+        .signWith(SignatureAlgorithm.HS256, jwtSecret)
+        .compact();
   }
 
   /**
@@ -49,7 +46,7 @@ public class JwtUtil {
   /**
    * Validates a JWT token against user details.
    *
-   * @param token       the JWT token
+   * @param token the JWT token
    * @param userDetails the user details
    * @return true if the token is valid and matches the user, false otherwise
    */

@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * Represents income trends over months for dashboard display, comparing current and previous year.
  */
-
 public class IncomeTrend {
   private List<String> months;
   private List<BigDecimal> incomeThisYear;

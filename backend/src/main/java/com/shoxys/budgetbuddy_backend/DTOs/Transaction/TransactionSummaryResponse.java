@@ -2,9 +2,7 @@ package com.shoxys.budgetbuddy_backend.DTOs.Transaction;
 
 import java.time.LocalDate;
 
-/**
- * Response object summarizing transaction data, including count and date range.
- */
+/** Response object summarizing transaction data, including count and date range. */
 public class TransactionSummaryResponse {
   private Integer count;
   private LocalDate earliest;

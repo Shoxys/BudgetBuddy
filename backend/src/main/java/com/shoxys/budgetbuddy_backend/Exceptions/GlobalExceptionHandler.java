@@ -3,6 +3,8 @@ package com.shoxys.budgetbuddy_backend.Exceptions;
 import com.shoxys.budgetbuddy_backend.Config.Constants;
 import com.shoxys.budgetbuddy_backend.DTOs.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,12 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Centralized exception handler for REST controllers, returning standardized error responses.
- */
+/** Centralized exception handler for REST controllers, returning standardized error responses. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
   private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -32,7 +29,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage("Entity not found: " + ex.getMessage());
     log.warn("Entity not found: {}", message);
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
+        .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -46,7 +43,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage(ex.getMessage());
     log.warn("User not found: {}", message);
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
+        .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -60,7 +57,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage(ex.getMessage());
     log.warn("Invalid password: {}", message);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -70,11 +67,12 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with ErrorResponse
    */
   @ExceptionHandler(InvalidEmailFormatException.class)
-  public ResponseEntity<ErrorResponse> handleInvalidEmailFormatException(InvalidEmailFormatException ex) {
+  public ResponseEntity<ErrorResponse> handleInvalidEmailFormatException(
+      InvalidEmailFormatException ex) {
     String message = truncateMessage(ex.getMessage());
     log.warn("Invalid email format: {}", message);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -88,7 +86,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage(ex.getMessage());
     log.warn("Email already exists: {}", message);
     return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(new ErrorResponse(message, HttpStatus.CONFLICT));
+        .body(new ErrorResponse(message, HttpStatus.CONFLICT));
   }
 
   /**
@@ -102,7 +100,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage(ex.getMessage());
     log.warn("Missing field: {}", message);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -116,7 +114,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage(ex.getMessage());
     log.warn("Account not found: {}", message);
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
+        .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -126,11 +124,12 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with ErrorResponse
    */
   @ExceptionHandler(InvalidCredentialsException.class)
-  public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+  public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(
+      InvalidCredentialsException ex) {
     String message = truncateMessage(ex.getMessage());
     log.warn("Invalid credentials: {}", message);
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(new ErrorResponse(message, HttpStatus.UNAUTHORIZED));
+        .body(new ErrorResponse(message, HttpStatus.UNAUTHORIZED));
   }
 
   /**
@@ -140,11 +139,12 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with ErrorResponse
    */
   @ExceptionHandler(PasswordMismatchException.class)
-  public ResponseEntity<ErrorResponse> handlePasswordMismatchException(PasswordMismatchException ex) {
+  public ResponseEntity<ErrorResponse> handlePasswordMismatchException(
+      PasswordMismatchException ex) {
     String message = truncateMessage(ex.getMessage());
     log.warn("Password mismatch: {}", message);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -154,11 +154,12 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with ErrorResponse
    */
   @ExceptionHandler(SavingGoalNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleSavingGoalNotFoundException(SavingGoalNotFoundException ex) {
+  public ResponseEntity<ErrorResponse> handleSavingGoalNotFoundException(
+      SavingGoalNotFoundException ex) {
     String message = truncateMessage(ex.getMessage());
     log.warn("Saving goal not found: {}", message);
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
+        .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -168,11 +169,12 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with ErrorResponse
    */
   @ExceptionHandler(InvalidDateRangeException.class)
-  public ResponseEntity<ErrorResponse> handleInvalidDateRangeException(InvalidDateRangeException ex) {
+  public ResponseEntity<ErrorResponse> handleInvalidDateRangeException(
+      InvalidDateRangeException ex) {
     String message = truncateMessage(ex.getMessage());
     log.warn("Invalid date range: {}", message);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -182,11 +184,12 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with ErrorResponse
    */
   @ExceptionHandler(TransactionNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleTransactionNotFoundException(TransactionNotFoundException ex) {
+  public ResponseEntity<ErrorResponse> handleTransactionNotFoundException(
+      TransactionNotFoundException ex) {
     String message = truncateMessage(ex.getMessage());
     log.warn("Transaction not found: {}", message);
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
+        .body(new ErrorResponse(message, HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -200,7 +203,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage(ex.getMessage());
     log.warn("Invalid request: {}", message);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -214,8 +217,9 @@ public class GlobalExceptionHandler {
     log.error("Validation error occurred: ", ex);
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult()
-            .getFieldErrors()
-            .forEach(error -> {
+        .getFieldErrors()
+        .forEach(
+            error -> {
               String field = error.getField();
               String message = error.getDefaultMessage();
               errors.put(field, message);
@@ -224,7 +228,7 @@ public class GlobalExceptionHandler {
 
     String message = truncateMessage(String.join("; ", errors.values()));
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
+        .body(new ErrorResponse(message, HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -238,7 +242,7 @@ public class GlobalExceptionHandler {
     String message = truncateMessage("An unexpected error occurred");
     log.error("Unhandled exception occurred: ", ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ErrorResponse(message, HttpStatus.INTERNAL_SERVER_ERROR));
+        .body(new ErrorResponse(message, HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
   /**

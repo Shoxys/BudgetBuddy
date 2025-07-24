@@ -1,8 +1,6 @@
 package com.shoxys.budgetbuddy_backend.Enums;
 
-/**
- * Defines file paths for sample CSV data used in testing.
- */
+/** Defines file paths for sample CSV data used in testing. */
 public enum CsvSampleData {
   VALID_SAMPLE("TestData/sample1.csv"),
   NULL_MERCHANT_SAMPLE("TestData/sample2.csv");

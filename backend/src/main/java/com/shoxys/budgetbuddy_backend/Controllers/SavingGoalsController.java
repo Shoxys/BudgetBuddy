@@ -8,17 +8,14 @@ import com.shoxys.budgetbuddy_backend.Entities.SavingGoal;
 import com.shoxys.budgetbuddy_backend.Security.AppUserDetails;
 import com.shoxys.budgetbuddy_backend.Services.SavingGoalService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * Handles HTTP requests for managing saving goals.
- */
+/** Handles HTTP requests for managing saving goals. */
 @RestController
 @RequestMapping(Constants.SAVING_GOALS_ENDPOINT)
 public class SavingGoalsController {
@@ -36,7 +33,8 @@ public class SavingGoalsController {
    * @return a list of pending saving goals
    */
   @GetMapping("/pending")
-  public ResponseEntity<List<SavingGoal>> getPendingGoals(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<SavingGoal>> getPendingGoals(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching pending goals for user: {}", username);
     List<SavingGoal> goals = savingGoalService.getPendingSavingGoalsForUser(username);
@@ -51,7 +49,8 @@ public class SavingGoalsController {
    * @return a list of completed saving goals
    */
   @GetMapping("/completed")
-  public ResponseEntity<List<SavingGoal>> getCompleteGoals(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<List<SavingGoal>> getCompleteGoals(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching completed goals for user: {}", username);
     List<SavingGoal> goals = savingGoalService.getCompleteSavingGoalsForUser(username);
@@ -68,7 +67,7 @@ public class SavingGoalsController {
    */
   @GetMapping("/{id}/title")
   public ResponseEntity<String> getGoalTitle(
-          @AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
+      @AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching goal title for user: {}, goal ID: {}", username, id);
     String title = savingGoalService.getSavingGoalTitleById(username, id);
@@ -85,7 +84,7 @@ public class SavingGoalsController {
    */
   @GetMapping("/{id}")
   public ResponseEntity<SavingGoal> getGoalById(
-          @AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
+      @AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching goal for user: {}, goal ID: {}", username, id);
     SavingGoal goal = savingGoalService.getSavingGoalById(username, id);
@@ -100,7 +99,8 @@ public class SavingGoalsController {
    * @return the goal statistics
    */
   @GetMapping("/stats")
-  public ResponseEntity<GoalStatsResponse> getGoalStats(@AuthenticationPrincipal AppUserDetails userDetails) {
+  public ResponseEntity<GoalStatsResponse> getGoalStats(
+      @AuthenticationPrincipal AppUserDetails userDetails) {
     String username = validateUserDetails(userDetails);
     logger.info("Fetching goal stats for user: {}", username);
     GoalStatsResponse stats = savingGoalService.getGoalStatsForUser(username);
@@ -118,9 +118,9 @@ public class SavingGoalsController {
    */
   @PutMapping("/{id}/contribute")
   public ResponseEntity<String> updateContributionForGoal(
-          @AuthenticationPrincipal AppUserDetails userDetails,
-          @PathVariable long id,
-          @Valid @RequestBody GoalContributionRequest request) {
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @PathVariable long id,
+      @Valid @RequestBody GoalContributionRequest request) {
     String username = validateUserDetails(userDetails);
     logger.info("Updating contribution for user: {}, goal ID: {}", username, id);
     savingGoalService.updateContributionForSavingGoal(username, id, request);
@@ -137,8 +137,8 @@ public class SavingGoalsController {
    */
   @PostMapping
   public ResponseEntity<SavingGoal> createNewGoal(
-          @AuthenticationPrincipal AppUserDetails userDetails,
-          @Valid @RequestBody SavingGoalRequest request) {
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @Valid @RequestBody SavingGoalRequest request) {
     String username = validateUserDetails(userDetails);
     logger.info("Creating new goal for user: {}", username);
     SavingGoal goal = savingGoalService.createSavingGoal(username, request);
@@ -156,9 +156,9 @@ public class SavingGoalsController {
    */
   @PutMapping("/{id}/update")
   public ResponseEntity<SavingGoal> updateGoal(
-          @AuthenticationPrincipal AppUserDetails userDetails,
-          @PathVariable long id,
-          @Valid @RequestBody SavingGoalRequest request) {
+      @AuthenticationPrincipal AppUserDetails userDetails,
+      @PathVariable long id,
+      @Valid @RequestBody SavingGoalRequest request) {
     String username = validateUserDetails(userDetails);
     logger.info("Updating goal for user: {}, goal ID: {}", username, id);
     SavingGoal goal = savingGoalService.updateSavingGoal(username, id, request);
@@ -174,7 +174,7 @@ public class SavingGoalsController {
    */
   @DeleteMapping("/{id}/delete")
   public ResponseEntity<Void> deleteGoal(
-          @AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
+      @AuthenticationPrincipal AppUserDetails userDetails, @PathVariable long id) {
     String username = validateUserDetails(userDetails);
     logger.info("Deleting goal for user: {}, goal ID: {}", username, id);
     savingGoalService.deleteSavingGoal(username, id);

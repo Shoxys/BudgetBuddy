@@ -16,11 +16,6 @@ import com.shoxys.budgetbuddy_backend.Repo.SavingGoalsRepo;
 import com.shoxys.budgetbuddy_backend.Repo.UserRepo;
 import com.shoxys.budgetbuddy_backend.Utils.Utils;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +24,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service for managing saving goals, including creation, updates, contributions, and statistics.
@@ -45,14 +44,20 @@ public class SavingGoalService {
    * Constructs a SavingGoalService with required dependencies.
    *
    * @param savingGoalsRepo Repository for saving goal data access
-   * @param accountRepo     Repository for account data access
-   * @param userRepo       Repository for user data access
-   * @param accountService  Service for account-related operations
+   * @param accountRepo Repository for account data access
+   * @param userRepo Repository for user data access
+   * @param accountService Service for account-related operations
    */
-  public SavingGoalService(SavingGoalsRepo savingGoalsRepo, AccountRepo accountRepo,
-                           UserRepo userRepo, AccountService accountService) {
+  public SavingGoalService(
+      SavingGoalsRepo savingGoalsRepo,
+      AccountRepo accountRepo,
+      UserRepo userRepo,
+      AccountService accountService) {
     logger.debug("Initializing SavingGoalService");
-    if (savingGoalsRepo == null || accountRepo == null || userRepo == null || accountService == null) {
+    if (savingGoalsRepo == null
+        || accountRepo == null
+        || userRepo == null
+        || accountService == null) {
       logger.error("One or more dependencies are null");
       throw new IllegalArgumentException("All dependencies must be non-null");
     }
@@ -67,20 +72,23 @@ public class SavingGoalService {
    * Retrieves the title of a saving goal by ID for a user.
    *
    * @param email the user's email
-   * @param id    the saving goal ID
+   * @param id the saving goal ID
    * @return the title of the saving goal
-   * @throws IllegalArgumentException     if email is invalid or ID is not positive
-   * @throws UserNotFoundException       if user is not found
+   * @throws IllegalArgumentException if email is invalid or ID is not positive
+   * @throws UserNotFoundException if user is not found
    * @throws SavingGoalNotFoundException if saving goal is not found
    */
   public String getSavingGoalTitleById(String email, long id) {
     logger.debug("Fetching saving goal title for user: {}, ID: {}", email, id);
     validateEmailAndId(email, id);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
     String title = savingGoalsRepo.findTitleForSavingGoalByIdAndUser(id, user);
     if (Utils.nullOrEmpty(title)) {
       logger.error("Saving goal not found for ID: {}", id);
@@ -94,25 +102,31 @@ public class SavingGoalService {
    * Retrieves a saving goal by ID for a user.
    *
    * @param email the user's email
-   * @param id    the saving goal ID
+   * @param id the saving goal ID
    * @return the saving goal object
-   * @throws IllegalArgumentException     if email is invalid or ID is not positive
-   * @throws UserNotFoundException       if user is not found
+   * @throws IllegalArgumentException if email is invalid or ID is not positive
+   * @throws UserNotFoundException if user is not found
    * @throws SavingGoalNotFoundException if saving goal is not found
    */
   public SavingGoal getSavingGoalById(String email, long id) {
     logger.debug("Fetching saving goal for user: {}, ID: {}", email, id);
     validateEmailAndId(email, id);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
-    SavingGoal goal = savingGoalsRepo.findSavingGoalByIdAndUser(id, user)
-            .orElseThrow(() -> {
-              logger.error("Saving goal not found for ID: {}", id);
-              return new SavingGoalNotFoundException("Goal not found with ID: " + id);
-            });
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
+    SavingGoal goal =
+        savingGoalsRepo
+            .findSavingGoalByIdAndUser(id, user)
+            .orElseThrow(
+                () -> {
+                  logger.error("Saving goal not found for ID: {}", id);
+                  return new SavingGoalNotFoundException("Goal not found with ID: " + id);
+                });
     logger.info("Retrieved saving goal ID: {} for user: {}", id, email);
     return goal;
   }
@@ -123,18 +137,21 @@ public class SavingGoalService {
    * @param email the user's email
    * @return the total contribution amount
    * @throws IllegalArgumentException if email is invalid
-   * @throws UserNotFoundException   if user is not found
+   * @throws UserNotFoundException if user is not found
    */
   public BigDecimal getTotalContributionForUser(String email) {
     logger.debug("Fetching total contribution for user: {}", email);
     validateEmail(email);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
-    BigDecimal total = Optional.ofNullable(savingGoalsRepo.sumContributionsByUser(user))
-            .orElse(BigDecimal.ZERO);
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
+    BigDecimal total =
+        Optional.ofNullable(savingGoalsRepo.sumContributionsByUser(user)).orElse(BigDecimal.ZERO);
     logger.info("Total contribution: {} for user: {}", total, email);
     return total;
   }
@@ -145,16 +162,19 @@ public class SavingGoalService {
    * @param email the user's email
    * @return a list of pending saving goals
    * @throws IllegalArgumentException if email is invalid
-   * @throws UserNotFoundException   if user is not found
+   * @throws UserNotFoundException if user is not found
    */
   public List<SavingGoal> getPendingSavingGoalsForUser(String email) {
     logger.debug("Fetching pending saving goals for user: {}", email);
     validateEmail(email);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
     List<SavingGoal> goals = savingGoalsRepo.findPendingSavingGoalsForUser(user);
     logger.info("Retrieved {} pending saving goals for user: {}", goals.size(), email);
     return goals == null ? List.of() : goals;
@@ -166,38 +186,46 @@ public class SavingGoalService {
    * @param email the user's email
    * @return a list of completed saving goals
    * @throws IllegalArgumentException if email is invalid
-   * @throws UserNotFoundException   if user is not found
+   * @throws UserNotFoundException if user is not found
    */
   public List<SavingGoal> getCompleteSavingGoalsForUser(String email) {
     logger.debug("Fetching completed saving goals for user: {}", email);
     validateEmail(email);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
     List<SavingGoal> goals = savingGoalsRepo.findCompletedSavingGoalsForUser(user);
     logger.info("Retrieved {} completed saving goals for user: {}", goals.size(), email);
     return goals == null ? List.of() : goals;
   }
 
   /**
-   * Retrieves statistics for a user's saving goals, including completed, in-progress, overdue, and total counts.
+   * Retrieves statistics for a user's saving goals, including completed, in-progress, overdue, and
+   * total counts.
    *
    * @param email the user's email
    * @return a GoalStatsResponse containing goal statistics
    * @throws IllegalArgumentException if email is invalid
-   * @throws UserNotFoundException   if user is not found
+   * @throws UserNotFoundException if user is not found
    */
   public GoalStatsResponse getGoalStatsForUser(String email) {
     logger.debug("Fetching goal stats for user: {}", email);
     validateEmail(email);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
-    List<GoalStat> goalStatList = Arrays.asList(
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
+    List<GoalStat> goalStatList =
+        Arrays.asList(
             getCompletedGoalStat(user),
             getInProgressGoalStat(user),
             getOverdueGoalStat(user),
@@ -218,7 +246,8 @@ public class SavingGoalService {
     validateUser(user);
     int completedCount = savingGoalsRepo.findCountCompletedSavingGoalsByUser(user);
     String plurality = completedCount > 1 ? "goals" : "goal";
-    String completedGoalInsight = String.format("You have completed %d %s", completedCount, plurality);
+    String completedGoalInsight =
+        String.format("You have completed %d %s", completedCount, plurality);
     logger.debug("Completed goal stat: {}", completedGoalInsight);
     return new GoalStat(completedGoalInsight, GoalType.COMPLETED, completedCount);
   }
@@ -236,7 +265,8 @@ public class SavingGoalService {
     int inProgressCount = savingGoalsRepo.findCountInProgressSavingGoalsByUser(user);
     int totalGoals = savingGoalsRepo.findCountSavingGoalsByUser(user);
     double inProgressPercent = totalGoals > 0 ? ((double) inProgressCount / totalGoals) * 100 : 0;
-    String inProgressGoalInsight = String.format(
+    String inProgressGoalInsight =
+        String.format(
             "You're making progress — %d goals (%d%%) are still in progress",
             inProgressCount, Math.round(inProgressPercent));
     logger.debug("In-progress goal stat: {}", inProgressGoalInsight);
@@ -256,7 +286,8 @@ public class SavingGoalService {
     int overdueCount = savingGoalsRepo.findCountOverdueSavingGoalsByUser(user);
     int pendingCount = savingGoalsRepo.findCountInProgressSavingGoalsByUser(user);
     double overduePercent = pendingCount > 0 ? ((double) overdueCount / pendingCount) * 100 : 0;
-    String overdueGoalInsight = String.format(
+    String overdueGoalInsight =
+        String.format(
             "About %.0f%% of your pending goals are overdue. Time to catch up!", overduePercent);
     logger.debug("Overdue goal stat: {}", overdueGoalInsight);
     return new GoalStat(overdueGoalInsight, GoalType.OVERDUE, overdueCount);
@@ -275,7 +306,8 @@ public class SavingGoalService {
     int totalCount = savingGoalsRepo.findCountSavingGoalsByUser(user);
     int completedCount = savingGoalsRepo.findCountCompletedSavingGoalsByUser(user);
     int completionPercent = totalCount > 0 ? (int) ((double) completedCount / totalCount * 100) : 0;
-    String completionInsight = String.format("You have completed %d%% of total goals", completionPercent);
+    String completionInsight =
+        String.format("You have completed %d%% of total goals", completionPercent);
     logger.debug("Total goal stat: {}", completionInsight);
     return new GoalStat(completionInsight, GoalType.TOTAL, totalCount);
   }
@@ -283,15 +315,16 @@ public class SavingGoalService {
   /**
    * Updates the contribution amount for a saving goal and recalculates account balance.
    *
-   * @param email    the user's email
-   * @param id       the saving goal ID
-   * @param request  the contribution request
-   * @throws IllegalArgumentException     if email, ID, or contribution is invalid
-   * @throws UserNotFoundException       if user is not found
+   * @param email the user's email
+   * @param id the saving goal ID
+   * @param request the contribution request
+   * @throws IllegalArgumentException if email, ID, or contribution is invalid
+   * @throws UserNotFoundException if user is not found
    * @throws SavingGoalNotFoundException if saving goal is not found
    */
   @Transactional
-  public void updateContributionForSavingGoal(String email, long id, GoalContributionRequest request) {
+  public void updateContributionForSavingGoal(
+      String email, long id, GoalContributionRequest request) {
     logger.debug("Updating contribution for saving goal ID: {}, user: {}", id, email);
     validateEmailAndId(email, id);
     if (request == null) {
@@ -302,28 +335,35 @@ public class SavingGoalService {
       logger.error("Invalid contribution amount: {}", request.getContribution());
       throw new IllegalArgumentException("Contribution amount must not be null or negative");
     }
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
     if (savingGoalsRepo.existsByIdAndUser(id, user)) {
       logger.error("Saving goal not found for ID: {}", id);
       throw new SavingGoalNotFoundException("Goal not found with ID: " + id);
     }
     savingGoalsRepo.updateSavingGoalContribution(user, id, request.getContribution());
     accountService.recalculateGoalSavingsBalance(user);
-    logger.info("Updated contribution: {} for saving goal ID: {}, user: {}", request.getContribution(), id, email);
+    logger.info(
+        "Updated contribution: {} for saving goal ID: {}, user: {}",
+        request.getContribution(),
+        id,
+        email);
   }
 
   /**
    * Creates a new saving goal for a user and recalculates account balance.
    *
-   * @param email   the user's email
+   * @param email the user's email
    * @param request the saving goal request
    * @return the created saving goal
    * @throws IllegalArgumentException if email or request fields are invalid
-   * @throws UserNotFoundException   if user is not found
+   * @throws UserNotFoundException if user is not found
    */
   @Transactional
   public SavingGoal createSavingGoal(String email, SavingGoalRequest request) {
@@ -349,17 +389,24 @@ public class SavingGoalService {
       logger.error("Saving goal date is null");
       throw new IllegalArgumentException("Date must not be null");
     }
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
-    Account savingGoalsAccount = accountRepo.findAccountByUserAndType(user, AccountType.GOALSAVINGS)
-            .orElseGet(() -> {
-              logger.debug("No goal savings account found, creating new for user: {}", email);
-              return accountService.createGoalSavingsAccount(user, request.getContributed());
-            });
-    SavingGoal newSavingGoal = new SavingGoal(
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
+    Account savingGoalsAccount =
+        accountRepo
+            .findAccountByUserAndType(user, AccountType.GOALSAVINGS)
+            .orElseGet(
+                () -> {
+                  logger.debug("No goal savings account found, creating new for user: {}", email);
+                  return accountService.createGoalSavingsAccount(user, request.getContributed());
+                });
+    SavingGoal newSavingGoal =
+        new SavingGoal(
             request.getTitle(),
             request.getTarget(),
             request.getContributed(),
@@ -376,12 +423,12 @@ public class SavingGoalService {
   /**
    * Updates an existing saving goal and recalculates account balance.
    *
-   * @param email   the user's email
-   * @param id      the saving goal ID
+   * @param email the user's email
+   * @param id the saving goal ID
    * @param request the saving goal request
    * @return the updated saving goal
-   * @throws IllegalArgumentException     if email, ID, or request fields are invalid
-   * @throws UserNotFoundException       if user is not found
+   * @throws IllegalArgumentException if email, ID, or request fields are invalid
+   * @throws UserNotFoundException if user is not found
    * @throws SavingGoalNotFoundException if saving goal is not found
    */
   @Transactional
@@ -407,17 +454,24 @@ public class SavingGoalService {
       logger.error("Saving goal date is null");
       throw new IllegalArgumentException("Date must not be null");
     }
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
-    SavingGoal savingGoal = savingGoalsRepo.findSavingGoalByIdAndUser(id, user)
-            .orElseThrow(() -> {
-              logger.error("Saving goal not found for ID: {}", id);
-              return new SavingGoalNotFoundException("Goal not found with ID: " + id);
-            });
-    savingGoal.setContributed(Optional.ofNullable(request.getContributed()).orElse(BigDecimal.ZERO));
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
+    SavingGoal savingGoal =
+        savingGoalsRepo
+            .findSavingGoalByIdAndUser(id, user)
+            .orElseThrow(
+                () -> {
+                  logger.error("Saving goal not found for ID: {}", id);
+                  return new SavingGoalNotFoundException("Goal not found with ID: " + id);
+                });
+    savingGoal.setContributed(
+        Optional.ofNullable(request.getContributed()).orElse(BigDecimal.ZERO));
     savingGoal.setId(id);
     savingGoal.setTitle(request.getTitle());
     savingGoal.setTarget(request.getTarget());
@@ -433,20 +487,23 @@ public class SavingGoalService {
    * Deletes a saving goal and recalculates account balance.
    *
    * @param email the user's email
-   * @param id    the saving goal ID
-   * @throws IllegalArgumentException     if email is invalid or ID is not positive
-   * @throws UserNotFoundException       if user is not found
+   * @param id the saving goal ID
+   * @throws IllegalArgumentException if email is invalid or ID is not positive
+   * @throws UserNotFoundException if user is not found
    * @throws SavingGoalNotFoundException if saving goal is not found
    */
   @Transactional
   public void deleteSavingGoal(String email, long id) {
     logger.debug("Deleting saving goal ID: {} for user: {}", id, email);
     validateEmailAndId(email, id);
-    User user = userRepo.getUserByEmail(email)
-            .orElseThrow(() -> {
-              logger.error("User not found: {}", email);
-              return new UserNotFoundException("User not found: " + email);
-            });
+    User user =
+        userRepo
+            .getUserByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
     if (savingGoalsRepo.existsByIdAndUser(id, user)) {
       logger.error("Saving goal not found for ID: {}", id);
       throw new SavingGoalNotFoundException("Goal not found with ID: " + id);
@@ -460,10 +517,10 @@ public class SavingGoalService {
    * Uploads an image for a saving goal and returns the file path.
    *
    * @param username the user's username
-   * @param file     the image file to upload
+   * @param file the image file to upload
    * @return the relative file path of the uploaded image
    * @throws IllegalArgumentException if username or file is invalid
-   * @throws RuntimeException         if file upload fails
+   * @throws RuntimeException if file upload fails
    */
   public String uploadImage(String username, MultipartFile file) {
     logger.debug("Uploading image for user: {}", username);
@@ -478,7 +535,8 @@ public class SavingGoalService {
     try {
       Path uploadPath = Paths.get("uploads");
       Files.createDirectories(uploadPath);
-      String fileName = username + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+      String fileName =
+          username + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
       Path filePath = uploadPath.resolve(fileName);
       Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
       String relativePath = "/uploads/" + fileName;

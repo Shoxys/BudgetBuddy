@@ -2,9 +2,7 @@ package com.shoxys.budgetbuddy_backend.DTOs.SavingGoal;
 
 import com.shoxys.budgetbuddy_backend.Enums.GoalType;
 
-/**
- * Represents a statistic or insight for a saving goal, including its type and amount.
- */
+/** Represents a statistic or insight for a saving goal, including its type and amount. */
 public class GoalStat {
   private String insight;
   private GoalType goalType;

@@ -1,15 +1,14 @@
 package com.shoxys.budgetbuddy_backend.Repo;
 
 import com.shoxys.budgetbuddy_backend.Entities.User;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 /**
- * Repository interface for managing {@link User} entities, providing CRUD operations and custom queries
- * for retrieving users by email.
+ * Repository interface for managing {@link User} entities, providing CRUD operations and custom
+ * queries for retrieving users by email.
  */
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {

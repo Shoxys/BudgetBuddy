@@ -31,17 +31,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
 
-  @Mock
-  private SavingGoalsRepo savingGoalsRepo;
-  @Mock
-  private AccountRepo accountRepo;
-  @Mock
-  private UserRepo userRepo;
-  @Mock
-  private TransactionRepo transactionRepo;
+  @Mock private SavingGoalsRepo savingGoalsRepo;
+  @Mock private AccountRepo accountRepo;
+  @Mock private UserRepo userRepo;
+  @Mock private TransactionRepo transactionRepo;
 
-  @InjectMocks
-  private AccountService accountService;
+  @InjectMocks private AccountService accountService;
 
   private final String VALID_EMAIL = "valid@example.com";
   private final String INVALID_EMAIL = "invalid@example.com";
@@ -60,9 +55,11 @@ class AccountServiceTest {
     mockUser = new User(VALID_EMAIL, "hashedpass");
     mockUser.setId(USER_ID);
 
-    goalAccount = new Account("Goal Savings", AccountType.GOALSAVINGS, null, BigDecimal.TEN, true, mockUser);
+    goalAccount =
+        new Account("Goal Savings", AccountType.GOALSAVINGS, null, BigDecimal.TEN, true, mockUser);
     goalAccount.setId(GOAL_ACCOUNT_ID);
-    spendingAccount = new Account("Spending Account", SPENDING, null, BigDecimal.TEN, false, mockUser);
+    spendingAccount =
+        new Account("Spending Account", SPENDING, null, BigDecimal.TEN, false, mockUser);
     spendingAccount.setId(SPENDING_ACCOUNT_ID);
   }
 
@@ -78,15 +75,15 @@ class AccountServiceTest {
 
     // Assert
     TestUtils.assertListElementsMatch(
-            expectedUserAccounts,
-            actualUserAccounts,
-            (expected, actual) -> {
-              assertEquals(expected.getAccountNo(), actual.getAccountNo());
-              assertEquals(expected.getBalance(), actual.getBalance());
-              assertEquals(expected.getName(), actual.getName());
-              assertEquals(expected.getType(), actual.getType());
-              assertEquals(expected.getUser(), actual.getUser());
-            });
+        expectedUserAccounts,
+        actualUserAccounts,
+        (expected, actual) -> {
+          assertEquals(expected.getAccountNo(), actual.getAccountNo());
+          assertEquals(expected.getBalance(), actual.getBalance());
+          assertEquals(expected.getName(), actual.getName());
+          assertEquals(expected.getType(), actual.getType());
+          assertEquals(expected.getUser(), actual.getUser());
+        });
   }
 
   @Test
@@ -96,7 +93,8 @@ class AccountServiceTest {
     when(userRepo.findById(noneExistingUserId)).thenReturn(Optional.empty());
 
     // Act & Assert
-    assertThrows(UserNotFoundException.class, () -> accountService.getAccountsByUserId(noneExistingUserId));
+    assertThrows(
+        UserNotFoundException.class, () -> accountService.getAccountsByUserId(noneExistingUserId));
   }
 
   @Test
@@ -104,12 +102,18 @@ class AccountServiceTest {
     // Arrange
     BigDecimal expectedNewBalance = BigDecimal.valueOf(1000);
     when(userRepo.findByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
-    when(accountRepo.findByIdAndUser(SPENDING_ACCOUNT_ID, mockUser)).thenReturn(Optional.of(spendingAccount));
+    when(accountRepo.findByIdAndUser(SPENDING_ACCOUNT_ID, mockUser))
+        .thenReturn(Optional.of(spendingAccount));
     when(accountRepo.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Act
-    Account resultAccount = accountService.upsertAccountBalance(
-            VALID_EMAIL, SPENDING_ACCOUNT_ID, spendingAccount.getName(), SPENDING, expectedNewBalance);
+    Account resultAccount =
+        accountService.upsertAccountBalance(
+            VALID_EMAIL,
+            SPENDING_ACCOUNT_ID,
+            spendingAccount.getName(),
+            SPENDING,
+            expectedNewBalance);
 
     // Assert
     assertEquals(spendingAccount.getName(), resultAccount.getName());
@@ -124,11 +128,12 @@ class AccountServiceTest {
     BigDecimal expectedNewBalance = BigDecimal.valueOf(1000);
     when(userRepo.findByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
     when(accountRepo.findByUserAndNameAndType(mockUser, spendingAccount.getName(), SPENDING))
-            .thenReturn(Optional.of(spendingAccount));
+        .thenReturn(Optional.of(spendingAccount));
     when(accountRepo.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Act
-    Account resultAccount = accountService.upsertAccountBalance(
+    Account resultAccount =
+        accountService.upsertAccountBalance(
             VALID_EMAIL, null, spendingAccount.getName(), SPENDING, expectedNewBalance);
 
     // Assert
@@ -144,11 +149,12 @@ class AccountServiceTest {
     BigDecimal expectedNewBalance = BigDecimal.valueOf(1000);
     when(userRepo.findByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
     when(accountRepo.findByUserAndNameAndType(mockUser, spendingAccount.getName(), SPENDING))
-            .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
     when(accountRepo.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Act
-    Account resultAccount = accountService.upsertAccountBalance(
+    Account resultAccount =
+        accountService.upsertAccountBalance(
             VALID_EMAIL, null, spendingAccount.getName(), SPENDING, expectedNewBalance);
 
     // Assert
@@ -168,8 +174,11 @@ class AccountServiceTest {
     when(userRepo.findByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
     // Act & Assert
-    assertThrows(UserNotFoundException.class, () ->
-            accountService.upsertAccountBalance(INVALID_EMAIL, null, spendingAccount.getName(), SPENDING, mockNewBalance));
+    assertThrows(
+        UserNotFoundException.class,
+        () ->
+            accountService.upsertAccountBalance(
+                INVALID_EMAIL, null, spendingAccount.getName(), SPENDING, mockNewBalance));
   }
 
   @Test
@@ -178,7 +187,9 @@ class AccountServiceTest {
     BigDecimal mockNewBalance = BigDecimal.valueOf(1000);
 
     // Act & Assert
-    assertThrows(IllegalArgumentException.class, () ->
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
             accountService.upsertAccountBalance(VALID_EMAIL, null, null, SPENDING, mockNewBalance));
   }
 
@@ -187,8 +198,9 @@ class AccountServiceTest {
     // Arrange
     BigDecimal mockNewBalance = BigDecimal.valueOf(1000);
     // Act & Assert
-    assertThrows(IllegalArgumentException.class, () ->
-            accountService.upsertAccountBalance(VALID_EMAIL, null, "", SPENDING, mockNewBalance));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> accountService.upsertAccountBalance(VALID_EMAIL, null, "", SPENDING, mockNewBalance));
   }
 
   @Test
@@ -197,8 +209,11 @@ class AccountServiceTest {
     BigDecimal mockNewBalance = BigDecimal.valueOf(1000);
 
     // Act & Assert
-    assertThrows(IllegalArgumentException.class, () ->
-            accountService.upsertAccountBalance(VALID_EMAIL, null, spendingAccount.getName(), null, mockNewBalance));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            accountService.upsertAccountBalance(
+                VALID_EMAIL, null, spendingAccount.getName(), null, mockNewBalance));
   }
 
   @Test
@@ -206,8 +221,11 @@ class AccountServiceTest {
     // Arrange
 
     // Act & Assert
-    assertThrows(IllegalArgumentException.class, () ->
-            accountService.upsertAccountBalance(VALID_EMAIL, null, spendingAccount.getName(), SPENDING, null));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            accountService.upsertAccountBalance(
+                VALID_EMAIL, null, spendingAccount.getName(), SPENDING, null));
   }
 
   @Test
@@ -285,10 +303,11 @@ class AccountServiceTest {
     // Arrange
     when(userRepo.findByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
     when(accountRepo.findByUserAndNameAndType(mockUser, spendingAccount.getName(), SPENDING))
-            .thenReturn(Optional.of(spendingAccount));
+        .thenReturn(Optional.of(spendingAccount));
 
     // Act
-    BigDecimal balance = accountService.getAccountBalance(VALID_EMAIL, spendingAccount.getName(), SPENDING);
+    BigDecimal balance =
+        accountService.getAccountBalance(VALID_EMAIL, spendingAccount.getName(), SPENDING);
 
     // Assert
     assertEquals(0, BigDecimal.TEN.compareTo(balance));
@@ -299,10 +318,11 @@ class AccountServiceTest {
     // Arrange
     when(userRepo.findByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
     when(accountRepo.findByUserAndNameAndType(mockUser, spendingAccount.getName(), SPENDING))
-            .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
     // Act
-    BigDecimal balance = accountService.getAccountBalance(VALID_EMAIL, spendingAccount.getName(), SPENDING);
+    BigDecimal balance =
+        accountService.getAccountBalance(VALID_EMAIL, spendingAccount.getName(), SPENDING);
 
     // Assert
     assertNull(balance);
@@ -314,8 +334,9 @@ class AccountServiceTest {
     when(userRepo.findByEmail(INVALID_EMAIL)).thenReturn(Optional.empty());
 
     // Act & Assert
-    assertThrows(UserNotFoundException.class, () ->
-            accountService.getAccountBalance(INVALID_EMAIL, spendingAccount.getName(), SPENDING));
+    assertThrows(
+        UserNotFoundException.class,
+        () -> accountService.getAccountBalance(INVALID_EMAIL, spendingAccount.getName(), SPENDING));
   }
 
   @Test
@@ -326,7 +347,8 @@ class AccountServiceTest {
     transaction.setAccount(spendingAccount);
     transaction.setBalanceAtTransaction(transactionBalance);
     transaction.setDate(LocalDate.of(2025, 7, 1));
-    when(transactionRepo.findByAccountOrderByDateDesc(spendingAccount)).thenReturn(List.of(transaction));
+    when(transactionRepo.findByAccountOrderByDateDesc(spendingAccount))
+        .thenReturn(List.of(transaction));
     when(accountRepo.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Act
@@ -356,7 +378,7 @@ class AccountServiceTest {
     // Arrange
     BigDecimal totalContributed = BigDecimal.valueOf(300);
     when(accountRepo.findAccountByUserAndType(mockUser, AccountType.GOALSAVINGS))
-            .thenReturn(Optional.of(goalAccount));
+        .thenReturn(Optional.of(goalAccount));
     when(savingGoalsRepo.sumContributionsByUser(mockUser)).thenReturn(totalContributed);
     when(accountRepo.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -372,16 +394,19 @@ class AccountServiceTest {
   public void recalculateGoalSavingsBalance_shouldThrowIfAccountNotFound() {
     // Arrange
     when(accountRepo.findAccountByUserAndType(mockUser, AccountType.GOALSAVINGS))
-            .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
     // Act & Assert
-    assertThrows(AccountNotFoundException.class, () -> accountService.recalculateGoalSavingsBalance(mockUser));
+    assertThrows(
+        AccountNotFoundException.class,
+        () -> accountService.recalculateGoalSavingsBalance(mockUser));
   }
 
   @Test
   public void handleFetchAccount_shouldReturnExistingAccount() {
     // Arrange
-    when(accountRepo.findAccountByUserAndType(mockUser, SPENDING)).thenReturn(Optional.of(spendingAccount));
+    when(accountRepo.findAccountByUserAndType(mockUser, SPENDING))
+        .thenReturn(Optional.of(spendingAccount));
 
     // Act
     Account result = accountService.handleFetchAccount(mockUser);

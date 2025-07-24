@@ -11,8 +11,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
- * Repository interface for managing {@link AccountRepo} entities, providing CRUD operations and custom queries
- * for retrieving and updating accounts based on user and account type.
+ * Repository interface for managing {@link AccountRepo} entities, providing CRUD operations and
+ * custom queries for retrieving and updating accounts based on user and account type.
  */
 public interface AccountRepo extends CrudRepository<Account, Long> {
 
@@ -52,7 +52,7 @@ public interface AccountRepo extends CrudRepository<Account, Long> {
   /**
    * Finds an account by its ID and associated user.
    *
-   * @param id   the account ID
+   * @param id the account ID
    * @param user the user entity
    * @return an {@code Optional} containing the account, or empty if not found
    */
@@ -70,8 +70,8 @@ public interface AccountRepo extends CrudRepository<Account, Long> {
   /**
    * Finds an account by user, name, and account type.
    *
-   * @param user        the user entity
-   * @param name        the account name
+   * @param user the user entity
+   * @param name the account name
    * @param accountType the account type (e.g., SPENDING, GOALSAVINGS)
    * @return an {@code Optional} containing the account, or empty if not found
    */

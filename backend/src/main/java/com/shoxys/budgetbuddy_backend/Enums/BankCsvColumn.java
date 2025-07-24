@@ -1,8 +1,6 @@
 package com.shoxys.budgetbuddy_backend.Enums;
 
-/**
- * Defines column names for parsing bank CSV files.
- */
+/** Defines column names for parsing bank CSV files. */
 public enum BankCsvColumn {
   DATE("Date"),
   AMOUNT("Amount"),

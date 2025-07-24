@@ -19,9 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * Service for handling user authentication and registration.
- */
+/** Service for handling user authentication and registration. */
 @Service
 public class AuthService {
   private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
@@ -34,12 +32,15 @@ public class AuthService {
    * Constructs an AuthService with required dependencies.
    *
    * @param authenticationManager the authentication manager for user authentication
-   * @param jwtUtil              utility for JWT generation
-   * @param userRepo             repository for user data access
-   * @param passwordEncoder      encoder for password hashing
+   * @param jwtUtil utility for JWT generation
+   * @param userRepo repository for user data access
+   * @param passwordEncoder encoder for password hashing
    */
-  public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-                     UserRepo userRepo, PasswordEncoder passwordEncoder) {
+  public AuthService(
+      AuthenticationManager authenticationManager,
+      JwtUtil jwtUtil,
+      UserRepo userRepo,
+      PasswordEncoder passwordEncoder) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     this.userRepo = userRepo;
@@ -52,11 +53,11 @@ public class AuthService {
    *
    * @param request the login request containing email and password
    * @return an AuthResponse containing the JWT token and success message
-   * @throws IllegalArgumentException      if email or password is invalid
-   * @throws InvalidEmailFormatException  if email format is invalid
-   * @throws InvalidCredentialsException  if authentication fails
-   * @throws UserNotFoundException        if user is not found after authentication
-   * @throws RuntimeException             if a server error occurs
+   * @throws IllegalArgumentException if email or password is invalid
+   * @throws InvalidEmailFormatException if email format is invalid
+   * @throws InvalidCredentialsException if authentication fails
+   * @throws UserNotFoundException if user is not found after authentication
+   * @throws RuntimeException if a server error occurs
    */
   public AuthResponse authenticate(LoginRequest request) {
     logger.debug("Authenticating user: {}", request != null ? request.getEmail() : null);
@@ -65,8 +66,10 @@ public class AuthService {
       throw new IllegalArgumentException("Login request cannot be null");
     }
     if (Utils.nullOrEmpty(request.getEmail()) || Utils.nullOrEmpty(request.getPassword())) {
-      logger.error("Missing required fields for authentication: email={}, password={}",
-              request.getEmail(), request.getPassword() != null ? "****" : null);
+      logger.error(
+          "Missing required fields for authentication: email={}, password={}",
+          request.getEmail(),
+          request.getPassword() != null ? "****" : null);
       throw new MissingFieldException("Email and password are required");
     }
     if (!Utils.isEmail(request.getEmail())) {
@@ -76,7 +79,8 @@ public class AuthService {
 
     Authentication authentication;
     try {
-      authentication = authenticationManager.authenticate(
+      authentication =
+          authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
       logger.info("Authentication successful for: {}", authentication.getName());
     } catch (BadCredentialsException e) {
@@ -89,10 +93,14 @@ public class AuthService {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String email = authentication.getName();
-    User user = userRepo.findByEmail(email).orElseThrow(() -> {
-      logger.error("User not found after authentication: {}", email);
-      return new UserNotFoundException("User not found: " + email);
-    });
+    User user =
+        userRepo
+            .findByEmail(email)
+            .orElseThrow(
+                () -> {
+                  logger.error("User not found after authentication: {}", email);
+                  return new UserNotFoundException("User not found: " + email);
+                });
     AppUserDetails userDetails = new AppUserDetails(user);
     String jwt = jwtUtil.generateToken(userDetails);
     logger.info("Generated JWT for user: {}", email);
@@ -103,11 +111,11 @@ public class AuthService {
    * Registers a new user with the provided credentials.
    *
    * @param request the registration request containing email, password, and confirm password
-   * @throws IllegalArgumentException     if request fields are invalid
+   * @throws IllegalArgumentException if request fields are invalid
    * @throws InvalidEmailFormatException if email format is invalid
-   * @throws PasswordMismatchException   if passwords do not match
-   * @throws InvalidPasswordException    if password does not meet criteria
-   * @throws EmailExistsException        if email is already registered
+   * @throws PasswordMismatchException if passwords do not match
+   * @throws InvalidPasswordException if password does not meet criteria
+   * @throws EmailExistsException if email is already registered
    */
   public void register(RegisterRequest request) {
     logger.debug("Registering user: {}", request != null ? request.getEmail() : null);
@@ -115,11 +123,14 @@ public class AuthService {
       logger.error("Register request is null");
       throw new IllegalArgumentException("Register request cannot be null");
     }
-    if (Utils.nullOrEmpty(request.getEmail()) || Utils.nullOrEmpty(request.getPassword()) ||
-            Utils.nullOrEmpty(request.getConfirmPassword())) {
-      logger.error("Missing required fields for registration: email={}, password={}, confirmPassword={}",
-              request.getEmail(), request.getPassword() != null ? "****" : null,
-              request.getConfirmPassword() != null ? "****" : null);
+    if (Utils.nullOrEmpty(request.getEmail())
+        || Utils.nullOrEmpty(request.getPassword())
+        || Utils.nullOrEmpty(request.getConfirmPassword())) {
+      logger.error(
+          "Missing required fields for registration: email={}, password={}, confirmPassword={}",
+          request.getEmail(),
+          request.getPassword() != null ? "****" : null,
+          request.getConfirmPassword() != null ? "****" : null);
       throw new MissingFieldException("All fields are required");
     }
     if (!Utils.isEmail(request.getEmail())) {

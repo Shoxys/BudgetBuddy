@@ -9,19 +9,18 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
+@EnableSpringDataWebSupport(
+    pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class WebConfig implements WebMvcConfigurer {
-    private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
+  private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
-    @Value("${file.upload-dir:uploads/}")
-    private String uploadDir;
+  @Value("${file.upload-dir:uploads/}")
+  private String uploadDir;
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        logger.info("Configuring resource handler for uploads at: {}", uploadDir);
-        registry
-                .addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadDir);
-        logger.debug("Resource handler configured for /uploads/**");
-    }
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    logger.info("Configuring resource handler for uploads at: {}", uploadDir);
+    registry.addResourceHandler("/uploads/**").addResourceLocations("file:" + uploadDir);
+    logger.debug("Resource handler configured for /uploads/**");
+  }
 }

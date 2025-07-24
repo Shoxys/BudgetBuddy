@@ -6,9 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
 
-/**
- * Entity representing a user of the BudgetBuddy application.
- */
+/** Entity representing a user of the BudgetBuddy application. */
 @Entity
 @Table(name = "users")
 public class User {
@@ -19,12 +17,22 @@ public class User {
 
   @NotBlank(message = "Email is required")
   @Email(message = "Please provide a valid email address")
-  @Size(max = Constants.MAX_EMAIL_LENGTH, message = "Email cannot exceed " + Constants.MAX_EMAIL_LENGTH + " characters")
+  @Size(
+      max = Constants.MAX_EMAIL_LENGTH,
+      message = "Email cannot exceed " + Constants.MAX_EMAIL_LENGTH + " characters")
   @Column(unique = true, nullable = false)
   private String email;
 
   @NotBlank(message = "Hashed password is required")
-  @Size(min = Constants.MIN_PASSWORD_LENGTH, max = Constants.MAX_PASSWORD_LENGTH, message = "Hashed password must be between " + Constants.MIN_PASSWORD_LENGTH + " and " + Constants.MAX_PASSWORD_LENGTH + " characters")
+  @Size(
+      min = Constants.MIN_PASSWORD_LENGTH,
+      max = Constants.MAX_PASSWORD_LENGTH,
+      message =
+          "Hashed password must be between "
+              + Constants.MIN_PASSWORD_LENGTH
+              + " and "
+              + Constants.MAX_PASSWORD_LENGTH
+              + " characters")
   @Column(nullable = false)
   private String hashedPassword;
 
