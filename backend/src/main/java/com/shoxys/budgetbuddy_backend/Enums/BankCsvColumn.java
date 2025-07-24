@@ -1,5 +1,8 @@
 package com.shoxys.budgetbuddy_backend.Enums;
 
+/**
+ * Defines column names for parsing bank CSV files.
+ */
 public enum BankCsvColumn {
   DATE("Date"),
   AMOUNT("Amount"),
@@ -9,8 +12,7 @@ public enum BankCsvColumn {
   DETAILS("Transaction Details"),
   BALANCE("Balance"),
   CATEGORY("Category"),
-  MERCHANT("Merchant Name"),
-  ;
+  MERCHANT("Merchant Name");
 
   private final String title;
 
@@ -18,6 +20,11 @@ public enum BankCsvColumn {
     this.title = title;
   }
 
+  /**
+   * Returns the string representation of the column name.
+   *
+   * @return the column title
+   */
   public String getStr() {
     return title;
   }
