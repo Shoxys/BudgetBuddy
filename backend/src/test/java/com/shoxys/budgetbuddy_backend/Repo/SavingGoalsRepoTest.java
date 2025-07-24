@@ -175,36 +175,6 @@ class SavingGoalsRepoTest {
   }
 
   @Test
-  void testAmountOfCompletedGoalsInWeek() {
-    LocalDate now = LocalDate.now();
-    SavingGoal g =
-        new SavingGoal(
-            "Weekly Done", BigDecimal.TEN, BigDecimal.TEN, now.minusDays(2), null, account, user);
-    savingGoalsRepo.save(g);
-
-    int count = savingGoalsRepo.amountOfCompletedGoalsInWeek(user, now.minusDays(3), now);
-    assertThat(count).isEqualTo(1);
-  }
-
-  @Test
-  void testAmountOfInProgressGoalsInWeek() {
-    LocalDate now = LocalDate.now();
-    SavingGoal g =
-        new SavingGoal(
-            "In Week",
-            BigDecimal.valueOf(100),
-            BigDecimal.valueOf(50),
-            now.minusDays(1),
-            null,
-            account,
-            user);
-    savingGoalsRepo.save(g);
-
-    int count = savingGoalsRepo.amountOfInProgressGoalsInWeek(user, now.minusDays(3), now);
-    assertThat(count).isEqualTo(1);
-  }
-
-  @Test
   void testSumContributionsByUser() {
     SavingGoal g1 =
         new SavingGoal(

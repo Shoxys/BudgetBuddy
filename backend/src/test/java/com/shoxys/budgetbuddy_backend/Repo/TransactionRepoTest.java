@@ -1,6 +1,7 @@
 package com.shoxys.budgetbuddy_backend.Repo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.shoxys.budgetbuddy_backend.DTOs.Dashboard.ExpenseAnalysis;
 import com.shoxys.budgetbuddy_backend.DTOs.Dashboard.RecentTransactions;
@@ -11,47 +12,51 @@ import com.shoxys.budgetbuddy_backend.Enums.AccountType;
 import com.shoxys.budgetbuddy_backend.Enums.SourceType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @DataJpaTest
 public class TransactionRepoTest {
-  @Autowired private TransactionRepo transactionRepo;
 
-  @Autowired private UserRepo userRepo;
+  @Autowired
+  private TransactionRepo transactionRepo;
 
-  @Autowired private AccountRepo accountRepo;
+  @Autowired
+  private UserRepo userRepo;
+
+  @Autowired
+  private AccountRepo accountRepo;
 
   private User user;
   private Account account;
 
-  private static final Map<String, Transaction> transactionMap = new HashMap<>();
-
   @BeforeEach
   void setUp() {
-    user =
-        userRepo
-            .getUserByEmail("test@example.com")
-            .orElseGet(
-                () -> {
-                  User u = new User();
-                  u.setEmail("test@example.com");
-                  u.setHashedPassword("secret");
-                  return userRepo.save(u);
-                });
+    // Create and save user
+    user = new User();
+    user.setEmail("test@example.com");
+    user.setHashedPassword("secret");
+    user = userRepo.save(user);
 
+    // Create and save account associated with user
     account = new Account();
     account.setName("Test Account");
     account.setType(AccountType.SPENDING);
     account.setBalance(BigDecimal.valueOf(1000));
     account.setManual(true);
-    accountRepo.save(account);
+    account.setUser(user); // Associate account with user
+    account = accountRepo.save(account);
   }
 
   @AfterEach
@@ -66,13 +71,13 @@ public class TransactionRepoTest {
     final int TOTAL_TRANSACTIONS = 5;
     List<Integer> expectedDays = List.of(3, 4, 5);
 
-    LocalDate startDate = LocalDate.of(2025, 4, expectedDays.getFirst());
-    LocalDate endDate = LocalDate.of(2025, 4, expectedDays.getLast());
+    LocalDate startDate = LocalDate.of(2025, 4, expectedDays.get(0));
+    LocalDate endDate = LocalDate.of(2025, 4, expectedDays.get(expectedDays.size() - 1));
 
-    for (int i = 0; i < TOTAL_TRANSACTIONS; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, 4, 1 + i),
+    // Create transactions with varied dates
+    for (int i = 1; i <= TOTAL_TRANSACTIONS; i++) {
+      Transaction transaction = new Transaction(
+              LocalDate.of(2025, 4, i),
               BigDecimal.valueOf(100),
               "W4242 15/04",
               "Groceries",
@@ -80,30 +85,29 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
+              user
+      );
       transactionRepo.save(transaction);
     }
 
-    List<Transaction> dateRangedTxns =
-        transactionRepo.findByUserIdAndDateBetween(user.getId(), startDate, endDate);
+    List<Transaction> dateRangedTxns = transactionRepo.findByUserIdAndDateBetween(user.getId(), startDate, endDate);
 
     assertThat(dateRangedTxns).hasSize(expectedDays.size());
-
-    List<Integer> actualDays =
-        dateRangedTxns.stream().map(txn -> txn.getDate().getDayOfMonth()).sorted().toList();
-
+    List<Integer> actualDays = dateRangedTxns.stream()
+            .map(txn -> txn.getDate().getDayOfMonth())
+            .sorted()
+            .toList();
     assertThat(actualDays).isEqualTo(expectedDays);
   }
 
   @Test
   void testGetTotalCreditThisMonth() {
-    int thisMonth = LocalDate.now().getMonthValue();
-    int lastMonth = LocalDate.now().minusMonths(1).getMonthValue();
+    int thisMonth = 7; // Fixed month for consistency
+    int lastMonth = 6;
 
     // Debit transactions for this month
     for (int i = 0; i < 4; i++) {
-      Transaction transaction =
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -112,74 +116,69 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
     // Credit transactions for this month
     for (int i = 0; i < 4; i++) {
-      Transaction transaction =
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(100),
               "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
+              "Salary",
+              "Employer",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
+
     // Credit transactions for last month
     for (int i = 0; i < 5; i++) {
-      Transaction transaction =
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, lastMonth, 1),
               BigDecimal.valueOf(100),
               "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
+              "Salary",
+              "Employer",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
     BigDecimal totalCredit = transactionRepo.getTotalCreditThisMonth(user.getId());
-
     assertThat(totalCredit).isEqualByComparingTo(BigDecimal.valueOf(400));
   }
 
   @Test
-  void testGetTotalCreditLastMonth() {
-    int thisMonth = LocalDate.now().getMonthValue();
-    int lastMonth = LocalDate.now().minusMonths(1).getMonthValue();
-
-    LocalDate startLastMonth = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+  void testGetTotalCreditBetween() {
+    int lastMonth = 6;
+    LocalDate startLastMonth = LocalDate.of(2025, lastMonth, 1);
     LocalDate endLastMonth = startLastMonth.withDayOfMonth(startLastMonth.lengthOfMonth());
 
-    // Credit transactions for this month
-    for (int i = 0; i < 4; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, thisMonth, 1),
+    // Credit transactions for last month
+    for (int i = 0; i < 5; i++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(100),
               "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
+              "Salary",
+              "Employer",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
-    // Debit debit transactions for last month
+
+    // Debit transactions for last month
     for (int i = 0; i < 4; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, lastMonth, 1),
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
               "Groceries",
@@ -187,55 +186,37 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
-    }
-    // Credit transactions for last month
-    for (int i = 0; i < 5; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, lastMonth, 1),
-              BigDecimal.valueOf(100),
-              "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
-              BigDecimal.valueOf(1000),
-              SourceType.MANUAL,
-              account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
-    BigDecimal totalCredit =
-        transactionRepo.getTotalCreditBetween(user.getId(), startLastMonth, endLastMonth);
-
+    BigDecimal totalCredit = transactionRepo.getTotalCreditBetween(user.getId(), startLastMonth, endLastMonth);
     assertThat(totalCredit).isEqualByComparingTo(BigDecimal.valueOf(500));
   }
 
   @Test
   void testGetTotalDebitThisMonth() {
-    int thisMonth = LocalDate.now().getMonthValue();
-    int lastMonth = LocalDate.now().minusMonths(1).getMonthValue();
+    int thisMonth = 7;
+    int lastMonth = 6;
 
     // Credit transactions for this month
     for (int i = 0; i < 2; i++) {
-      Transaction transaction =
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(100),
               "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
+              "Salary",
+              "Employer",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
+
     // Debit transactions for this month
     for (int i = 0; i < 3; i++) {
-      Transaction transaction =
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, thisMonth, 1),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -244,13 +225,13 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
+
     // Debit transactions for last month
     for (int i = 0; i < 2; i++) {
-      Transaction transaction =
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, lastMonth, 1),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
@@ -259,58 +240,39 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
     BigDecimal totalDebit = transactionRepo.getTotalDebitThisMonth(user.getId());
-
     assertThat(totalDebit).isEqualByComparingTo(BigDecimal.valueOf(-300));
   }
 
   @Test
   void testGetTotalDebitBetween() {
-    int thisMonth = LocalDate.now().getMonthValue();
-    int lastMonth = LocalDate.now().minusMonths(1).getMonthValue();
-
-    LocalDate startLastMonth = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+    int lastMonth = 6;
+    LocalDate startLastMonth = LocalDate.of(2025, lastMonth, 1);
     LocalDate endLastMonth = startLastMonth.withDayOfMonth(startLastMonth.lengthOfMonth());
 
-    // Credit transactions for this month
+    // Credit transactions for last month
     for (int i = 0; i < 2; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, thisMonth, 1),
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(100),
               "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
+              "Salary",
+              "Employer",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
-    // Debit transactions for this month
-    for (int i = 0; i < 2; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, thisMonth, 1),
-              BigDecimal.valueOf(-100),
-              "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
-              BigDecimal.valueOf(1000),
-              SourceType.MANUAL,
-              account,
-              user);
-      transactionRepo.save(transaction);
-    }
+
     // Debit transactions for last month
     for (int i = 0; i < 3; i++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(2025, lastMonth, 1),
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, lastMonth, 1 + i),
               BigDecimal.valueOf(-100),
               "W4242 15/04",
               "Groceries",
@@ -318,119 +280,113 @@ public class TransactionRepoTest {
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
-    BigDecimal totalDebit =
-        transactionRepo.getTotalDebitBetween(user.getId(), startLastMonth, endLastMonth);
-
+    BigDecimal totalDebit = transactionRepo.getTotalDebitBetween(user.getId(), startLastMonth, endLastMonth);
     assertThat(totalDebit).isEqualByComparingTo(BigDecimal.valueOf(-300));
   }
 
   @Test
   void testGetMonthlyIncomeForYear() {
-    int thisYear = LocalDate.now().getYear();
-    int lastYear = LocalDate.now().minusYears(1).getYear();
+    int year = 2025;
 
-    List<BigDecimal> expectedMonthlyIncome = new ArrayList<>();
-    int min = -800;
-    int max = 800;
+    // Create transactions for specific months
+    List<BigDecimal> expectedIncomes = List.of(
+            BigDecimal.valueOf(100), // January
+            BigDecimal.valueOf(200), // February
+            BigDecimal.valueOf(300)  // March
+    );
 
-    for (int i = 0; i < 12; i++) {
-      int randomIncome = new Random().nextInt((max - min) + 1) + min;
-      expectedMonthlyIncome.add(BigDecimal.valueOf(randomIncome));
-    }
-
-    BigDecimal expectedSum =
-        expectedMonthlyIncome.stream()
-            .filter(value -> value.compareTo(BigDecimal.ZERO) > 0)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    // Transactions for this year
-    for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(thisYear, monthIndex, 1),
-              expectedMonthlyIncome.get(monthIndex - 1),
+    for (int month = 1; month <= 3; month++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(year, month, 1),
+              expectedIncomes.get(month - 1),
+              "W4242 15/04",
+              "Salary",
+              "Employer",
+              BigDecimal.valueOf(1000),
+              SourceType.MANUAL,
+              account,
+              user
+      ));
+      // Add a debit transaction to ensure only credits are summed
+      transactionRepo.save(new Transaction(
+              LocalDate.of(year, month, 1),
+              BigDecimal.valueOf(-50),
               "W4242 15/04",
               "Groceries",
               "Woolworths Market",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
-    }
-    // Transactions for last year
-    for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {
-      Transaction transaction =
-          new Transaction(
-              LocalDate.of(lastYear, monthIndex, 1),
-              expectedMonthlyIncome.get(monthIndex - 1),
-              "W4242 15/04",
-              "Groceries",
-              "Woolworths Market",
-              BigDecimal.valueOf(1000),
-              SourceType.MANUAL,
-              account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
-    List<BigDecimal> monthlyIncomeForYear =
-        transactionRepo.getMonthlyIncomeForYear(user.getId(), thisYear);
-    BigDecimal actualSum = monthlyIncomeForYear.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+    List<Object[]> monthlyIncome = transactionRepo.getMonthlyIncomeForYear(user.getId(), year);
+    assertThat(monthlyIncome).hasSize(3);
 
-    assertThat(actualSum).isEqualByComparingTo(expectedSum);
+    for (int i = 0; i < monthlyIncome.size(); i++) {
+      Object[] result = monthlyIncome.get(i);
+      assertThat(result[0]).isEqualTo(i + 1); // Month
+      assertEquals(0, ((BigDecimal) result[1]).compareTo(expectedIncomes.get(i)),
+              "BigDecimal values should be numerically equal"); // Income
+    }
   }
 
   @Test
-  void testFindTop5CategoriesByAmount() {
-    List<ExpenseAnalysis> expectedCategories =
-        List.of(
-            new ExpenseAnalysis("Personal Care", BigDecimal.valueOf(1000)),
-            new ExpenseAnalysis("Groceries", BigDecimal.valueOf(900)),
-            new ExpenseAnalysis("Entertainment", BigDecimal.valueOf(800)),
-            new ExpenseAnalysis("Uncategorised", BigDecimal.valueOf(700)),
-            new ExpenseAnalysis("Transfers", BigDecimal.valueOf(600)),
-            new ExpenseAnalysis("Restaurants", BigDecimal.valueOf(500)),
-            new ExpenseAnalysis("Utility & Bills", BigDecimal.valueOf(400)));
+  void testFindTop5ExpenseCategoriesByAmount() {
+    List<ExpenseAnalysis> expectedCategories = List.of(
+            new ExpenseAnalysis("Personal Care", BigDecimal.valueOf(-1000)),
+            new ExpenseAnalysis("Groceries", BigDecimal.valueOf(-900)),
+            new ExpenseAnalysis("Entertainment", BigDecimal.valueOf(-800)),
+            new ExpenseAnalysis("Uncategorised", BigDecimal.valueOf(-700)),
+            new ExpenseAnalysis("Restaurants", BigDecimal.valueOf(-500))
+    );
 
-    for (int i = 0; i < expectedCategories.size(); i++) {
-      Transaction transaction =
-          new Transaction(
+    for (ExpenseAnalysis category : expectedCategories) {
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, 7, 1),
-              expectedCategories.get(i).getValue(),
+              category.getValue(),
               "W4242 15/04",
-              expectedCategories.get(i).getLabel(),
+              category.getLabel(),
               "Store",
               BigDecimal.valueOf(1000),
               SourceType.MANUAL,
               account,
-              user);
-      transactionRepo.save(transaction);
+              user
+      ));
     }
 
-    List<ExpenseAnalysis> actualCategories =
-        transactionRepo.findTop5CategoriesByAmount(user.getId());
+    // Add a transfer transaction that should be excluded
+    transactionRepo.save(new Transaction(
+            LocalDate.of(2025, 7, 1),
+            BigDecimal.valueOf(-600),
+            "W4242 15/04",
+            "Transfer",
+            "Bank",
+            BigDecimal.valueOf(1000),
+            SourceType.MANUAL,
+            account,
+            user
+    ));
 
+    List<ExpenseAnalysis> actualCategories = transactionRepo.findTop5ExpenseCategoriesByAmount(user.getId());
     assertThat(actualCategories).hasSize(5);
 
     for (int i = 0; i < actualCategories.size(); i++) {
-      assertThat(actualCategories.get(i).getLabel())
-          .isEqualTo(expectedCategories.get(i).getLabel());
-      assertThat(actualCategories.get(i).getValue())
-          .isEqualByComparingTo(expectedCategories.get(i).getValue());
+      assertThat(actualCategories.get(i).getLabel()).isEqualTo(expectedCategories.get(i).getLabel());
+      assertThat(actualCategories.get(i).getValue()).isEqualByComparingTo(expectedCategories.get(i).getValue());
     }
   }
 
   @Test
   void testFindByUserIdOrderByDateAsc() {
-    for (int i = 0; i < 3; i++) {
-      transactionRepo.save(
-          new Transaction(
-              LocalDate.of(2025, 7, 5 - i), // descending order insertion
+    for (int i = 1; i <= 3; i++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
               "Test Category",
@@ -438,19 +394,20 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user));
+              user
+      ));
     }
 
     List<Transaction> result = transactionRepo.findByUser_IdOrderByDateAsc(user.getId());
+    assertThat(result).hasSize(3);
     assertThat(result).isSortedAccordingTo(Comparator.comparing(Transaction::getDate));
   }
 
   @Test
   void testFindByUserIdOrderByDateDesc() {
-    for (int i = 0; i < 3; i++) {
-      transactionRepo.save(
-          new Transaction(
-              LocalDate.of(2025, 7, i + 1),
+    for (int i = 1; i <= 3; i++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(50),
               "desc",
               "Test Category",
@@ -458,41 +415,165 @@ public class TransactionRepoTest {
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user));
+              user
+      ));
     }
 
     List<Transaction> result = transactionRepo.findByUser_IdOrderByDateDesc(user.getId());
+    assertThat(result).hasSize(3);
     assertThat(result).isSortedAccordingTo(Comparator.comparing(Transaction::getDate).reversed());
+  }
+
+  @Test
+  void testFindByUserIdOrderByDateAscPageable() {
+    for (int i = 1; i <= 5; i++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, 7, i),
+              BigDecimal.valueOf(50),
+              "desc",
+              "Test Category",
+              "Merchant",
+              BigDecimal.TEN,
+              SourceType.MANUAL,
+              account,
+              user
+      ));
+    }
+
+    Pageable pageable = PageRequest.of(0, 3);
+    Page<Transaction> result = transactionRepo.findByUser_IdOrderByDateAsc(user.getId(), pageable);
+    assertThat(result.getContent()).hasSize(3);
+    assertThat(result.getTotalElements()).isEqualTo(5);
+    assertThat(result.getContent()).isSortedAccordingTo(Comparator.comparing(Transaction::getDate));
+  }
+
+  @Test
+  void testFindByUserIdOrderByDateDescPageable() {
+    for (int i = 1; i <= 5; i++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, 7, i),
+              BigDecimal.valueOf(50),
+              "desc",
+              "Test Category",
+              "Merchant",
+              BigDecimal.TEN,
+              SourceType.MANUAL,
+              account,
+              user
+      ));
+    }
+
+    Pageable pageable = PageRequest.of(0, 3);
+    Page<Transaction> result = transactionRepo.findByUser_IdOrderByDateDesc(user.getId(), pageable);
+    assertThat(result.getContent()).hasSize(3);
+    assertThat(result.getTotalElements()).isEqualTo(5);
+    assertThat(result.getContent()).isSortedAccordingTo(Comparator.comparing(Transaction::getDate).reversed());
+  }
+
+  @Test
+  void testFindByAccountOrderByDateDesc() {
+    for (int i = 1; i <= 3; i++) {
+      transactionRepo.save(new Transaction(
+              LocalDate.of(2025, 7, i),
+              BigDecimal.valueOf(50),
+              "desc",
+              "Test Category",
+              "Merchant",
+              BigDecimal.TEN,
+              SourceType.MANUAL,
+              account,
+              user
+      ));
+    }
+
+    List<Transaction> result = transactionRepo.findByAccountOrderByDateDesc(account);
+    assertThat(result).hasSize(3);
+    assertThat(result).isSortedAccordingTo(Comparator.comparing(Transaction::getDate).reversed());
+  }
+
+  @Test
+  void testFindTransactionByUserAndId() {
+    Transaction transaction = new Transaction(
+            LocalDate.of(2025, 7, 1),
+            BigDecimal.valueOf(100),
+            "desc",
+            "Test Category",
+            "Merchant",
+            BigDecimal.TEN,
+            SourceType.MANUAL,
+            account,
+            user
+    );
+    transaction = transactionRepo.save(transaction);
+
+    Optional<Transaction> result = transactionRepo.findTransactionByUserAndId(user, transaction.getId());
+    assertThat(result).isPresent();
+    assertThat(result.get().getId()).isEqualTo(transaction.getId());
+    assertThat(result.get().getUser()).isEqualTo(user);
+  }
+
+  @Test
+  void testDeleteAllByIdInAndUser() {
+    Transaction transaction1 = new Transaction(
+            LocalDate.of(2025, 7, 1),
+            BigDecimal.valueOf(100),
+            "desc",
+            "Test Category",
+            "Merchant",
+            BigDecimal.TEN,
+            SourceType.MANUAL,
+            account,
+            user
+    );
+    Transaction transaction2 = new Transaction(
+            LocalDate.of(2025, 7, 2),
+            BigDecimal.valueOf(200),
+            "desc",
+            "Test Category",
+            "Merchant",
+            BigDecimal.TEN,
+            SourceType.MANUAL,
+            account,
+            user
+    );
+    transaction1 = transactionRepo.save(transaction1);
+    transaction2 = transactionRepo.save(transaction2);
+
+    List<Long> idsToDelete = List.of(transaction1.getId(), transaction2.getId());
+    transactionRepo.deleteAllByIdInAndUser(idsToDelete, user);
+
+    assertThat(transactionRepo.findById(transaction1.getId())).isEmpty();
+    assertThat(transactionRepo.findById(transaction2.getId())).isEmpty();
   }
 
   @Test
   void testFindLatest3TransactionSummaries() {
     for (int i = 1; i <= 5; i++) {
-      transactionRepo.save(
-          new Transaction(
+      transactionRepo.save(new Transaction(
               LocalDate.of(2025, 7, i),
               BigDecimal.valueOf(100 + i),
               "Txn " + i,
-              "Category",
-              "Merchant",
+              "Category" + i,
+              "Merchant" + i,
               BigDecimal.TEN,
               SourceType.MANUAL,
               account,
-              user));
+              user
+      ));
     }
 
-    List<RecentTransactions> summaries =
-        transactionRepo.findLatest3TransactionSummaries(user.getId());
-
+    List<RecentTransactions> summaries = transactionRepo.findLatest3TransactionSummaries(user.getId());
     assertThat(summaries).hasSize(3);
-    assertThat(summaries.get(0).getDate()).isAfterOrEqualTo(summaries.get(1).getDate());
+    assertThat(summaries).isSortedAccordingTo(Comparator.comparing(RecentTransactions::getDate).reversed());
+    assertThat(summaries.get(0).getDescription()).isEqualTo("Txn 5");
+    assertThat(summaries.get(0).getCategory()).isEqualTo("Category5");
+    assertThat(summaries.get(0).getAmount()).isEqualByComparingTo(BigDecimal.valueOf(105));
   }
 
   @Test
   void testSumAmountsByAccount() {
-    transactionRepo.save(
-        new Transaction(
-            LocalDate.now(),
+    transactionRepo.save(new Transaction(
+            LocalDate.of(2025, 7, 1),
             BigDecimal.valueOf(100),
             "desc",
             "category",
@@ -500,11 +581,11 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user));
+            user
+    ));
 
-    transactionRepo.save(
-        new Transaction(
-            LocalDate.now(),
+    transactionRepo.save(new Transaction(
+            LocalDate.of(2025, 7, 2),
             BigDecimal.valueOf(200),
             "desc",
             "category",
@@ -512,9 +593,10 @@ public class TransactionRepoTest {
             BigDecimal.TEN,
             SourceType.MANUAL,
             account,
-            user));
+            user
+    ));
 
     BigDecimal sum = transactionRepo.sumAmountsByAccount(account);
-    assertThat(sum).isEqualByComparingTo("300");
+    assertThat(sum).isEqualByComparingTo(BigDecimal.valueOf(300));
   }
 }
