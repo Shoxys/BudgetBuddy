@@ -1,5 +1,9 @@
 package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 
+/**
+ * Represents a spending insight or recommendation for dashboard display.
+ */
+
 public class SpendingInsight {
   private String insight;
 

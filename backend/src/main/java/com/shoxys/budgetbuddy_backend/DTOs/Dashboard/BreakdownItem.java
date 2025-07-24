@@ -2,6 +2,10 @@ package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a single item in a net worth breakdown for dashboard display.
+ */
+
 public class BreakdownItem {
   private String name;
   private BigDecimal value;

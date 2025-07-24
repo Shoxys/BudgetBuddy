@@ -2,6 +2,10 @@ package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 
 import java.math.BigDecimal;
 
+/**
+ * Summary of income and expenses for a specific period on the dashboard.
+ */
+
 public class IncomeExpenseSummary {
   private String name;
   private BigDecimal income;

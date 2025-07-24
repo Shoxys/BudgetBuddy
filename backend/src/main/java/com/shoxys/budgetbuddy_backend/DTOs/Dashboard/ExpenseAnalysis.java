@@ -2,6 +2,10 @@ package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents an expense analysis item for dashboard display.
+ */
+
 public class ExpenseAnalysis {
   private String label;
   private BigDecimal value;

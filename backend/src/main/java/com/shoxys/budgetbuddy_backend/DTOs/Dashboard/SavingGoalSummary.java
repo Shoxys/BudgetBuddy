@@ -2,6 +2,10 @@ package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 
 import java.math.BigDecimal;
 
+/**
+ * Summary of a saving goal's progress for dashboard display.
+ */
+
 public class SavingGoalSummary {
   private String title;
   private BigDecimal contributed;

@@ -3,6 +3,10 @@ package com.shoxys.budgetbuddy_backend.DTOs.Dashboard;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Represents income trends over months for dashboard display, comparing current and previous year.
+ */
+
 public class IncomeTrend {
   private List<String> months;
   private List<BigDecimal> incomeThisYear;
