@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import com.shoxys.budgetbuddy_backend.DTOs.*;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.GoalContributionRequest;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.GoalStat;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.GoalStatsResponse;
+import com.shoxys.budgetbuddy_backend.DTOs.SavingGoal.SavingGoalRequest;
 import com.shoxys.budgetbuddy_backend.Entities.*;
 import com.shoxys.budgetbuddy_backend.Enums.*;
 import com.shoxys.budgetbuddy_backend.Exceptions.UserNotFoundException;
@@ -234,11 +237,9 @@ class SavingGoalServiceTest {
     // Arrange
     when(userRepo.getUserByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
     when(savingGoalsRepo.findCountCompletedSavingGoalsByUser(mockUser)).thenReturn(2);
-    when(savingGoalsRepo.amountOfCompletedGoalsInWeek(eq(mockUser), any(), any())).thenReturn(1);
     when(savingGoalsRepo.findCountInProgressSavingGoalsByUser(mockUser)).thenReturn(3);
-    when(savingGoalsRepo.amountOfInProgressGoalsInWeek(eq(mockUser), any(), any())).thenReturn(2);
+    when(savingGoalsRepo.findCountSavingGoalsByUser(eq(mockUser))).thenReturn(6);
     when(savingGoalsRepo.findCountOverdueSavingGoalsByUser(mockUser)).thenReturn(1);
-    when(savingGoalsRepo.amountOfOverdueGoalsInWeek(eq(mockUser), any(), any())).thenReturn(1);
     when(savingGoalsRepo.findCountSavingGoalsByUser(mockUser)).thenReturn(4);
     // called twice due to method reuse
     when(savingGoalsRepo.findCountCompletedSavingGoalsByUser(mockUser)).thenReturn(2);
@@ -247,22 +248,24 @@ class SavingGoalServiceTest {
     GoalStatsResponse actual = savingGoalService.getGoalStatsForUser(VALID_EMAIL);
 
     // Assert
+
     List<GoalStat> expectedStats =
-        List.of(
-            new GoalStat("You have completed 1 goal this week", GoalType.COMPLETED, 2),
-            new GoalStat("You have 2 in progress goals this week", GoalType.INPROGRESS, 3),
-            new GoalStat("You have 1 overdue goal this week", GoalType.OVERDUE, 1),
-            new GoalStat("You have completed 50% of total goals", GoalType.TOTAL, 4));
+            List.of(
+                    new GoalStat("You have completed 2 goals", GoalType.COMPLETED, 2),
+                    new GoalStat("You're making progress — 3 goals (75%) are still in progress", GoalType.IN_PROGRESS, 3),
+                    new GoalStat( "About 33% of your pending goals are overdue. Time to catch up!", GoalType.OVERDUE, 1),
+                    new GoalStat("You have completed 50% of total goals", GoalType.TOTAL, 4));
 
     TestUtils.assertListElementsMatch(
-        expectedStats,
-        actual.getGoalStats(),
-        (expected, actualStat) -> {
-          assertEquals(expected.getInsight(), actualStat.getInsight());
-          assertEquals(expected.getGoalType(), actualStat.getGoalType());
-          assertEquals(expected.getAmount(), actualStat.getAmount());
-        });
+            expectedStats,
+            actual.getGoalStats(),
+            (expected, actualStat) -> {
+              assertEquals(expected.getInsight(), actualStat.getInsight());
+              assertEquals(expected.getGoalType(), actualStat.getGoalType());
+              assertEquals(expected.getAmount(), actualStat.getAmount());
+            });
   }
+
 
   @Test
   void getGoalStatsForUser_shouldThrowIfUserNotFound() {
@@ -275,45 +278,45 @@ class SavingGoalServiceTest {
   @Test
   void getCompletedGoalStat_shouldReturnCorrectStat() {
     when(savingGoalsRepo.findCountCompletedSavingGoalsByUser(mockUser)).thenReturn(5);
-    when(savingGoalsRepo.amountOfCompletedGoalsInWeek(eq(mockUser), any(), any())).thenReturn(2);
 
     GoalStat stat = savingGoalService.getCompletedGoalStat(mockUser);
 
     assertEquals(GoalType.COMPLETED, stat.getGoalType());
     assertEquals(5, stat.getAmount());
-    assertEquals("You have completed 2 goals this week", stat.getInsight());
+    assertEquals("You have completed 5 goals", stat.getInsight());
   }
 
   @Test
   void getInProgressGoalStat_shouldReturnCorrectStat() {
     when(savingGoalsRepo.findCountInProgressSavingGoalsByUser(mockUser)).thenReturn(4);
-    when(savingGoalsRepo.amountOfInProgressGoalsInWeek(eq(mockUser), any(), any())).thenReturn(3);
+    when(savingGoalsRepo.findCountSavingGoalsByUser(mockUser)).thenReturn(10);
 
     GoalStat stat = savingGoalService.getInProgressGoalStat(mockUser);
 
-    assertEquals(GoalType.INPROGRESS, stat.getGoalType());
+    assertEquals(GoalType.IN_PROGRESS, stat.getGoalType());
     assertEquals(4, stat.getAmount());
-    assertEquals("You have 3 in progress goals this week", stat.getInsight());
+    assertEquals("You're making progress — 4 goals (40%) are still in progress", stat.getInsight());
   }
 
   @Test
   void getOverdueGoalStat_shouldReturnCorrectStat() {
     when(savingGoalsRepo.findCountOverdueSavingGoalsByUser(mockUser)).thenReturn(2);
-    when(savingGoalsRepo.amountOfOverdueGoalsInWeek(eq(mockUser), any(), any())).thenReturn(1);
+    when(savingGoalsRepo.findCountInProgressSavingGoalsByUser(mockUser)).thenReturn(6);
 
     GoalStat stat = savingGoalService.getOverdueGoalStat(mockUser);
 
     assertEquals(GoalType.OVERDUE, stat.getGoalType());
     assertEquals(2, stat.getAmount());
-    assertEquals("You have 1 overdue goal this week", stat.getInsight());
+    assertEquals("About 33% of your pending goals are overdue. Time to catch up!", stat.getInsight());
   }
+
 
   @Test
   void getTotalGoalStat_shouldReturnCorrectStat() {
     when(savingGoalsRepo.findCountSavingGoalsByUser(mockUser)).thenReturn(10);
     when(savingGoalsRepo.findCountCompletedSavingGoalsByUser(mockUser)).thenReturn(2);
 
-    GoalStat stat = savingGoalService.getTotalGoatStat(mockUser);
+    GoalStat stat = savingGoalService.getTotalGoalStat(mockUser);
 
     assertEquals(GoalType.TOTAL, stat.getGoalType());
     assertEquals(10, stat.getAmount());
