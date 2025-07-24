@@ -157,10 +157,6 @@ public class Transaction {
     return balanceAtTransaction;
   }
 
-  /**
-   * Sets the balance at the time of the transaction.
-   * TODO: Implement logic to validate or compute the balance (e.g., check against account balance).
-   */
   public void setBalanceAtTransaction(BigDecimal balanceAtTransaction) {
     this.balanceAtTransaction = balanceAtTransaction;
   }
