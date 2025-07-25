@@ -3,14 +3,25 @@
  */
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/AppConstants';
+/**
+ * Home page component for landing and navigation.
+ */
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../constants/AppConstants';
 import Logo from '../components/Logo';
 
 /**
  * Home page with navigation to signup and login.
  * @returns {JSX.Element} Home component.
  */
+/**
+ * Home page with navigation to signup and login.
+ * @returns {JSX.Element} Home component.
+ */
 export default function Home() {
   const navigate = useNavigate();
+
+  // Main layout
 
   // Main layout
   return (

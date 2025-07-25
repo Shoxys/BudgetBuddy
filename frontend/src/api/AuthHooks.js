@@ -10,7 +10,14 @@ import { login, signupUser, logoutUser } from './AuthApi';
  */
 export const useLogin = () => {
   return useMutation({
+<<<<<<< HEAD
   mutationFn: login,
+=======
+    mutationFn: login,
+    onError: (error) => {
+      throw new Error(error.response?.data?.message || 'An unexpected error occurred during login');
+    },
+>>>>>>> fc742901d7cab31b565d63a7f9cef837dace4bb7
   });
 };
 
