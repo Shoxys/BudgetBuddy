@@ -1,6 +1,3 @@
-/**
- * Login page component for user authentication.
- */
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import AuthForm from '../components/Authentication/AuthForm';
@@ -26,7 +23,6 @@ export default function Login() {
     { id: 'password', label: 'Password', type: 'password', placeholder: 'Enter at least 8+ characters', required: true },
   ];
 
-  // Handlers
   const handleSubmit = (event, formData) => {
     event.preventDefault();
     login(formData, {
@@ -34,7 +30,7 @@ export default function Login() {
         setNotification({
           isOpen: true,
           type: 'success',
-          message: data.message || 'Login successful',
+          message: data.message || 'Login successful! Redirecting...',
         });
         setTimeout(() => {
           navigate(ROUTES.DASHBOARD);
@@ -44,7 +40,7 @@ export default function Login() {
         setNotification({
           isOpen: true,
           type: 'error',
-          message: error.message || 'An error occurred during login',
+          message: error.response?.data?.message || 'An error occurred during login',
         });
       },
     });
@@ -54,18 +50,17 @@ export default function Login() {
     setNotification((prev) => ({ ...prev, isOpen: false }));
   };
 
-  // Main layout
   return (
-    <div className="min-h-screen flex flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Form section */}
-      <div className="w-1/2 min-h-screen flex flex-col">
+      <div className="w-full lg:w-1/2 min-h-screen flex flex-col order-2 lg:order-1">
         {/* Logo */}
         <div className="p-6 absolute">
           <img src="/assets/bb-logo-text.png" alt="Budget Buddy Logo with text" width="180" />
         </div>
         {/* Login form */}
-        <div className="flex-1 flex items-center justify-center px-12">
-          <div className="text-center w-1/2">
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-12">
+          <div className="w-full max-w-md text-center">
             <h1 className="font-header text-gray-800 text-5xl 3xl:text-6xl font-medium">Login</h1>
             <AuthForm
               fields={loginFields}
@@ -75,15 +70,17 @@ export default function Login() {
             />
             <p className="mt-5 font-body text-md">
               <span>Don't have an account? </span>
-              <Link to="/signup" className="text-primary_blue underline text-lg font-medium">
+              <Link to={ROUTES.SIGNUP} className="text-primary_blue underline text-lg font-medium">
                 Sign Up
               </Link>
             </p>
           </div>
         </div>
       </div>
+
       {/* Background image */}
-      <div className="w-1/2 min-h-screen bg-[url('/assets/login-bg.png')] bg-cover bg-no-repeat order-2"></div>
+      <div className="hidden lg:block lg:w-1/2 min-h-screen bg-[url('/assets/login-bg.png')] bg-cover bg-no-repeat order-1 lg:order-2"></div>
+
       {/* Notification */}
       <Notification
         type={notification.type}
