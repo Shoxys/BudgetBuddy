@@ -1,6 +1,7 @@
 /**
  * Home page component for landing and navigation.
  */
+import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/AppConstants';
 /**
@@ -42,7 +43,7 @@ export default function Home() {
       >
         Login
       </button>
-    </div>
+    </div> 
   </div>
   {/* Main content */}
   <div className="w-full sm:w-11/12 md:w-4/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 pt-6 sm:pt-8 md:pt-10 lg:pt-10 xl:pt-12">
