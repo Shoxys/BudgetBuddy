@@ -19,7 +19,7 @@
 - **JWT Authentication:** Implements secure user login and session management using JSON Web Tokens (JWT), stored in HTTP-only cookies for enhanced security.
 - **Database**: MySQL with Spring Data JPA for persistent storage.
 
-**Concepts Learned**:
+## Concepts Learned:
 
 - **Full-stack development** with React.js, Spring Boot, and Tailwind CSS, integrating modern frameworks cohesively.
 - **Layered Architecture** using controller, service, and repository layers for modular, maintainable code.
