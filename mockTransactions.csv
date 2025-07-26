@@ -1,0 +1,266 @@
+Date,Amount,Account Number,Empty,Transaction Type,Transaction Details,Balance,Category,Merchant Name
+1 Jan 24,5500.00,899000000,,Credit,Monthly Salary,5500.00,Salary,Employer Co.
+3 Jan 24,-2000.00,899000000,,Debit,Rent Payment,3500.00,Housing,Property Management
+5 Jan 24,-170.00,899000000,,Debit,Groceries Purchase,3330.00,Groceries,FreshFoods Supermarket
+8 Jan 24,-70.00,899000000,,Debit,Dining Out,3260.00,Dining Out,Local Eatery
+10 Jan 24,-80.00,899000000,,Debit,Electricity Bill Payment,3180.00,Utilities,PowerCo
+13 Jan 24,-35.00,899000000,,Debit,Public Transport Fare,3145.00,Transport,City Transit
+15 Jan 24,-45.00,899000000,,Debit,Subscription Renewal,3100.00,Subscriptions,App Service
+18 Jan 24,-140.00,899000000,,Debit,Gadget Purchase,2960.00,Shopping,Electronics Store
+21 Jan 24,-60.00,899000000,,Debit,Medical Supplies,2900.00,Medical,Chemist Warehouse
+24 Jan 24,150.00,899000000,,Credit,Freelance Payment,3050.00,Freelance,Client A
+27 Jan 24,-90.00,899000000,,Debit,Concert Tickets,2960.00,Entertainment,Eventbrite
+1 Feb 24,5500.00,899000000,,Credit,Monthly Salary,8460.00,Salary,Employer Co.
+3 Feb 24,-2000.00,899000000,,Debit,Rent Payment,6460.00,Housing,Property Management
+5 Feb 24,-160.00,899000000,,Debit,Groceries Purchase,6300.00,Groceries,FreshFoods Supermarket
+8 Feb 24,-50.00,899000000,,Debit,Coffee Shop Purchase,6250.00,Dining Out,Coffee Place
+10 Feb 24,-75.00,899000000,,Debit,Phone Bill Payment,6175.00,Utilities,MobileNet
+13 Feb 24,-30.00,899000000,,Debit,Fuel Purchase,6145.00,Transport,BP Station
+15 Feb 24,-35.00,899000000,,Debit,Gym Membership,6110.00,Subscriptions,FitLife Gym
+18 Feb 24,-110.00,899000000,,Debit,New Clothes,6000.00,Shopping,Fashion Store
+21 Feb 24,-40.00,899000000,,Debit,Dentist Visit,5960.00,Medical,Dental Clinic
+24 Feb 24,100.00,899000000,,Credit,Side Gig Income,6060.00,Freelance,Client B
+27 Feb 24,-70.00,899000000,,Debit,Movie Tickets,5990.00,Entertainment,Cinema World
+1 Mar 24,5500.00,899000000,,Credit,Monthly Salary,11490.00,Salary,Employer Co.
+3 Mar 24,-2000.00,899000000,,Debit,Rent Payment,9490.00,Housing,Property Management
+5 Mar 24,-180.00,899000000,,Debit,Groceries Purchase,9310.00,Groceries,FreshFoods Supermarket
+8 Mar 24,-65.00,899000000,,Debit,Restaurant Dinner,9245.00,Dining Out,The Bistro
+10 Mar 24,-80.00,899000000,,Debit,Internet Bill Payment,9165.00,Utilities,Internet Provider
+13 Mar 24,-25.00,899000000,,Debit,Public Transport Fare,9140.00,Transport,City Transit
+15 Mar 24,-40.00,899000000,,Debit,Software Subscription,9100.00,Subscriptions,Software Inc.
+18 Mar 24,-150.00,899000000,,Debit,Books Purchase,8950.00,Shopping,Bookstore
+21 Mar 24,-55.00,899000000,,Debit,Eye Exam,8895.00,Medical,Optometrist
+24 Mar 24,180.00,899000000,,Credit,Freelance Payment,9075.00,Freelance,Client C
+27 Mar 24,-100.00,899000000,,Debit,Gaming Purchase,8975.00,Entertainment,Game Store
+1 Apr 24,5500.00,899000000,,Credit,Monthly Salary,14475.00,Salary,Employer Co.
+3 Apr 24,-2000.00,899000000,,Debit,Rent Payment,12475.00,Housing,Property Management
+5 Apr 24,-165.00,899000000,,Debit,Groceries Purchase,12310.00,Groceries,FreshFoods Supermarket
+8 Apr 24,-75.00,899000000,,Debit,Cafe Visit,12235.00,Dining Out,Coffee Bean
+10 Apr 24,-90.00,899000000,,Debit,Electricity Bill Payment,12145.00,Utilities,PowerCo
+13 Apr 24,-40.00,899000000,,Debit,Fuel Purchase,12105.00,Transport,BP Station
+15 Apr 24,-50.00,899000000,,Debit,Streaming Service,12055.00,Subscriptions,StreamFlix
+18 Apr 24,-120.00,899000000,,Debit,Home Decor Purchase,11935.00,Shopping,HomeGoods
+21 Apr 24,-30.00,899000000,,Debit,Prescription Purchase,11905.00,Medical,Pharmacy
+24 Apr 24,150.00,899000000,,Credit,Side Gig Income,12055.00,Freelance,Client A
+27 Apr 24,-80.00,899000000,,Debit,Sporting Event Tickets,11975.00,Entertainment,Stadium
+1 May 24,5500.00,899000000,,Credit,Monthly Salary,17475.00,Salary,Employer Co.
+3 May 24,-2000.00,899000000,,Debit,Rent Payment,15475.00,Housing,Property Management
+5 May 24,-175.00,899000000,,Debit,Groceries Purchase,15300.00,Groceries,FreshFoods Supermarket
+8 May 24,-60.00,899000000,,Debit,Takeaway Food,15240.00,Dining Out,Pizza Palace
+10 May 24,-70.00,899000000,,Debit,Phone Bill Payment,15170.00,Utilities,MobileNet
+13 May 24,-20.00,899000000,,Debit,Bus Fare,15150.00,Transport,City Transit
+15 May 24,-30.00,899000000,,Debit,App Subscription,15120.00,Subscriptions,App Store
+18 May 24,-100.00,899000000,,Debit,New Gadget,15020.00,Shopping,Tech Store
+21 May 24,-45.00,899000000,,Debit,Therapy Session,14975.00,Medical,Therapy Centre
+24 May 24,120.00,899000000,,Credit,Freelance Payment,15095.00,Freelance,Client B
+27 May 24,-60.00,899000000,,Debit,Board Games Purchase,15035.00,Entertainment,Game Cafe
+1 Jun 24,5500.00,899000000,,Credit,Monthly Salary,20535.00,Salary,Employer Co.
+3 Jun 24,-2000.00,899000000,,Debit,Rent Payment,18535.00,Housing,Property Management
+5 Jun 24,-190.00,899000000,,Debit,Groceries Purchase,18345.00,Groceries,FreshFoods Supermarket
+8 Jun 24,-80.00,899000000,,Debit,Restaurant Dinner,18265.00,Dining Out,The Eatery
+10 Jun 24,-85.00,899000000,,Debit,Electricity Bill Payment,18180.00,Utilities,PowerCo
+13 Jun 24,-50.00,899000000,,Debit,Fuel Purchase,18130.00,Transport,Shell Station
+15 Jun 24,-40.00,899000000,,Debit,Online Course Fee,18090.00,Subscriptions,EduPlatform
+18 Jun 24,-130.00,899000000,,Debit,New Clothes,17960.00,Shopping,Fashion Outlet
+21 Jun 24,-35.00,899000000,,Debit,Dental Checkup,17925.00,Medical,Dental Clinic
+24 Jun 24,100.00,899000000,,Credit,Side Gig Income,18025.00,Freelance,Client C
+27 Jun 24,-70.00,899000000,,Debit,Movie Tickets,17955.00,Entertainment,Cinema World
+1 Jul 24,5500.00,899000000,,Credit,Monthly Salary,23455.00,Salary,Employer Co.
+3 Jul 24,-2000.00,899000000,,Debit,Rent Payment,21455.00,Housing,Property Management
+5 Jul 24,-150.00,899000000,,Debit,Groceries Purchase,21305.00,Groceries,FreshFoods Supermarket
+7 Jul 24,-50.00,899000000,,Debit,Coffee Purchase,21255.00,Dining Out,Local Cafe
+8 Jul 24,-80.00,899000000,,Debit,Internet Bill Payment,21175.00,Utilities,Internet Provider
+10 Jul 24,-25.00,899000000,,Debit,Public Transport Fare,21150.00,Transport,City Transit
+12 Jul 24,-35.00,899000000,,Debit,Streaming Service,21115.00,Subscriptions,StreamFlix
+15 Jul 24,-120.00,899000000,,Debit,Dinner with friends,20995.00,Dining Out,The Eatery
+18 Jul 24,-75.00,899000000,,Debit,Pharmacy Purchase,20920.00,Medical,City Pharmacy
+20 Jul 24,150.00,899000000,,Credit,Freelance Payment,21070.00,Freelance,Client A
+22 Jul 24,-45.00,899000000,,Debit,Clothes Shopping,21025.00,Shopping,Fashion Outlet
+25 Jul 24,-200.00,899000000,,Debit,Electricity Bill Payment,20825.00,Utilities,PowerCo
+28 Jul 24,-60.00,899000000,,Debit,Movie Tickets,20765.00,Entertainment,Cinema World
+1 Aug 24,5500.00,899000000,,Credit,Monthly Salary,26265.00,Salary,Employer Co.
+3 Aug 24,-2000.00,899000000,,Debit,Rent Payment,24265.00,Housing,Property Management
+6 Aug 24,-180.00,899000000,,Debit,Groceries Purchase,24085.00,Groceries,FreshFoods Supermarket
+9 Aug 24,-70.00,899000000,,Debit,Restaurant Lunch,24015.00,Dining Out,Pizza Palace
+11 Aug 24,-65.00,899000000,,Debit,Phone Bill Payment,23950.00,Utilities,MobileNet
+14 Aug 24,-30.00,899000000,,Debit,Fuel Purchase,23920.00,Transport,Shell Station
+16 Aug 24,-40.00,899000000,,Debit,Gym Membership,23880.00,Subscriptions,FitLife Gym
+19 Aug 24,-150.00,899000000,,Debit,Shopping,23730.00,Shopping,Department Store
+23 Aug 24,-90.00,899000000,,Debit,Doctor Visit,23640.00,Medical,City Clinic
+26 Aug 24,200.00,899000000,,Credit,Freelance Payment,23840.00,Freelance,Client B
+29 Aug 24,-80.00,899000000,,Debit,Concert Tickets,23760.00,Entertainment,Eventbrite
+1 Sep 24,5500.00,899000000,,Credit,Monthly Salary,29260.00,Salary,Employer Co.
+3 Sep 24,-2000.00,899000000,,Debit,Rent Payment,27260.00,Housing,Property Management
+5 Sep 24,-160.00,899000000,,Debit,Groceries Purchase,27100.00,Groceries,FreshFoods Supermarket
+8 Sep 24,-55.00,899000000,,Debit,Takeaway Food,27045.00,Dining Out,Local Kebab
+10 Sep 24,-75.00,899000000,,Debit,Internet Bill Payment,26970.00,Utilities,Internet Provider
+13 Sep 24,-20.00,899000000,,Debit,Bus Fare,26950.00,Transport,City Transit
+15 Sep 24,-30.00,899000000,,Debit,Music Streaming,26920.00,Subscriptions,Tuneify
+18 Sep 24,-100.00,899000000,,Debit,New Shoes,26820.00,Shopping,Shoe Emporium
+21 Sep 24,-40.00,899000000,,Debit,Flu Shot,26780.00,Medical,Pharmacy
+24 Sep 24,100.00,899000000,,Credit,Side Gig Income,26880.00,Freelance,Client C
+27 Sep 24,-70.00,899000000,,Debit,Bar Tab,26810.00,Entertainment,The Local Pub
+1 Oct 24,5500.00,899000000,,Credit,Monthly Salary,32310.00,Salary,Employer Co.
+3 Oct 24,-2000.00,899000000,,Debit,Rent Payment,30310.00,Housing,Property Management
+6 Oct 24,-170.00,899000000,,Debit,Groceries Purchase,30140.00,Groceries,FreshFoods Supermarket
+9 Oct 24,-60.00,899000000,,Debit,Cafe Visit,30080.00,Dining Out,Coffee Bean
+11 Oct 24,-85.00,899000000,,Debit,Electricity Bill Payment,29995.00,Utilities,PowerCo
+14 Oct 24,-40.00,899000000,,Debit,Fuel Purchase,29955.00,Transport,BP Station
+16 Oct 24,-50.00,899000000,,Debit,Software Subscription,29905.00,Subscriptions,Software Inc.
+19 Oct 24,-130.00,899000000,,Debit,New Books,29775.00,Shopping,Bookworm Store
+22 Oct 24,-30.00,899000000,,Debit,Dental Checkup,29745.00,Medical,Dental Clinic
+25 Oct 24,180.00,899000000,,Credit,Freelance Payment,29925.00,Freelance,Client A
+28 Oct 24,-90.00,899000000,,Debit,Concert Tickets,29835.00,Entertainment,TicketMaster
+1 Nov 24,5500.00,899000000,,Credit,Monthly Salary,35335.00,Salary,Employer Co.
+3 Nov 24,-2000.00,899000000,,Debit,Rent Payment,33335.00,Housing,Property Management
+5 Nov 24,-155.00,899000000,,Debit,Groceries Purchase,33180.00,Groceries,FreshFoods Supermarket
+8 Nov 24,-45.00,899000000,,Debit,Fast Food,33135.00,Dining Out,Burger Joint
+10 Nov 24,-70.00,899000000,,Debit,Phone Bill Payment,33065.00,Utilities,MobileNet
+13 Nov 24,-25.00,899000000,,Debit,Public Transport Fare,33040.00,Transport,City Transit
+15 Nov 24,-35.00,899000000,,Debit,Movie Subscription,33005.00,Subscriptions,CinePass
+18 Nov 24,-110.00,899000000,,Debit,Electronics Purchase,32895.00,Shopping,Tech Store
+21 Nov 24,-50.00,899000000,,Debit,Physio Session,32845.00,Medical,Physio Clinic
+24 Nov 24,120.00,899000000,,Credit,Side Gig Income,32965.00,Freelance,Client B
+27 Nov 24,-80.00,899000000,,Debit,Night Out,32885.00,Entertainment,The Club
+1 Dec 24,5500.00,899000000,,Credit,Monthly Salary,38385.00,Salary,Employer Co.
+3 Dec 24,-2000.00,899000000,,Debit,Rent Payment,36385.00,Housing,Property Management
+5 Dec 24,-200.00,899000000,,Debit,Groceries (Holiday),36185.00,Groceries,FreshFoods Supermarket
+8 Dec 24,-100.00,899000000,,Debit,Christmas Dinner,36085.00,Dining Out,Fancy Restaurant
+10 Dec 24,-90.00,899000000,,Debit,Internet Bill Payment,35995.00,Utilities,Internet Provider
+13 Dec 24,-60.00,899000000,,Debit,Fuel Purchase,35935.00,Transport,Shell Station
+15 Dec 24,-40.00,899000000,,Debit,Gift Wrapping,35895.00,Shopping,Gift Shop
+18 Dec 24,-300.00,899000000,,Debit,Christmas Gifts,35595.00,Shopping,Various
+21 Dec 24,-70.00,899000000,,Debit,Holiday Entertainment,35525.00,Entertainment,Amusement Park
+24 Dec 24,250.00,899000000,,Credit,Bonus Payment,35775.00,Salary,Employer Co.
+28 Dec 24,-500.00,899000000,,Debit,Travel Expenses,35275.00,Travel,Airline
+1 Jan 25,6050.00,899000000,,Credit,Monthly Salary,41325.00,Salary,Employer Co.
+3 Jan 25,-2000.00,899000000,,Debit,Rent Payment,39325.00,Housing,Property Management
+5 Jan 25,-170.00,899000000,,Debit,Groceries Purchase,39155.00,Groceries,FreshFoods Supermarket
+8 Jan 25,-70.00,899000000,,Debit,Dining Out,39085.00,Dining Out,Local Eatery
+10 Jan 25,-80.00,899000000,,Debit,Electricity Bill Payment,39005.00,Utilities,PowerCo
+13 Jan 25,-35.00,899000000,,Debit,Public Transport Fare,38970.00,Transport,City Transit
+15 Jan 25,-45.00,899000000,,Debit,Subscription Renewal,38925.00,Subscriptions,App Service
+18 Jan 25,-140.00,899000000,,Debit,Gadget Purchase,38785.00,Shopping,Electronics Store
+21 Jan 25,-60.00,899000000,,Debit,Medical Supplies,38725.00,Medical,Chemist Warehouse
+24 Jan 25,150.00,899000000,,Credit,Freelance Payment,38875.00,Freelance,Client A
+27 Jan 25,-90.00,899000000,,Debit,Concert Tickets,38785.00,Entertainment,Eventbrite
+1 Feb 25,6050.00,899000000,,Credit,Monthly Salary,44835.00,Salary,Employer Co.
+3 Feb 25,-2000.00,899000000,,Debit,Rent Payment,42835.00,Housing,Property Management
+5 Feb 25,-160.00,899000000,,Debit,Groceries Purchase,42675.00,Groceries,FreshFoods Supermarket
+8 Feb 25,-50.00,899000000,,Debit,Coffee Shop Purchase,42625.00,Dining Out,Coffee Place
+10 Feb 25,-75.00,899000000,,Debit,Phone Bill Payment,42550.00,Utilities,MobileNet
+13 Feb 25,-30.00,899000000,,Debit,Fuel Purchase,42520.00,Transport,BP Station
+15 Feb 25,-35.00,899000000,,Debit,Gym Membership,42485.00,Subscriptions,FitLife Gym
+18 Feb 25,-110.00,899000000,,Debit,New Clothes,42375.00,Shopping,Fashion Store
+21 Feb 25,-40.00,899000000,,Debit,Dentist Visit,42335.00,Medical,Dental Clinic
+24 Feb 25,100.00,899000000,,Credit,Side Gig Income,42435.00,Freelance,Client B
+27 Feb 25,-70.00,899000000,,Debit,Movie Night,42365.00,Entertainment,Cinema World
+1 Mar 25,6050.00,899000000,,Credit,Monthly Salary,48415.00,Salary,Employer Co.
+3 Mar 25,-2000.00,899000000,,Debit,Rent Payment,46415.00,Housing,Property Management
+5 Mar 25,-180.00,899000000,,Debit,Groceries Purchase,46235.00,Groceries,FreshFoods Supermarket
+8 Mar 25,-65.00,899000000,,Debit,Restaurant Dinner,46170.00,Dining Out,The Bistro
+10 Mar 25,-80.00,899000000,,Debit,Internet Bill Payment,46090.00,Utilities,Internet Provider
+13 Mar 25,-25.00,899000000,,Debit,Public Transport Fare,46065.00,Transport,City Transit
+15 Mar 25,-40.00,899000000,,Debit,Software Subscription,46025.00,Subscriptions,Software Inc.
+18 Mar 25,-150.00,899000000,,Debit,Books Purchase,45875.00,Shopping,Bookstore
+21 Mar 25,-55.00,899000000,,Debit,Eye Exam,45820.00,Medical,Optometrist
+24 Mar 25,180.00,899000000,,Credit,Freelance Payment,46000.00,Freelance,Client C
+27 Mar 25,-100.00,899000000,,Debit,Gaming Purchase,45900.00,Entertainment,Game Store
+1 Apr 25,6050.00,899000000,,Credit,Monthly Salary,51950.00,Salary,Employer Co.
+3 Apr 25,-2000.00,899000000,,Debit,Rent Payment,49950.00,Housing,Property Management
+5 Apr 25,-165.00,899000000,,Debit,Groceries Purchase,49785.00,Groceries,FreshFoods Supermarket
+8 Apr 25,-75.00,899000000,,Debit,Cafe Visit,49710.00,Dining Out,Coffee Bean
+10 Apr 25,-90.00,899000000,,Debit,Electricity Bill Payment,49620.00,Utilities,PowerCo
+13 Apr 25,-40.00,899000000,,Debit,Fuel Purchase,49580.00,Transport,BP Station
+15 Apr 25,-50.00,899000000,,Debit,Streaming Service,49530.00,Subscriptions,StreamFlix
+18 Apr 25,-120.00,899000000,,Debit,Home Decor Purchase,49410.00,Shopping,HomeGoods
+21 Apr 25,-30.00,899000000,,Debit,Prescription Purchase,49380.00,Medical,Pharmacy
+24 Apr 25,150.00,899000000,,Credit,Side Gig Income,49530.00,Freelance,Client A
+27 Apr 25,-80.00,899000000,,Debit,Sporting Event Tickets,49450.00,Entertainment,Stadium
+1 May 25,6050.00,899000000,,Credit,Monthly Salary,55500.00,Salary,Employer Co.
+3 May 25,-2000.00,899000000,,Debit,Rent Payment,53500.00,Housing,Property Management
+5 May 25,-175.00,899000000,,Debit,Groceries Purchase,53325.00,Groceries,FreshFoods Supermarket
+8 May 25,-60.00,899000000,,Debit,Takeaway Food,53265.00,Dining Out,Pizza Palace
+10 May 25,-70.00,899000000,,Debit,Phone Bill Payment,53195.00,Utilities,MobileNet
+13 May 25,-20.00,899000000,,Debit,Bus Fare,53175.00,Transport,City Transit
+15 May 25,-30.00,899000000,,Debit,App Subscription,53145.00,Subscriptions,App Store
+18 May 25,-100.00,899000000,,Debit,New Gadget,53045.00,Shopping,Tech Store
+21 May 25,-45.00,899000000,,Debit,Therapy Session,53000.00,Medical,Therapy Centre
+24 May 25,120.00,899000000,,Credit,Freelance Payment,53120.00,Freelance,Client B
+27 May 25,-60.00,899000000,,Debit,Board Games Purchase,53060.00,Entertainment,Game Cafe
+1 Jun 25,6050.00,899000000,,Credit,Monthly Salary,59110.00,Salary,Employer Co.
+3 Jun 25,-2000.00,899000000,,Debit,Rent Payment,57110.00,Housing,Property Management
+5 Jun 25,-190.00,899000000,,Debit,Groceries Purchase,56920.00,Groceries,FreshFoods Supermarket
+8 Jun 25,-80.00,899000000,,Debit,Restaurant Dinner,56840.00,Dining Out,The Eatery
+10 Jun 25,-85.00,899000000,,Debit,Electricity Bill Payment,56755.00,Utilities,PowerCo
+13 Jun 25,-50.00,899000000,,Debit,Fuel Purchase,56705.00,Transport,Shell Station
+15 Jun 25,-40.00,899000000,,Debit,Online Course Fee,56665.00,Subscriptions,EduPlatform
+18 Jun 25,-130.00,899000000,,Debit,New Clothes,56535.00,Shopping,Fashion Outlet
+21 Jun 25,-35.00,899000000,,Debit,Dental Checkup,56500.00,Medical,Dental Clinic
+24 Jun 25,100.00,899000000,,Credit,Side Gig Income,56600.00,Freelance,Client C
+27 Jun 25,-70.00,899000000,,Debit,Movie Tickets,56530.00,Entertainment,Cinema World
+1 Jul 25,6050.00,899000000,,Credit,Monthly Salary,62580.00,Salary,Employer Co.
+3 Jul 25,-2000.00,899000000,,Debit,Rent Payment,60580.00,Housing,Property Management
+5 Jul 25,-150.00,899000000,,Debit,Groceries Purchase,60430.00,Groceries,FreshFoods Supermarket
+8 Jul 25,-70.00,899000000,,Debit,Dining Out,60360.00,Dining Out,Local Eatery
+10 Jul 25,-80.00,899000000,,Debit,Electricity Bill Payment,60280.00,Utilities,PowerCo
+13 Jul 25,-35.00,899000000,,Debit,Public Transport Fare,60245.00,Transport,City Transit
+15 Jul 25,-45.00,899000000,,Debit,Subscription Renewal,60200.00,Subscriptions,App Service
+18 Jul 25,-140.00,899000000,,Debit,Gadget Purchase,60060.00,Shopping,Electronics Store
+21 Jul 25,-60.00,899000000,,Debit,Medical Supplies,60000.00,Medical,Chemist Warehouse
+24 Jul 25,150.00,899000000,,Credit,Freelance Payment,60150.00,Freelance,Client A
+27 Jul 25,-90.00,899000000,,Debit,Concert Tickets,60060.00,Entertainment,Eventbrite
+1 Aug 25,6050.00,899000000,,Credit,Monthly Salary,66110.00,Salary,Employer Co.
+3 Aug 25,-2000.00,899000000,,Debit,Rent Payment,64110.00,Housing,Property Management
+5 Aug 25,-180.00,899000000,,Debit,Groceries Purchase,63930.00,Groceries,FreshFoods Supermarket
+8 Aug 25,-70.00,899000000,,Debit,Restaurant Lunch,63860.00,Dining Out,Pizza Palace
+10 Aug 25,-65.00,899000000,,Debit,Phone Bill Payment,63795.00,Utilities,MobileNet
+13 Aug 25,-30.00,899000000,,Debit,Fuel Purchase,63765.00,Transport,BP Station
+15 Aug 25,-40.00,899000000,,Debit,Gym Membership,63725.00,Subscriptions,FitLife Gym
+18 Aug 25,-150.00,899000000,,Debit,Shopping,63575.00,Shopping,Department Store
+21 Aug 25,-90.00,899000000,,Debit,Doctor Visit,63485.00,Medical,City Clinic
+24 Aug 25,200.00,899000000,,Credit,Freelance Payment,63685.00,Freelance,Client B
+27 Aug 25,-80.00,899000000,,Debit,Concert Tickets,63605.00,Entertainment,Eventbrite
+1 Sep 25,6050.00,899000000,,Credit,Monthly Salary,69655.00,Salary,Employer Co.
+3 Sep 25,-2000.00,899000000,,Debit,Rent Payment,67655.00,Housing,Property Management
+5 Sep 25,-160.00,899000000,,Debit,Groceries Purchase,67495.00,Groceries,FreshFoods Supermarket
+8 Sep 25,-55.00,899000000,,Debit,Takeaway Food,67440.00,Dining Out,Local Kebab
+10 Sep 25,-75.00,899000000,,Debit,Internet Bill Payment,67365.00,Utilities,Internet Provider
+13 Sep 25,-20.00,899000000,,Debit,Bus Fare,67345.00,Transport,City Transit
+15 Sep 25,-30.00,899000000,,Debit,Music Streaming,67315.00,Subscriptions,Tuneify
+18 Sep 25,-100.00,899000000,,Debit,New Shoes,67215.00,Shopping,Shoe Emporium
+21 Sep 25,-40.00,899000000,,Debit,Flu Shot,67175.00,Medical,Pharmacy
+24 Sep 25,100.00,899000000,,Credit,Side Gig Income,67275.00,Freelance,Client C
+27 Sep 25,-70.00,899000000,,Debit,Bar Tab,67205.00,Entertainment,The Local Pub
+1 Oct 25,6050.00,899000000,,Credit,Monthly Salary,73255.00,Salary,Employer Co.
+3 Oct 25,-2000.00,899000000,,Debit,Rent Payment,71255.00,Housing,Property Management
+6 Oct 25,-170.00,899000000,,Debit,Groceries Purchase,71085.00,Groceries,FreshFoods Supermarket
+9 Oct 25,-60.00,899000000,,Debit,Cafe Visit,71025.00,Dining Out,Coffee Bean
+11 Oct 25,-85.00,899000000,,Debit,Electricity Bill Payment,70940.00,Utilities,PowerCo
+14 Oct 25,-40.00,899000000,,Debit,Fuel Purchase,70900.00,Transport,BP Station
+16 Oct 25,-50.00,899000000,,Debit,Software Subscription,70850.00,Subscriptions,Software Inc.
+19 Oct 25,-130.00,899000000,,Debit,New Books,70720.00,Shopping,Bookworm Store
+22 Oct 25,-30.00,899000000,,Debit,Dental Checkup,70690.00,Medical,Dental Clinic
+25 Oct 25,180.00,899000000,,Credit,Freelance Payment,70870.00,Freelance,Client A
+28 Oct 25,-90.00,899000000,,Debit,Concert Tickets,70780.00,Entertainment,TicketMaster
+1 Nov 25,6050.00,899000000,,Credit,Monthly Salary,76830.00,Salary,Employer Co.
+3 Nov 25,-2000.00,899000000,,Debit,Rent Payment,74830.00,Housing,Property Management
+5 Nov 25,-155.00,899000000,,Debit,Groceries Purchase,74675.00,Groceries,FreshFoods Supermarket
+8 Nov 25,-45.00,899000000,,Debit,Fast Food,74630.00,Dining Out,Burger Joint
+10 Nov 25,-70.00,899000000,,Debit,Phone Bill Payment,74560.00,Utilities,MobileNet
+13 Nov 25,-25.00,899000000,,Debit,Public Transport Fare,74535.00,Transport,City Transit
+15 Nov 25,-35.00,899000000,,Debit,Movie Subscription,74500.00,Subscriptions,CinePass
+18 Nov 25,-110.00,899000000,,Debit,Electronics Purchase,74390.00,Shopping,Tech Store
+21 Nov 25,-50.00,899000000,,Debit,Physio Session,74340.00,Medical,Physio Clinic
+24 Nov 25,120.00,899000000,,Credit,Side Gig Income,74460.00,Freelance,Client B
+27 Nov 25,-80.00,899000000,,Debit,Night Out,74380.00,Entertainment,The Club
+1 Dec 25,6050.00,899000000,,Credit,Monthly Salary,80430.00,Salary,Employer Co.
+3 Dec 25,-2000.00,899000000,,Debit,Rent Payment,78430.00,Housing,Property Management
+5 Dec 25,-200.00,899000000,,Debit,Groceries (Holiday),78230.00,Groceries,FreshFoods Supermarket
+8 Dec 25,-100.00,899000000,,Debit,Christmas Dinner,78130.00,Dining Out,Fancy Restaurant
+10 Dec 25,-90.00,899000000,,Debit,Internet Bill Payment,78040.00,Utilities,Internet Provider
+13 Dec 25,-60.00,899000000,,Debit,Fuel Purchase,77980.00,Transport,Shell Station
+15 Dec 25,-40.00,899000000,,Debit,Gift Wrapping,77940.00,Shopping,Gift Shop
+18 Dec 25,-300.00,899000000,,Debit,Christmas Gifts,77640.00,Shopping,Various
+21 Dec 25,-70.00,899000000,,Debit,Holiday Entertainment,77570.00,Entertainment,Amusement Park
+24 Dec 25,250.00,899000000,,Credit,Bonus Payment,77820.00,Salary,Employer Co.
