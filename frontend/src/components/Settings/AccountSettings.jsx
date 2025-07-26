@@ -280,7 +280,7 @@ export default function AccountSettings() {
             onClick={() => setDeletePopup(true)}
             disabled={deleteAccountMutation.isPending}
           >
-            {deleteAccountMutation.isPending ? <LoadingSpinner size="small" /> : 'Delete Account'}
+            {deleteAccountMutation.isPending ? 'Deleting Account' : 'Delete Account'}
           </button>
         </div>
       </div>
