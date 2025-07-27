@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 /** Entity representing a user's saving goal linked to an account. */
 @Entity
-@Table(name = "savingGoals")
+@Table(name = "saving_goals")
 public class SavingGoal {
 
   @Id

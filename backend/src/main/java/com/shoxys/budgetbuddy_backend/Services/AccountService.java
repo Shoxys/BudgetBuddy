@@ -110,9 +110,9 @@ public class AccountService {
       logger.error("Account type is null");
       throw new IllegalArgumentException("Type cannot be null");
     }
-    if (Utils.nullOrNegative(newBalance)) {
-      logger.error("Balance is null or negative: {}", newBalance);
-      throw new IllegalArgumentException("Balance cannot be null or negative");
+    if (newBalance == null) {
+      logger.error("Balance is null: {}", newBalance);
+      throw new IllegalArgumentException("Balance cannot be null");
     }
 
     User user =
@@ -224,10 +224,7 @@ public class AccountService {
       logger.error("No account associated with transaction ID: {}", transaction.getId());
       throw new AccountNotFoundException("No account associated with transaction");
     }
-    if (Utils.nullOrNegative(newAmount)) {
-      logger.error("Invalid new amount: {}", newAmount);
-      throw new IllegalArgumentException("New amount cannot be null or negative");
-    }
+
     BigDecimal oldAmount = Optional.ofNullable(transaction.getAmount()).orElse(BigDecimal.ZERO);
     BigDecimal delta = newAmount.subtract(oldAmount);
     account.setBalance(account.getBalance().add(delta));

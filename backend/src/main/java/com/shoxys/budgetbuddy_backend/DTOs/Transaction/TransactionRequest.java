@@ -13,9 +13,6 @@ public class TransactionRequest {
   private LocalDate date;
 
   @NotNull(message = "Amount is required")
-  @DecimalMin(
-      value = Constants.MIN_BALANCE,
-      message = "Amount must be at least " + Constants.MIN_BALANCE)
   @Digits(
       integer = Constants.MAX_BALANCE_INTEGER_DIGITS,
       fraction = Constants.MAX_BALANCE_FRACTION_DIGITS,

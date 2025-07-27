@@ -343,7 +343,7 @@ public class SavingGoalService {
                   logger.error("User not found: {}", email);
                   return new UserNotFoundException("User not found: " + email);
                 });
-    if (savingGoalsRepo.existsByIdAndUser(id, user)) {
+    if (!savingGoalsRepo.existsByIdAndUser(id, user)) {
       logger.error("Saving goal not found for ID: {}", id);
       throw new SavingGoalNotFoundException("Goal not found with ID: " + id);
     }
@@ -470,8 +470,9 @@ public class SavingGoalService {
                   logger.error("Saving goal not found for ID: {}", id);
                   return new SavingGoalNotFoundException("Goal not found with ID: " + id);
                 });
-    savingGoal.setContributed(
-        Optional.ofNullable(request.getContributed()).orElse(BigDecimal.ZERO));
+    if (savingGoal.getContributed().compareTo(savingGoal.getTarget()) >= 0) {
+      savingGoal.setContributed(BigDecimal.ZERO);
+    }
     savingGoal.setId(id);
     savingGoal.setTitle(request.getTitle());
     savingGoal.setTarget(request.getTarget());
@@ -504,7 +505,7 @@ public class SavingGoalService {
                   logger.error("User not found: {}", email);
                   return new UserNotFoundException("User not found: " + email);
                 });
-    if (savingGoalsRepo.existsByIdAndUser(id, user)) {
+    if (!savingGoalsRepo.existsByIdAndUser(id, user)) {
       logger.error("Saving goal not found for ID: {}", id);
       throw new SavingGoalNotFoundException("Goal not found with ID: " + id);
     }

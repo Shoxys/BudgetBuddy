@@ -31,7 +31,7 @@ export default function DeletionPopup({ isOpen = false, onClose, onConfirm, desc
               className="text-white font-semibold bg-secondary_red px-7 py-1.5 rounded-lg hover:bg-red-600 transition-colors"
               disabled={isLoading}
             >
-              {isLoading ? <LoadingSpinner size="small" /> : 'Delete'}
+              {isLoading ? "Deleting" : 'Delete'}
             </button>
           </div>
         </Dialog.Panel>

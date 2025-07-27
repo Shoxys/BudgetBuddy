@@ -96,7 +96,7 @@ public class AiInsightService {
     String prompt =
         """
                 You are a financial analyst who provides very brief, actionable advice. \
-                Based on the following spending summary, generate exactly TWO short, encouraging, and distinct insights. \
+                Based on the following spending summary, generate exactly THREE short, encouraging, and distinct insights. \
                 Each insight should aim to be 2 sentences and MUST not exceed 3 sentences. \
                 DO NOT use any introductory text, numbering, or bullet points. \
                 Each insight must be on its own line.
