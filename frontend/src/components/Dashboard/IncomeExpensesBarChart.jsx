@@ -49,7 +49,7 @@ export default function IncomeExpensesBarChart({ data = DEFAULT_DATA }) {
               </span>
             </div>
             <span className="font-semibold text-lg text-gray-900">
-              {formatMoney(income - expenses)}
+              {formatMoney(income + expenses)}
             </span>
           </div>
         ))}

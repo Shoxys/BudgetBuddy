@@ -126,7 +126,8 @@ export default function Table({ transactions = [], selectedIds = [], setSelected
               />
             </th>
             <th className="w-5 text-center">Date</th>
-            <th className="w-11">Details</th>
+            <th className="w-5">Merchant</th>
+            <th className="w-7">Details</th>
             <th className="w-4">Category</th>
             <th className="w-3.5">Debit</th>
             <th className="w-3.5">Credit</th>
@@ -153,7 +154,8 @@ export default function Table({ transactions = [], selectedIds = [], setSelected
                   />
                 </td>
                 <td className="px-2 text-center">{formatDate(date)}</td>
-                <td className="break-words whitespace-normal max-w-[250px]">{merchant || description}</td>
+                <td className="break-words whitespace-normal max-w-[250px]">{merchant}</td>
+                <td className="break-words whitespace-normal max-w-[250px]">{description}</td>
                 <td className="text-sm">
                   <Tag category={category} />
                 </td>

@@ -40,7 +40,7 @@ export default function AddModal({ isOpen = false, onClose}) {
   const handleCreate = () => {
     // Validate form fields
     const amount = parseFloat(formData.amount);
-    if (!formData.desc || !formData.category || !formData.type || !formData.date || isNaN(amount) || amount <= 0) {
+    if (!formData.merchant || !formData.desc || !formData.category || !formData.type || !formData.date || isNaN(amount) || amount <= 0) {
       setNotification({
         isOpen: true,
         type: 'error',
@@ -54,7 +54,7 @@ export default function AddModal({ isOpen = false, onClose}) {
       amount: amount,
       description: formData.desc,
       category: formData.category,
-      merchant: formData.merchant,
+      merchant: formData.merchant || '',
       type: formData.type,
     };
 
@@ -135,12 +135,24 @@ export default function AddModal({ isOpen = false, onClose}) {
                 <p className="mt-1 text-lg font-semibold text-primary_blue">{formatMoney(currentAccountBalance)}</p>
               )}
             </div>
+            {/* Merchant */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 font-header">Merchant</label>
+              <input
+                type="text"
+                placeholder="e.g., Starbucks"
+                value={formData.merchant}
+                onChange={handleChange('merchant')}
+                className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
+                required
+              />
+              </div>
             {/* Details */}
             <div>
               <label className="block text-sm font-medium text-gray-700 font-header">Details</label>
               <input
                 type="text"
-                placeholder="e.g., Coffee at Starbucks"
+                placeholder="e.g., Coffee Purchase"
                 value={formData.desc}
                 onChange={handleChange('desc')}
                 className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"

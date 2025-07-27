@@ -67,6 +67,7 @@ export const useSaveGoal = () => {
       queryClient.invalidateQueries({ queryKey: ['pendingGoals'] });
       queryClient.invalidateQueries({ queryKey: ['completedGoals'] });
       queryClient.invalidateQueries({ queryKey: ['goalStats'] });
+      queryClient.invalidateQueries({ queryKey: ['goal'] });
     },
   });
 };

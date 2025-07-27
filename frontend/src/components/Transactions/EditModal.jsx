@@ -27,7 +27,7 @@ export default function EditModal({ actionedTransaction = {}, isOpen = false, on
   const handleSave = () => {
     // Validate form fields
     const amount = parseFloat(formData.amount);
-    if (!formData.description || !formData.category || !formData.type || !formData.date || isNaN(amount) || amount <= 0) {
+    if (!formData.merchant || !formData.description || !formData.category || !formData.type || !formData.date || isNaN(amount) || amount <= 0) {
       setNotification({
         isOpen: true,
         type: 'error',
@@ -83,7 +83,8 @@ export default function EditModal({ actionedTransaction = {}, isOpen = false, on
       ...actionedTransaction, 
       date: formattedDate,
       amount: displayAmount,
-      description: actionedTransaction.description || actionedTransaction.merchant || '',
+      description: actionedTransaction.description,
+      merchant: actionedTransaction.merchant || '',
       type: derivedType,
     });
       setNotification({ isOpen: false, type: '', message: '' });
@@ -133,6 +134,17 @@ export default function EditModal({ actionedTransaction = {}, isOpen = false, on
           {/* Form */}
           {actionedTransaction && (
             <div className="space-y-4">
+              {/* Merchant */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 font-header">Merchant</label>
+                <input
+                  type="text"
+                  value={formData.merchant || ''}
+                  onChange={handleChange('merchant')}
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-primary_blue"
+                  required
+                />
+              </div>
               {/* Details */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 font-header">Details</label>
