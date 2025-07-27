@@ -507,7 +507,7 @@ public class SavingGoalService {
                 });
     if (!savingGoalsRepo.existsByIdAndUser(id, user)) {
       logger.error("Saving goal not found for ID: {}", id);
-      throw new SavingGoalNotFoundException("Goal not found with ID: " + id);
+      throw new SavingGoalNotFoundException("Saving Goal not found with ID: " + id);
     }
     savingGoalsRepo.deleteSavingGoalByIdAndUser(id, user);
     accountService.recalculateGoalSavingsBalance(user);

@@ -127,6 +127,7 @@ class SavingGoalServiceTest {
   @Test
   void deleteSavingGoal_shouldDeleteAndRecalculate() {
     when(userRepo.getUserByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
+    when(savingGoalsRepo.existsByIdAndUser(GOAL_ID, mockUser)).thenReturn(true);
 
     savingGoalService.deleteSavingGoal(VALID_EMAIL, GOAL_ID);
 
@@ -138,6 +139,7 @@ class SavingGoalServiceTest {
   void updateContribution_shouldUpdateAndRecalculate() {
     GoalContributionRequest req = new GoalContributionRequest(BigDecimal.valueOf(50));
     when(userRepo.getUserByEmail(VALID_EMAIL)).thenReturn(Optional.of(mockUser));
+    when(savingGoalsRepo.existsByIdAndUser(GOAL_ID, mockUser)).thenReturn(true);
 
     savingGoalService.updateContributionForSavingGoal(VALID_EMAIL, GOAL_ID, req);
 
