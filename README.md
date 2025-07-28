@@ -1,4 +1,4 @@
-# Budget Buddy
+# Budget Buddy - Personal Finance Tracker
 
 ## Demo
 
