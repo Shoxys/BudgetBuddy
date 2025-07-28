@@ -2,8 +2,8 @@
 
 ## Demo
 
-- [Watch the X-minute demo video](https://youtu.be/your-video-id)
-    - A X minute walkthrough of signup, onboarding, dashboard, transaction logging, savings goals, visualisations, AI insights, and JWT security.
+- [Watch the 13-minute demo video](https://youtu.be/urUbaJGCzRY)
+    - A 13 minute walkthrough of signup, onboarding, dashboard, transaction logging, savings goals, visualisations, AI insights, and JWT security.
 
 ## Overview
 
