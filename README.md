@@ -37,15 +37,6 @@
 - **Testing**: JUnit for backend unit tests, GitHub Actions for CI/CD
 - **AI Integration**: Gemini AI API
 
-### Tech Stack Highlights
-
-- **Spring Boot**: Manages RESTful services, JWT authentication, and database interactions.
-- **React.js with React Query**: Delivers a responsive UI with efficient data handling.
-- **Tailwind CSS**: Ensures a modern, responsive design.
-- **MySQL with Spring Data JPA**: Supports scalable data management.
-- **GitHub Actions**: Automates testing on code pushes.
-- **Recharts.js**: Powers interactive visualisations.
-
 ### Development Process
 
 - **Unit Testing**: Implemented JUnit tests for key backend classes (Controllers, Services & Repositories).
